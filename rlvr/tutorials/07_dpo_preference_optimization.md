@@ -26,9 +26,24 @@ graph TD
     class DPO,D1,D2,D3 dpo;
 ```
 
-### 1. 為什麼傳統三階段 RLHF 在工業界難以維護？
-- **獎勵模型的「古德哈特擊穿」（Goodhart's Law Exploitation）**：RM 本質上也是一個黑盒神經網路。在 PPO 的數萬步迭代中，Policy 會迅速找到 RM 的判分盲區，生成大量表面極其禮貌、辭藻華麗但邏輯空洞的「作弊文本」。
-- **工程複雜度與顯存災難**：在 70B 模型規模下，同時維護 Actor、Critic、RM、Ref 四套模型，加上 PPO 的超參數（Actor LR、Critic LR、GAE $\lambda$、截斷 $\epsilon$、KL 自適應係數），訓練極易在梯度爆炸與價值網絡崩潰中發散。
+### 1. 核心心智模型：廚房試吃員 vs 主廚自省法 (The Kitchen Metaphor)
+
+理解 DPO 最接地氣的方式，是看一個**頂級餐廳廚房的日常運作**：
+
+- **傳統三階段 RLHF（「廚房試吃員」模式）**：
+  - 廚師（Actor $\pi_\theta$）每做出一道菜，就要請一位專門培訓的「外聘美食評論家」（獨立神經網絡獎勵模型 RM）拿湯匙品嚐並打分；
+  - 廚房經理（Critic 價值網絡）還要在旁邊隨時預估「這道菜今天能不能拿高分」；
+  - 廚師根據這兩人的評語，開大會討論如何微調烹飪手法（PPO 迭代）。
+  - **為什麼會災難性崩潰？** 
+    1. **作弊取巧（古德哈特擊穿）**：廚師很快摸透了評論家的死穴——評論家其實是個沒真正吃過飯的神經網絡，只要廚師在每盤菜上撒滿金箔、鋪上浮誇裝飾（生成冗長、客套、華麗但無效的廢話），評論家就會狂給 100 分！
+    2. **廚房擁擠（顯存爆炸）**：廚房裡要同時擠下 4 位專家（Actor、Critic、RM、凍結基準 Ref），在 70B 模型規模下，動輒需要數十張 80GB H100 GPU 才能勉強跑起來。
+
+- **現代 DPO（「主廚自省法」模式）**：
+  - **根本不需要外聘評論家！** 廚師手裡只有一本厚實的「祖傳基礎食譜」（凍結的 $\pi_{\text{ref}}$），手裡烹飪著改良中的新菜（$\pi_\theta$）。
+  - 當服務員端回客人的真實反饋：*「客人在兩道菜中更喜歡勝者 $y_w$，討厭敗者 $y_l$」*。
+  - 主廚只需在灶台前進行一次**自省比較**：
+    > *「比起我的祖傳食譜，我的新做法到底對勝者 $y_w$ 傾注了多少多餘的熱情，對敗者 $y_l$ 施加了多少額外的克制？」*
+  - **這份多出來的相對偏愛程度，在數學上就是最精準的客觀獎勵！** 廚房裡再也不需要獨立評論家與經理，直接省掉一半以上的顯存與所有 PPO 超參數。
 
 ### 2. DPO 的代數突破：獎勵即策略對數比率
 Rafailov 等人在 2023 年證明：**任何帶有反向 KL 散度正則的受限強化學習問題，其最優獎勵函數在數學上都可以精確用策略模型本身的對數機率（Log-Probability）反解表達**。這意味著我們根本不需要單獨訓練神經網絡獎勵模型，直接拿策略模型自己當作隱式獎勵模型！
@@ -58,45 +73,114 @@ Rafailov 等人在 2023 年證明：**任何帶有反向 KL 散度正則的受�
 
 ## 三、系統心智模型與邊界直覺 (Systems Mechanics & Boundary Intuition)
 
-### 1. 隱式獎勵推拉力學
+### 1. 核心心智模型：國際象棋 Elo 等級分與成對博弈 (The Chess Elo Rating Mental Model)
+
+要真正讀懂 DPO，首先要拋開晦澀的強化學習術語，回到最直觀的**「雙人棋力對弈」**：
+
+- **大師對弈的勝率公式（Bradley-Terry 偏好模型）**：
+  想像兩篇候選回答 $y_w$ 與 $y_l$ 是兩位國際象棋大師，他們各自擁有隱含的「棋力評分」 $r(x, y_w)$ 與 $r(x, y_l)$。
+  競技體育中最經典的 **Bradley-Terry 偏好模型** 告訴我們：勝者 $y_w$ 擊敗敗者 $y_l$ 的勝率，完全由他們的**等級分差值通過 Sigmoid 邏輯函數映射**：
+  
+  $$P(y_w \succ y_l \mid x) = \sigma\left(r(x, y_w) - r(x, y_l)\right) = \frac{1}{1 + e^{-\left(r(x, y_w) - r(x, y_l)\right)}}$$
+
+- **關鍵直覺：分數的絕對高低毫無意義，只有差值才決定勝負！**
+  就像把全世界棋手的 Elo 評分同時拔高 1000 分，棋局勝率完全不會改變。這個**「平移不變性」（Shift Invariance）**，正是 DPO 消除維度災難的最關鍵幾何武器。
+
+---
+
+### 2. 三步數學奇蹟：配分函數的幽靈消去術 (The Miracle of the Vanishing Partition Function)
+
+傳統 RLHF 之所以必須單獨訓練獎勵模型，是因為直接反解獎勵公式時，會遇到一個**「算不出來的幽靈分母」**：
 
 ```mermaid
 flowchart TD
-    SUB["隱式獎勵差值: Δr = β log(π_θ(y_w)/π_ref(y_w)) - β log(π_θ(y_l)/π_ref(y_l))"]
-    W["動態權重純量: σ(-Δr)"]
-    
-    SUB --> W
-    W --> PUSH["+ ∇_θ log π_θ(y_w | x)<br/><b>拉升勝者 (Chosen) 生成概率</b>"]
-    W --> PULL["- ∇_θ log π_θ(y_l | x)<br/><b>打壓敗者 (Rejected) 生成概率</b>"]
-    
-    REF["π_ref(y | x) 凍結參考模型"] -.->|錨定語言分佈，防止語義崩解| PUSH
-    REF -.->|錨定語言分佈，防止語義崩解| PULL
+    RL["<b>1. 受限強化學習目標</b><br/>max 𝔼[r(x,y)] - β KL(π || π_ref)"] --> GIBBS["<b>2. 最優策略閉式解 (Gibbs/Boltzmann 分佈)</b><br/>π*(y|x) = (1 / Z(x)) · π_ref(y|x) · exp(r(x,y) / β)"]
+    GIBBS --> SOLVE["<b>3. 取對數反解真實獎勵 r(x,y)</b><br/>r(x,y) = β log(π*(y)/π_ref(y)) + β log Z(x)"]
+    SOLVE --> TRAP["🚨 <b>致命障礙: 配分函數 Z(x)</b><br/>Z(x) = ∑_y π_ref(y) exp(r/β)<br/>需窮舉宇宙中所有可能生成的句子求和，計算複雜度 O(V^L)，根本無法計算！"]
+    TRAP --> MIRACLE["✨ <b>DPO 的代數奇蹟 (代入成對博弈差值)</b><br/>r(x,y_w) - r(x,y_l) = [β log(π_w/π_ref) + β log Z(x)] - [β log(π_l/π_ref) + β log Z(x)]<br/><b>+β log Z(x) 與 -β log Z(x) 完美對消為 0！</b>"]
+    MIRACLE --> DPO_LOSS["🎉 <b>終極產物: DPO 封閉損失函數</b><br/>零獎勵模型、零維度災難，純前向計算即可更新！"]
 
-    classDef calc fill:#1a365d,stroke:#3182ce,stroke-width:1.5px,color:#fff;
-    classDef action fill:#2d3748,stroke:#4a5568,color:#e2e8f0;
-    class SUB,W calc;
-    class PUSH,PULL,REF action;
+    classDef normal fill:#1e293b,stroke:#475569,color:#e2e8f0;
+    classDef danger fill:#4c1d24,stroke:#e11d48,stroke-width:1.5px,color:#ffe4e6;
+    classDef miracle fill:#14332b,stroke:#10b981,stroke-width:1.5px,color:#d1fae5;
+    classDef target fill:#1a365d,stroke:#3182ce,stroke-width:2px,color:#fff;
+    class RL,GIBBS,SOLVE normal;
+    class TRAP danger;
+    class MIRACLE miracle;
+    class DPO_LOSS target;
 ```
 
-### 2. 核心目標函數（一行形式化）
+#### 代數推導的三個直觀台階：
 
-$$\mathcal{L}_{\text{DPO}}(\theta; \pi_{\text{ref}}) = -\mathbb{E}_{(x, y_w, y_l) \sim \mathcal{D}} \left[ \log \sigma \left( \beta \log \frac{\pi_\theta(y_w \mid x)}{\pi_{\text{ref}}(y_w \mid x)} - \beta \log \frac{\pi_\theta(y_l \mid x)}{\pi_{\text{ref}}(y_l \mid x)} \right) \right]$$
+1. **台階 1（繫著韁繩的最優解）**：
+   在強化學習對齊中，我們既希望獲得高獎勵，又強制用 KL 散度當作「韁繩」，防止模型脫離人類語言常規。在這種條件約束下，數學上證明最優策略必然是吉布斯分佈：
+   $$\pi^*(y \mid x) = \frac{1}{Z(x)} \pi_{\text{ref}}(y \mid x) \exp\left(\frac{1}{\beta} r(x, y)\right)$$
+   其中 $Z(x) = \sum_{y} \pi_{\text{ref}}(y \mid x) \exp\left(\frac{1}{\beta} r(x, y)\right)$ 稱為配分函數（Partition Function）。
 
-其中隱含獎勵為 $\hat{r}_\theta(x, y) = \beta \log \frac{\pi_\theta(y \mid x)}{\pi_{\text{ref}}(y \mid x)}$。
+2. **台階 2（移項反解隱含獎勵）**：
+   對等式兩端取對數 $\ln$，並將 $r(x, y)$ 移到等號左邊：
+   $$r(x, y) = \beta \log \frac{\pi^*(y \mid x)}{\pi_{\text{ref}}(y \mid x)} + \beta \log Z(x)$$
+   *白話透析*：任何一個回答的獎勵，等於「當前模型相比基準模型的對數幾率增益」，加上一個只跟題目 $x$ 有關的常數 $\beta \log Z(x)$。因為要對詞表大小 $V$ 與長度 $L$ 的全空間（$V^L$）窮舉求和，$Z(x)$ 在現實中根本無法求值。
 
-### 3. 關鍵參數物理意義與極限邊界分析 (Boundary Intuition)
+3. **台階 3（幽靈項完美蒸發）**：
+   神奇的事情發生在將其代入成對差值 $r(x, y_w) - r(x, y_l)$ 的那一瞬間：
+   $$r(x, y_w) - r(x, y_l) = \left[ \beta \log \frac{\pi_\theta(y_w \mid x)}{\pi_{\text{ref}}(y_w \mid x)} + \beta \log Z(x) \right] - \left[ \beta \log \frac{\pi_\theta(y_l \mid x)}{\pi_{\text{ref}}(y_l \mid x)} + \beta \log Z(x) \right]$$
+   $$= \beta \log \frac{\pi_\theta(y_w \mid x)}{\pi_{\text{ref}}(y_w \mid x)} - \beta \log \frac{\pi_\theta(y_l \mid x)}{\pi_{\text{ref}}(y_l \mid x)}$$
+   **幽靈項 $\beta \log Z(x)$ 被減法精準消去了！** 這就是 DPO 論文的靈魂所在——原本需要數千萬美金算力才能間接逼近的複雜强化學習流程，被一次精巧的代數相消直接降維成了二元交叉熵分類！
 
-- **溫度係數 $\beta$ 的動態物理特性**：
+---
+
+### 3. 三力動態拔河力學 (The 3-Force Dynamic Tug-of-War)
+
+當我們對 DPO 損失求導，觀察參數更新時所受到的真實物理受力：
+
+$$\nabla_\theta \mathcal{L}_{\text{DPO}} = - \underbrace{\sigma\left(\hat{r}_\theta(x, y_l) - \hat{r}_\theta(x, y_w)\right)}_{\text{力 1：動態彈簧拉力 (難度自適應係數)}} \cdot \left[ \underbrace{\nabla_\theta \log \pi_\theta(y_w \mid x)}_{\text{力 2：勝者吸力 (Attractor)}} - \underbrace{\nabla_\theta \log \pi_\theta(y_l \mid x)}_{\text{力 3：敗者斥力 (Repeller)}} \right]$$
+
+```mermaid
+flowchart LR
+    subgraph TUG["DPO 梯度物理受力場"]
+        SPRING["<b>力 1: 動態彈簧拉力 σ(r_l - r_w)</b><br/>• 若模型已分清勝敗 (r_w >> r_l) → 彈簧鬆弛 (拉力 ≈ 0)<br/>• 若模型嚴重誤判 (r_l >> r_w) → 彈簧繃緊 (拉力 ≈ 1)"]
+        
+        ATTRACT["<b>力 2: 勝者吸力 (+ ∇ log π(y_w))</b><br/>拉升勝者序列的 Token 概率質量"]
+        REPEL["<b>力 3: 敗者斥力 (- ∇ log π(y_l))</b><br/>壓制敗者序列的 Token 概率質量"]
+        BUNGEE["<b>隱形彈力韁繩 (Reference π_ref)</b><br/>限制政策模型偏離安全語言分佈的半徑"]
+    end
+
+    SPRING -->|縮放力矩大小| ATTRACT
+    SPRING -->|縮放力矩大小| REPEL
+    BUNGEE -.->|防止語義脫軌崩塌| ATTRACT
+    BUNGEE -.->|防止語義脫軌崩塌| REPEL
+
+    classDef spring fill:#7c2d12,stroke:#ea580c,stroke-width:1.5px,color:#ffedd5;
+    classDef attract fill:#14332b,stroke:#10b981,stroke-width:1.5px,color:#d1fae5;
+    classDef repel fill:#4c1d24,stroke:#e11d48,stroke-width:1.5px,color:#ffe4e6;
+    classDef bungee fill:#1e293b,stroke:#64748b,color:#cbd5e1;
+    class SPRING spring;
+    class ATTRACT attract;
+    class REPEL repel;
+    class BUNGEE bungee;
+```
+
+- **力 1：動態彈簧拉力 $\sigma(\hat{r}_l - \hat{r}_w)$（自適應難度調控）**：
+  - **學會了就放手（送分題）**：若模型對當前題目已經能輕鬆給出勝者高分（$\hat{r}_w \gg \hat{r}_l$），彈簧完全鬆弛，拉力趨近於 $0$。**模型不會在已經掌握的樣本上浪費寶貴的參數梯度**。
+  - **犯錯時猛烈修正（做錯題）**：若模型指鹿為馬，把敗者排在勝者前面（$\hat{r}_l > \hat{r}_w$），彈簧被拉至極限（接近 $1.0$），以最大推力迫使神經元重新排布權重。
+- **力 2：勝者吸力（Attractor Force, $+\nabla_\theta \log \pi_\theta(y_w)$）**：如同磁鐵正極，吸附模型把更多概率密度轉移到勝者回答上。
+- **力 3：敗者斥力（Repeller Force, $-\nabla_\theta \log \pi_\theta(y_l)$）**：如同磁鐵負極，把敗者回答推入低概率區間。
+- **隱形彈力韁繩（Reference Bungee Cord, $\pi_{\text{ref}}$）**：如果只有吸力與斥力，模型可能會走向極端（例如學會狂噴固定模式的特定符號來套取差值）。$\pi_{\text{ref}}$ 像一條強韌的彈力韁繩，只要 Policy 走偏太遠，就會產生巨大的反向回彈力，維繫語言的流暢與自然。
+
+---
+
+### 4. 關鍵參數物理意義與極限邊界分析 (Boundary Intuition)
+
+- **溫度係數 $\beta$ 的物理彈性**：
   - $\beta$ 充當了「隱含獎勵的縮放尺規」以及「對偏離參考模型 $\pi_{\text{ref}}$ 的懲罰阻尼」。
-  - 當 $\beta \to 0$：阻尼消失。代數差值 $\beta \Delta r$ 趨近於 0，損失函數對微小概率變化極度不敏感；若學習率稍大，Policy 會不顧語言通順度劇烈過擬合 $y_w$ 的表面符號，導致退化。
-  - 當 $\beta \to \infty$：對任何偏離 $\pi_{\text{ref}}$ 的微小步長施加無限大懲罰，梯度更新完全被凍結，策略無法吸收任何偏好標註。
-  - 工業實踐：一般 LLM 微調設定 $\beta \in [0.05, 0.2]$。
-- **動態純量權重 $\sigma(-\beta \Delta r)$ 的自適應課程直覺**：
-  - 當前模型若已經能輕易區分勝者與敗者（即 $\Delta r \gg 0$），則 $\sigma(-\beta \Delta r) \to 0$。**模型會主動停止在簡單樣本上浪費梯度**。
-  - 當前模型若嚴重判錯（敗者概率遠高於勝者，$\Delta r \ll 0$），則 $\sigma(-\beta \Delta r) \to 1$。**模型會以最大梯度強度進行猛烈糾偏**。
-- **長度偏見（Length Bias）邊界失效**：
-  - 由於 $\log \pi(y \mid x) = \sum_{t=1}^{|y|} \log \pi(y_t \mid x, y_{<t})$，長度越長，累積對數概率絕對值越大（負值越多）。
-  - 在長度不對稱的偏好對中，DPO 往往會被冗長但內容劣質的回答欺騙，這是促使後續 **SimPO**（引入平均 Token 長度歸一化）誕生的根本導火索。
+  - 當 $\beta \to 0$：韁繩徹底斷裂。代數差值 $\beta \Delta r \to 0$，損失對概率變化極不敏感；只要學習率稍大，策略就會暴烈過擬合訓練集特定符號，導致嚴重的語言崩壞。
+  - 當 $\beta \to \infty$：韁繩變成剛性鋼筋，任何微小改動都會面臨無限大阻力，梯度完全被凍結，模型無法學進去任何偏好反饋。
+  - 工業黃金推薦：一般 LLM 微調設定 $\beta \in [0.05, 0.2]$。
+- **長度偏見（Verbosity Bias）的根源直覺**：
+  - 因為序列對數幾率是每個 Token 的累加和：$\log \pi(y \mid x) = \sum_{t=1}^{|y|} \log \pi(y_t \mid x, y_{<t})$。
+  - 這就如同用「廚房電子秤」去給學生的作文打分：不管寫得好不好，只要洋洋灑灑寫了 1000 字，每字哪怕只累積一點微弱幾率，總重量也能輕易壓倒一篇只有 100 字但精準犀利的上乘之作！
+  - 這種「長度作弊」正是後續 **SimPO**（引入長度平均密度歸一化）誕生的直接原因。
 
 ---
 
@@ -108,7 +192,12 @@ $$\mathcal{L}_{\text{DPO}}(\theta; \pi_{\text{ref}}) = -\mathbb{E}_{(x, y_w, y_l
 
 ### 1. 實驗準備與合成偏好批次管道 (Synthetic Batch Pipeline & Tensors)
 
-在真實分散式後訓練中，成對數據包含 Prompt $x$、勝者回答 $y_w$ 與敗者回答 $y_l$。我們首先構建自包含的批次張量管線，包含 Attention Mask 與標籤遮蔽（Prompt 部分與 Padding 均標為 `-100`）：
+> 💡 **「試卷遮蔽」心智模型 (The Exam Paper Masking Metaphor)**：
+> 想像老師給學生發了一張數學考卷：考卷上半部印著題幹（Prompt $x$），下半部是學生作答區（$y_w$ 或 $y_l$）。
+> 老師批改考卷時，絕對不會因為學生把題幹題目抄得很工整就給他加分！題幹是既定前提，只有學生自己寫出的作答 Token 才有好壞與對錯。
+> 在 PyTorch 中，`labels[:, :prompt_len] = -100` 就是老師手裡的一卷「黑膠帶」，把題目部分嚴密貼死。CrossEntropyLoss 與 Gather 遇到 `-100` 會自動跳過，確保梯度純淨地只作用於回答區域。
+
+在真實分散式後訓練中，成對數據包含 Prompt $x$、勝者回答 $y_w$ 與敗者回答 $y_l$。我們首先構建自包含的批次張量管線，包含 Attention Mask 與標籤遮蔽：
 
 ```python
 import torch
@@ -179,7 +268,11 @@ print(f"  Supervised target tokens per sequence: {batch['chosen_labels'].shape[1
 
 ### 2. 因果對數機率抽取核心模組 (Causal Log-Prob Gathering with torch.gather)
 
-在自回歸 Transformer 中，時間步 $t$ 的 Logits 預測的是時間步 $t+1$ 的 Token。因此必須將 Logits 切片 `[:, :-1, :]` 與 Labels 切片 `[:, 1:]` 對齊，並使用 `torch.gather` 沿詞表維度精確抽取標籤的對數機率：
+> 💡 **「水晶球預言與智慧取物夾」心智模型 (Crystal Ball & Robotic Claw)**：
+> - **為什麼要進行因果位移（Causal Shift）？**
+>   自回歸語言模型在玩一場「水晶球預言接龍」：在時間步 $t$，模型看著前文，輸出對下一個詞 $t+1$ 的預測幾率。因此，第 $t$ 個位置輸出的 Logits，必須拿去和第 $t+1$ 個位置的真實標籤比對。所以我們將 Logits 切片 `[:, :-1]` 與 Labels 切片 `[:, 1:]` 嚴格位移對齊！
+> - **為什麼要使用 `torch.gather`？**
+>   模型在每個時間步都會輸出 32,000 個（甚至 128,000 個）詞表候選的概率，就像一整面裝滿 32,000 個抽屜的巨型中藥櫃。我們不需要所有抽屜的草藥，`torch.gather` 就像一隻靈巧的機械爪，一眼看準真實標籤是第 42 號，精準伸進第 42 號抽屜把對數幾率單獨夾取出來，其他 31,999 個抽屜的數值全部拋棄！
 
 ```python
 def get_batch_logps(
@@ -247,7 +340,12 @@ print(f"  Finite check         : {torch.isfinite(chosen_logps).all().item()}")
 
 ### 3. 向量化 DPO 損失引擎與即時遙測字典 (Vectorized DPO Loss Engine & Telemetry Signals)
 
-以下為工業生產級、完全向量化的 DPO 損失函數。它同時輸出反向傳播的純量損失以及 5 個關鍵的 WandB 遙測指標：
+> 💡 **「成對 Elo 結算盤」心智模型 (The Pairwise Elo Match Board)**：
+> 如果在 Python 裡寫 `for` 迴圈去一條條比對勝者與敗者，在 GPU 上會引發嚴重的核心調度延遲。
+> 向量化損失引擎將整個 Batch（例如 4 條對話）視為一個「矩陣結算盤」：
+> 1. 同時算出當前 Policy 對 4 局對弈的相對信心差 $\Delta \pi = \log \pi(y_w) - \log \pi(y_l)$；
+> 2. 同時算出凍結 Reference 對 4 局對弈的基準信心差 $\Delta \pi_{\text{ref}} = \log \pi_{\text{ref}}(y_w) - \log \pi_{\text{ref}}(y_l)$；
+> 3. 兩者相減乘以 $\beta$，直接作為成對邏輯回歸的 Logits，單次 GPU 核心操作直接結算出整個批次的梯度與 5 條監控信號！
 
 ```python
 def compute_dpo_loss(
@@ -319,7 +417,13 @@ for k, v in metrics.items():
 
 #### 實驗 4.1：整體概率塌陷模擬 (Likelihood Displacement Crash)
 
-> **物理直覺**：DPO 損失 $\mathcal{L}_{\text{DPO}}$ 的優化目標是拉大勝者與敗者的對數比率差值。由於降低敗者的機率比提高勝者的機率在幾何上更容易達成，策略模型會選擇「將敗者推入負無窮大，同時也順便壓低勝者機率」，導致整體生成困惑度（Perplexity）暴增崩壞！
+> 💡 **「蓋沙堡 vs 踢沙堡」非對稱崩塌心智模型 (Sandcastle Demolition vs Construction)**：
+> 為什麼 DPO 在沒有保護時，會發生恐怖的**「概率塌陷」（Likelihood Displacement）**？
+> - 在 32,000 維的龐大詞表空間裡，要讓勝者 $y_w$ 的 50 個詞連續命中，就像在微風中小心翼翼堆砌一座精細的沙堡（每個詞的幾率都要精確微調）；
+> - 但要摧毀敗者 $y_l$，就像抬腳一腳踢碎沙堡——模型只要在隨便兩三個詞上把幾率壓到 0，整個回答的聯合幾率 $\prod_t P(y_t)$ 就會瞬間歸零！
+> - 由於 DPO 只盯著差值 $(r_w - r_l)$，走捷徑的神經網絡發現了最輕鬆的偷懶策略：
+>   *「只要我把敗者一腳踢進深淵（$-25.71$），勝者哪怕也跟著滑坡（$-18.42$），我的差值依然在擴大（從 0 暴增到 $+0.53$）！」*
+> - 結果就是：WandB 監控大肆歡呼 Accuracy 達到 100%，而模型其實正在嚴重窒息，對正常文字的困惑度 Perplexity 暴漲，開始胡言亂語！
 
 ```python
 # 模擬 5 步純 DPO 梯度更新，觀察 chosen_logp 與 rejected_logp 的飄移軌跡
@@ -370,7 +474,12 @@ final_chosen, final_rejected = simulate_likelihood_displacement()
 
 #### 實驗 4.2：長度冗餘作弊陷阱模擬 (Verbosity Bias Exploitation)
 
-> **物理直覺**：DPO 的隱式獎勵是序列累積和 $\sum_t \log \frac{\pi(y_t)}{\pi_{\text{ref}}(y_t)}$。設想勝者回答極其精簡有效（長度 10），而敗者回答長篇大論、充滿客套話（長度 50）。只要敗者在每個 Token 上稍稍比參考模型高出一點點，其總和便會壓倒精簡勝者：
+> 💡 **「廚房電子秤閱卷」心智模型 (The Kitchen Scale Essay Grading)**：
+> 想像一位用「廚房電子秤」閱卷的懶惰考官：
+> - 優秀考生寫了 10 個字，言簡意賅，字字珠璣（單字含金量高達 $+0.12$），總重量 $= 10 \times 0.12 = 1.20$；
+> - 作弊考生寫了 60 個字，全是空話客套（「在當今社會深入思考這一問題時，我們首先應當注意到...」，單字含金量只有微弱的 $+0.03$），但總重量 $= 60 \times 0.03 = 1.80$！
+> - 電子秤盲目宣判：60 字廢話獲勝（$1.80 > 1.20$）！
+> - 因為傳統 DPO 的隱式獎勵是 Token 的未歸一化累加和，模型很快學會了「用字數換分數」，越微調回答越囉嗦。
 
 ```python
 def simulate_verbosity_bias():
@@ -413,9 +522,12 @@ _ = simulate_verbosity_bias()
 
 ### 5. 工業級急診修復與對比消融實驗 (Production Remediation & Comparative Ablation)
 
-為徹底消滅「概率塌陷」與「長度偏見」，工業界採取了兩項標誌性演算法革新：
-1. **SFT 錨定正則化 DPO**：$\mathcal{L}_{\text{total}} = \mathcal{L}_{\text{DPO}} + \alpha \mathcal{L}_{\text{SFT}}(y_w)$，防止勝者機率被連帶下拉。
-2. **長度歸一化 SimPO (Simple Preference Optimization)**：以平均 Token Log-Ratio $\frac{1}{|y|} \beta \log \frac{\pi_\theta}{\pi_{\text{ref}}}$ 取代未歸一化累積和，並引入目標裕度 $\gamma$。
+> 💡 **「打樁錨定與密度計處方」心智模型 (Bedrock Piling & Density Meter Remedy)**：
+> - **急救處方 1：SFT 錨定打樁（鋼樁釘入岩層）**：
+>   在 DPO 損失中混入 SFT 損失項 $-\alpha \log \pi(y_w)$。這就像在岩石地基上打入一根鋼樁，強行把勝者 $y_w$ 的絕對概率固定在水面之上。優化器就算想踢碎敗者，也無法拉著勝者一起跳崖！
+> - **急救處方 2：SimPO 密度計（以密度取代總重）**：
+>   將隱式獎勵除以序列長度 $|y|$，把「秤紙張總重量」改成「用量筒測含金量密度」。
+>   此時優秀考生的密度是 $0.12$，作弊考生的密度只有 $0.03$。精簡高質量的回答以四倍的巨大優勢漂亮反殺！
 
 ```python
 def compute_dpo_with_sft_anchor(

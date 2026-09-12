@@ -11,7 +11,7 @@ An 18-part comprehensive technical curriculum organized into **4 Thematic Techni
 | File | Hotspot | Responsibility / Competency Focus |
 |---|:---:|---|
 | `03_grpo_algorithm.md` | 🔥 | PPO 到 GRPO 工業演進、零 Critic 顯存架構、同儕相對優勢與邊界行為直覺 |
-| `07_dpo_preference_optimization.md` | 🔥 | Bradley-Terry 偏好演進、隱式獎勵閉式解、UvA-DLC 漸進式 5 階實驗室（概率塌陷與長度作弊復現、SimPO 消融）、DPO vs PPO 決策樹與失效排查 |
+| `07_dpo_preference_optimization.md` | 🔥 | 廚房試吃員 vs 主廚自省心智模型、Elo 偏好博弈、配分函數幽靈消去術、三力拔河受力場、UvA-DLC 漸進式 5 階實驗室（概率塌陷與長度作弊復現、SimPO 消融）、DPO vs PPO 決策樹與失效排查 |
 | `11_modern_preference_simpo_remax_kto.md` | 🔥 | 無參考模型 SimPO (節省 50% 顯存)、目標邊界 γ 直覺、ReMax 與 KTO 遙測對齊 |
 | `02_rewards.md` | | 確定性規則驗證器、格式懲罰、多目標獎勵組合與 Reward Hacking 防護 |
 

@@ -4,6 +4,26 @@
 
 This log records every documentation synchronization, bootstrap scan, and file modification event across the repository to guarantee zero documentation drift.
 
+### [2026-09-13] - Post-Training DPO Intuitive Mental Models Masterclass Upgrade
+- **DPO Curriculum Intuitive Pedagogical Overhaul (`rlvr/tutorials/07_dpo_preference_optimization.md`)**:
+  - **Section 1 (工業背景)**: Added **「廚房試吃員 vs 主廚自省法」心智模型** (The Restaurant Kitchen Metaphor), explaining why 3-stage RLHF suffers Goodhart collapse (chefs adding gold leaf/verbosity to fool critic models) and how DPO operates as chef self-reflection against ancestral recipes ($\pi_{\text{ref}}$).
+  - **Section 3 (核心心智模型與邊界直覺)**:
+    - Added **「國際象棋 Elo 等級分與成對博弈」** (The Chess Elo Rating Mental Model), connecting the Bradley-Terry preference probability $\sigma(\Delta r)$ to chess Elo rating differences and shift-invariance.
+    - Added **「配分函數的幽靈消去術」** (The Miracle of the Vanishing Partition Function), walking through the 3-step algebraic derivation with plain English explanations and Mermaid flow, demonstrating how the intractable denominator $+ \beta \log Z(x)$ and $- \beta \log Z(x)$ cancel to exactly 0.
+    - Added **「三力動態拔河受力場」** (The 3-Force Dynamic Tug-of-War), breaking down the gradient into Dynamic Spring Tension $\sigma(\hat{r}_l - \hat{r}_w)$ (auto-ignoring easy samples, pulling hard on mistakes), Attractor Pull ($+\nabla \log \pi(y_w)$), Repeller Push ($-\nabla \log \pi(y_l)$), and Bungee Leash ($\pi_{\text{ref}}$).
+  - **Section 4 (UvA-DLC 代碼實驗室)**:
+    - Stage 1: Added **「試卷遮蔽心智模型」** (Exam Paper Masking: why `-100` masks the prompt like black tape).
+    - Stage 2: Added **「水晶球預言與智慧取物夾心智模型」** (Causal shift crystal ball and `torch.gather` robotic claw picking the exact drawer out of 32,000 possibilities).
+    - Stage 3: Added **「成對 Elo 結算盤心智模型」** (Pairwise Elo Board matrix evaluation without python loops).
+    - Stage 4.1: Added **「蓋沙堡 vs 踢沙堡非對稱心智模型」** (Sandcastle demolition vs construction explaining Likelihood Displacement).
+    - Stage 4.2: Added **「廚房電子秤閱卷心智模型」** (Kitchen Scale essay grading explaining Verbosity Bias).
+    - Stage 5: Added **「打樁錨定與密度計處方心智模型」** (Bedrock Piling & Density Meter Remedy).
+- **Verification**:
+  - `npm --prefix frontend run typecheck` passed (exit code 0).
+  - `npm --prefix frontend run build` completed cleanly in 7.84s with zero errors.
+
+---
+
 ### [2026-09-13] - Sphinx ReadTheDocs & UvA DLC Academic Typography Calibration
 - **Reading Body & Typography Calibration (`ReaderCanvas.tsx`, `index.css`)**:
   - Calibrated `.prose` base font size from 16px/14.5px down to authentic Sphinx ReadTheDocs 14px (`line-height: 1.68`) preventing oversized typography bloat.
