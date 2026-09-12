@@ -29,13 +29,14 @@ The platform is a **React 19 SPA** powered by **Vite 6**, **TypeScript**, and **
 ```
 frontend/src/
 ├── app/                  # Application initialization, root providers, global CSS (Tailwind v4)
-│   ├── App.tsx           # QueryClientProvider, theme setup, routing
-│   └── app.css           # Modern Tailwind CSS v4 directives & theme variables
+│   ├── App.tsx           # Chapter routing, theme synchronization, URL hash sync
+│   └── styles/index.css  # Modern Tailwind CSS v4 tokens, ASCII blueprint styles, terminal telemetry, KaTeX contrast
 ├── pages/                # Route compositions
 │   └── guide/GuidePage.tsx # Master layout coordinating sidebar, reader canvas, and modal
 ├── widgets/              # Autonomous composite UI widgets
-│   ├── sidebar-nav/      # Track switcher (DeepAgents, RL Track, Post-Train), chapter tree, search
-│   └── reader-canvas/    # Markdown renderer, KaTeX math, deep links, milestone cards
+│   ├── sidebar-nav/      # Track switcher (DeepAgents, RL Track, Post-Train), mobile drawer, search
+│   ├── reader-canvas/    # Markdown renderer, KaTeX math, tri-modal code blocks, deep links, milestone cards
+│   └── privacy/          # Developer unlock and career authorization console dialog
 ├── entities/             # Core domain models and state stores
 │   ├── chapter/          # Dynamic ESM glob loader (`chapterLoader.ts`), Zustand `chapterStore.ts`
 │   ├── manifest/         # Track manifests (`deepagentsManifest`, `rlManifest`, `rlvrManifest`)
@@ -48,7 +49,7 @@ frontend/src/
 ```
 
 > [!NOTE]
-> **CodeInspector Deprecation**: The separate line-by-line `CodeInspector` component has been retired from `ReaderCanvas`. Code implementations are now presented directly within self-contained, syntax-highlighted notebook markdown cells. All chapter metadata records `codeLines: []`.
+> **CodeInspector Decommissioned**: The separate line-by-line `CodeInspector` component has been completely decommissioned and removed from the codebase. Code implementations are presented directly within in-canvas notebook markdown cells using the tri-modal renderer. All chapter metadata records `codeLines: []`.
 
 ### Dependency Rules (Feature-Sliced Design)
 Layers can strictly only import from layers below them:
@@ -61,17 +62,17 @@ Layers can strictly only import from layers below them:
 All frontend commands should be executed from the `frontend/` directory (or using `npm --prefix frontend`):
 
 ```bash
-# 1. Start development server (port 5173, proxies /api to FastAPI backend on 8000)
+# 1. Start development server (port 3000, proxies /api and /static to FastAPI backend on 8000)
 npm --prefix frontend run dev
 
 # 2. Strict TypeScript typechecking
 npm --prefix frontend run typecheck
 
-# 3. Production build (typecheck + Vite bundle to frontend/dist/)
+# 3. Production build (typecheck + Vite bundle to web/dist/)
 npm --prefix frontend run build
 
 # 4. Launch backend and serve frontend assets (from repo root)
-python serve.py
+python3 serve.py
 ```
 
 ---
@@ -94,6 +95,23 @@ Inspired by ReadTheDocs, Jupyter Book, and modern post-training developer workbe
 
 4. **Interactive Simulation Deep-Links**:
    - In-text badges and launch buttons (`<button data-lab="lab_id">Launch Simulation</button>`) dynamically trigger parameter-tuning modals without disrupting reading flow.
+
+5. **Tri-Modal Code Block & Blueprint Architecture**:
+   - **Mode 1: Systems Topology & Architectural Blueprints**: Detected when blocks contain box-drawing characters (`┌─┐│└─┘`); rendered with `Network` icon, blueprint header, wrap toggle, copy button, and calibrated monospace alignment.
+   - **Mode 2: Runtime Telemetry & Verification Terminal**: Detected by `[Execution Output / ...]` tags; rendered with macOS micro-status dots, `Terminal` icon, `Out:` gutter, and emerald console output.
+   - **Mode 3: Source Code**: Syntax-highlighted code cells with `Code2` icon, language badge, `In:` gutter, wrap toggle, and copy button.
+
+6. **Mobile Responsive & Touch Ergonomics**:
+   - Off-canvas overlay navigation drawer on mobile viewports (`< md`) with dimmed backdrop.
+   - Mobile in-page table of contents dropdown (`<details className="xl:hidden">`) allowing quick jumping across sections.
+   - Touch-accessible code copy and wrap controls (`opacity-80 sm:opacity-0 sm:group-hover:opacity-100`).
+   - Responsive modal dialogs and overflowing data tables with smooth momentum touch scrolling (`-webkit-overflow-scrolling: touch`).
+
+7. **Home Navigation Invariant**:
+   - Clicking the top-left brand icon or logo returns the user to the home view / first chapter of the active track.
+
+8. **Strict Elimination of Obsolete Code & Routes**:
+   - Dead code, orphaned widgets (e.g. `CodeInspector`), and duplicate un-prefixed backend API routes (`/api/toy`, etc.) are completely prohibited and decommissioned.
 
 ---
 
@@ -171,6 +189,10 @@ Every curriculum chapter on this platform must conform to the **7-Pillar Standar
        class DOWNA,UPB lora;
    ```
 
+2.5. **ASCII Architectural & Systems Topology Blueprint Standard**:
+   - In addition to Mermaid diagrams, all curriculum chapters must feature high-density, monospaced ASCII architectural blueprints, memory layouts, timeline sequences, and vector field visualizations enclosed in ````text` or ````ascii` blocks using precise box-drawing characters (`┌─┐│└─┘├┼┤╔═╗║╚═╝▼▲◀▶`).
+   - Diagrams must be calibrated for monospaced rendering with `font-variant-ligatures: none` to guarantee zero misalignment across all devices.
+
 3. **漸進式代碼實驗室與交替輸出區塊 (Progressive Notebook & Alternating Outputs)**:
    - 參照現代可執行代碼實驗室黃金規範，**嚴禁在章節中只展示孤立的單一函數或片段**。
    - 代碼小節必須按照 5 階流水線層層推進：
@@ -180,6 +202,10 @@ Every curriculum chapter on this platform must conform to the **7-Pillar Standar
      4. **病態曲率與致命失效邊界模擬 (Pathological Stress Tests & Failure Simulations)**：主動編寫多步優化循環或極限邊界測試，重現諸如「概率塌陷（Likelihood Displacement）」或「長度作弊陷阱（Verbosity Bias Trap）」等工業現場災難，並打印每步衰竭軌跡。
      5. **工業級急救處方與對比消融實驗 (Production Remediation & Comparative Ablation)**：實現具體修復方案（如 SFT 正則、SimPO 長度歸一化），並在相同病態輸入下進行橫向消融對比，以真實數據證明修復成功。
    - **交替單元標準**：每一個 Python 可執行代碼塊（` ```python `）必須緊鄰其獨立的終端控制台輸出區塊（` ```text ` 標記 `[Execution Output / Telemetry Log]`），呈現真實張量維度、方差、損失收斂軌跡與報警信號。
+   - **Kaggle Hands-On Execution & 100% Sandbox Verifiability**:
+     - All code must execute top-to-bottom on standard Kaggle GPU (T4 x2 / P100) or CPU environments without crashes.
+     - Strictly zero proprietary cloud tokens or cluster dependencies.
+     - 100% end-to-end visible and copyable without truncated ellipsis snippets.
 
 4. **Four-Dimensional Telemetry Table**:
    - Every training or algorithm chapter must feature a telemetry radar table:
@@ -278,21 +304,23 @@ Chapters are dynamically loaded in `frontend/src/entities/chapter/chapterLoader.
 Before finalizing any changes to the interactive platform:
 
 - [ ] **Typecheck**: `npm --prefix frontend run typecheck` exits with code 0.
-- [ ] **Build Check**: `npm --prefix frontend run build` completes successfully.
+- [ ] **Build Check**: `npm --prefix frontend run build` completes successfully into `web/dist/`.
 - [ ] **FSD Layer Boundaries**: No widget or page code is imported into `shared` or `entities`.
 - [ ] **7-Pillar Content Conformance**:
   - [ ] Chapter opens with clear title, epigraph, and quantitative scope.
   - [ ] Features an intuitive mental model with real-world metaphors.
   - [ ] Includes a styled Mermaid visual architecture / memory allocation graph.
+  - [ ] **ASCII Architectural Blueprints**: Features multiple monospaced ASCII diagrams, memory layouts, and topology maps with calibrated box-drawing alignment.
   - [ ] Provides rigorous KaTeX formulas and step-by-step mathematical derivations.
   - [ ] **5-Stage Progressive Code Conformance**:
     - [ ] Strictly zero isolated single snippets; code is an end-to-end 5-stage laboratory (Data Setup $\to$ Causal Gathering $\to$ Vectorized Engine $\to$ Pathological Simulation $\to$ Remediation & Ablation).
     - [ ] Alternating Notebook Blocks: Every Python code block is immediately followed by a dedicated console execution output block (`[Execution Output / Telemetry Log]`).
     - [ ] Reproduces real industrial failure modes (e.g. Likelihood Displacement, Verbosity Bias) with concrete iteration traces.
+    - [ ] **100% Kaggle Sandbox Verifiability**: All code blocks run top-to-bottom on standard Kaggle GPU/CPU environments without runtime exceptions.
   - [ ] Features a 4D telemetry signals table and an industrial emergency triage runbook.
   - [ ] Concludes with Frontier Lab Interview Defense (Failure Mode & Fix + High-Frequency Q&A).
   - [ ] Uses fluent Traditional Chinese with standard English machine learning keywords.
 - [ ] **Lab Functionality**: New or modified labs in `labCatalog.ts` render cleanly within `SimulationModal`.
-- [ ] **No CodeInspector Regressions**: Code is embedded directly in markdown; chapter metadata maintains `codeLines: []`.
-- [ ] **Milestone Consistency**: Parts with `milestone` metadata have corresponding tutorial definitions in `milestoneTutorials.ts` or fallback gracefully.
-- [ ] **Responsive & Theme**: Verified in both Dark and Light modes; sidebar and canvas adapt cleanly across desktop and mobile screens.
+- [ ] **Dead Code & Obsolete Routes Decommissioned**: `CodeInspector.tsx` is eliminated, chapter metadata maintains `codeLines: []`, and backend API routes strictly follow modular prefixes (`/api/rl/*`, etc.).
+- [ ] **Milestone Consistency**: Parts with `milestone` metadata have corresponding tutorial definitions in `milestoneTutorials.ts`, with end-to-end visible, copyable code.
+- [ ] **Responsive & Touch Ergonomics**: Verified in both Dark and Light modes; sidebar drawer, in-page TOC dropdown, reading canvas, and simulation modals adapt cleanly across desktop and mobile screens.

@@ -47,15 +47,15 @@ deepagents/
     └── src/
         ├── entities/manifest/    ← Curriculum metadata (deepagents, rl, rlvr)
         ├── entities/chapter/     ← Chapter data models, loaders, and progress stores
-        ├── entities/simulation/  ← 17 visual interactive simulation labs
+        ├── entities/simulation/  ← 18 visual interactive simulation labs
         ├── widgets/sidebar-nav/  ← 3-track navigation sidebar with instant search and progress tracking
-        └── widgets/reader-canvas/← Markdown & KaTeX reader with code line inspector
+        └── widgets/reader-canvas/← Markdown & KaTeX reader with tri-modal code block renderer
 ```
 
 ### Unified Presentation Layer
-The legacy 15-page static prototype has been consolidated into the unified 3-track interactive platform:
+The legacy static prototype has been consolidated into the unified 3-track interactive platform:
 1. **`deepagents`**: 31 tutorial chapters covering Agent Harness Engineering and Evaluation.
-2. **`rl`**: 18 chapters with interactive code inspectors, KaTeX derivations, and inline labs.
+2. **`rl`**: 18 chapters with 5-stage progressive code laboratories, KaTeX derivations, and inline labs.
 3. **`rlvr`**: 18 chapters covering Post-Training MLE, verifiable rewards, and Kaggle showcases.
 
 ---

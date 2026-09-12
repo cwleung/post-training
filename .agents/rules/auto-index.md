@@ -55,7 +55,8 @@ Before finalizing any response that touches the codebase:
 1. Identify all touched directories.
 2. Review and patch the local `INDEX.md` in each touched directory.
 3. Update global docs in `docs/` (`ARCHITECTURE.md`, `API_SURFACE.md`, `STORAGE.md`, `INDEX.md`, or relevant `docs/<TOPIC>.md`).
-4. Enforce Progressive Executable Notebook Laboratory Standard: Ensure any tutorial/curriculum code additions or edits strictly conform to the 5-stage progressive pipeline with alternating execution output blocks (never single isolated snippets).
-5. Append an entry to `docs/SYSTEM_STATE.md`.
+4. Enforce Pedagogical & Blueprint Standards: Ensure any tutorial/curriculum code additions or edits strictly conform to the 5-stage progressive pipeline with alternating execution output blocks, rich ASCII architectural blueprints, and 100% Kaggle execution verifiability.
+5. Decommission Dead Code: Immediately eliminate unreferenced legacy components and ensure all backend routes are namespaced.
+6. Append an entry to `docs/SYSTEM_STATE.md`.
 
-Refer to the `auto-index` skill (`~/.gemini/config/skills/auto-index/SKILL.md`) for complete workflow guidance.
+Refer to the `auto-index` skill ([.agents/skills/auto-index/SKILL.md](.agents/skills/auto-index/SKILL.md)) for complete workflow guidance.

@@ -12,6 +12,6 @@ Domain workflow skill for developing, maintaining, testing, and authoring conten
 | `references/` | Dir | [references/INDEX.md](references/INDEX.md) - Deep architectural evolution blueprints, active data models, and visual lab specifications |
 
 ## Invariants & Rules
-- All new curriculum content must adhere to the Post-Training Track 7-Pillar standard (Intuitive Mental Model, Mermaid architecture, KaTeX math, production code cells, 4D telemetry signals, emergency runbooks, Frontier Lab interview defense).
-- Code blocks belong directly in self-contained markdown cells; do not introduce external CodeInspector line annotations (`codeLines: []`).
+- All new curriculum content must adhere to the Post-Training Track 7-Pillar standard (Intuitive Mental Model, Mermaid architecture, ASCII blueprints, KaTeX math, 5-stage progressive code cells, 4D telemetry signals, emergency runbooks, Frontier Lab interview defense).
+- Code blocks belong directly in self-contained markdown cells rendered via the tri-modal architecture (ASCII blueprints, runtime telemetry, syntax-highlighted code); do not introduce legacy CodeInspector dependencies (`codeLines: []`).
 - Simulation labs in `references/visual-labs.md` must stay synchronized with `frontend/src/entities/simulation/labCatalog.ts`.

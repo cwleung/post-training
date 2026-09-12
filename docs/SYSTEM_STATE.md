@@ -789,3 +789,24 @@ This log records every documentation synchronization, bootstrap scan, and file m
   - Passed `npm --prefix frontend run typecheck` (exit code 0).
   - Compiled fresh production web bundle via `npm --prefix frontend run build` in 7.60s (exit code 0).
 
+---
+
+### [2026-09-13] - Update System Skills, Invariants & Global Harness Instructions
+- **Root Harness Contract (`AGENTS.md`)**:
+  - Codified Prime Directive 6: **ASCII Architectural & Systems Topology Blueprint Standard** (dense monospaced blueprints with box-drawing characters alongside Mermaid diagrams).
+  - Codified Prime Directive 7: **Kaggle Hands-On Execution & End-to-End Verifiability** (100% self-contained, reproducible, fully visible code passing sandbox execution).
+  - Codified Prime Directive 8: **Mobile & Touch Ergonomics** (responsive drawers, touch copy/wrap controls, overflow containment).
+  - Codified Prime Directive 9: **Strict Decommissioning of Dead Assets** (zero dead widgets or duplicate un-prefixed API routes).
+- **Autonomous Documentation Protocol Rule (`.agents/rules/auto-index.md`)**:
+  - Integrated ASCII blueprints and Kaggle executability verification triggers.
+  - Corrected relative skill resolution to `[.agents/skills/auto-index/SKILL.md](.agents/skills/auto-index/SKILL.md)`.
+- **Interactive Learning Platform Skill (`.agents/skills/interactive-learning-platform/SKILL.md`, `INDEX.md`)**:
+  - Updated file paths (`frontend/src/app/styles/index.css`, build outDir `web/dist/`).
+  - Formalized Tri-Modal Code Block Architecture (Architectural Blueprints, Runtime Telemetry, Source Code).
+  - Codified Mobile & Touch Ergonomics Standard and Home Navigation Invariant.
+  - Codified decommissioning of legacy `CodeInspector.tsx` and un-namespaced backend routes.
+  - Refreshed Quality & Verification Checklist.
+- **RL Domain Harness Contract (`rl/AGENTS.md`)**:
+  - Updated simulation catalog count (18 labs) and tri-modal code block references.
+- **Integrity**: Zero documentation drift across all functional directories.
+
