@@ -23,6 +23,7 @@ interface ChapterState {
   setSelectedCodeLine: (line: number | null) => void;
   openMilestoneTutorial: (partId: string) => void;
   closeMilestoneTutorial: () => void;
+  resetToHome: () => void;
 }
 
 export const useChapterStore = create<ChapterState>()(
@@ -77,6 +78,25 @@ export const useChapterStore = create<ChapterState>()(
       openMilestoneTutorial: (partId) => set({ activeMilestonePartId: partId }),
 
       closeMilestoneTutorial: () => set({ activeMilestonePartId: null }),
+
+      resetToHome: () => {
+        const defaultSite = 'deepagents';
+        const defaultCh = getDefaultChapterId(defaultSite);
+        set({
+          activeSite: defaultSite,
+          currentChapterId: defaultCh,
+          selectedCodeLine: null,
+          activeMilestonePartId: null,
+        });
+        if (typeof window !== 'undefined') {
+          window.location.hash = `#${defaultCh}`;
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+          const mainElement = document.querySelector('main');
+          if (mainElement) {
+            mainElement.scrollTo({ top: 0, behavior: 'smooth' });
+          }
+        }
+      },
     }),
     {
       name: 'deepagents-storage-v4',

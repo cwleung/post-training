@@ -386,11 +386,13 @@ const MarkdownLink: React.FC<{
 export const ReaderCanvas: React.FC<ReaderCanvasProps> = ({ onOpenLab }) => {
   const {
     activeSite,
+    setActiveSite,
     currentChapterId,
     setCurrentChapterId,
     isChapterDone,
     toggleChapterDone,
     openMilestoneTutorial,
+    resetToHome,
   } = useChapterStore();
 
   const [chapter, setChapter] = useState<ChapterData | null>(null);
@@ -518,9 +520,23 @@ export const ReaderCanvas: React.FC<ReaderCanvasProps> = ({ onOpenLab }) => {
         <div className="w-full max-w-3xl lg:max-w-4xl min-w-0 space-y-7">
           {/* 1. Sleek Breadcrumbs (Sphinx RTD Style) */}
           <nav className="flex flex-wrap items-center gap-1.5 sm:gap-2 text-[11px] sm:text-xs text-muted-foreground/80 font-medium">
-            <span>Docs</span>
+            <button
+              type="button"
+              onClick={resetToHome}
+              className="hover:text-primary transition-colors cursor-pointer"
+              title="返回首頁 (Home)"
+            >
+              Docs
+            </button>
             <span>/</span>
-            <span className="text-foreground/80 truncate max-w-[100px] sm:max-w-none">{manifest.shortName}</span>
+            <button
+              type="button"
+              onClick={() => setActiveSite(manifest.id)}
+              className="text-foreground/80 hover:text-primary transition-colors cursor-pointer truncate max-w-[100px] sm:max-w-none"
+              title={`切換至 ${manifest.name}`}
+            >
+              {manifest.shortName}
+            </button>
             <span>/</span>
             <span className="text-primary truncate max-w-[130px] sm:max-w-none">{currentPart.label.split('·')[0].trim()}</span>
             <span className="ml-auto font-mono text-[10.5px] sm:text-[11px] text-muted-foreground">

@@ -36,12 +36,20 @@ export const SidebarNavigation: React.FC<SidebarNavigationProps> = ({ className 
     theme,
     setTheme,
     openMilestoneTutorial,
+    resetToHome,
   } = useChapterStore();
 
   const closeSidebarIfMobile = () => {
     if (typeof window !== 'undefined' && window.innerWidth < 768) {
       setSidebarOpen(false);
     }
+  };
+
+  const handleHomeClick = () => {
+    resetToHome();
+    setSearchQuery('');
+    setLabsOnly(false);
+    closeSidebarIfMobile();
   };
 
   const { isUnlocked, openUnlockModal } = usePrivacyStore();
@@ -188,22 +196,27 @@ export const SidebarNavigation: React.FC<SidebarNavigationProps> = ({ className 
           <div className="flex items-center gap-2.5">
             <button
               type="button"
-              onClick={handleSecretClick}
-              className="flex h-7 w-7 items-center justify-center rounded-lg bg-gradient-to-tr from-cyan-500 via-blue-600 to-indigo-600 text-white font-bold text-xs shadow-md shadow-cyan-500/25 ring-1 ring-white/20 hover:opacity-95 active:scale-95 transition-all cursor-default"
-              title="ψ DeepAgents Core"
+              onClick={handleHomeClick}
+              className="flex h-7 w-7 items-center justify-center rounded-lg bg-gradient-to-tr from-cyan-500 via-blue-600 to-indigo-600 text-white font-bold text-xs shadow-md shadow-cyan-500/25 ring-1 ring-white/20 hover:opacity-95 hover:shadow-cyan-500/40 hover:scale-105 active:scale-95 transition-all cursor-pointer"
+              title="返回首頁 (Home)"
             >
               ψ
             </button>
             <div className="leading-tight">
               <div className="flex items-center gap-1.5">
-                <span className="font-title text-sm font-bold text-foreground tracking-tight">
+                <button
+                  type="button"
+                  onClick={handleHomeClick}
+                  className="font-title text-sm font-bold text-foreground tracking-tight hover:text-primary transition-colors cursor-pointer text-left"
+                  title="返回首頁 (Home)"
+                >
                   DeepAgents
-                </span>
+                </button>
                 <button
                   type="button"
                   onClick={handleSecretClick}
-                  className="rounded bg-primary/15 px-1 py-0.2 text-[9px] font-mono font-medium text-primary hover:bg-primary/25 cursor-default transition-colors"
-                  title="Version 4.0"
+                  className="rounded bg-primary/15 px-1 py-0.2 text-[9px] font-mono font-medium text-primary hover:bg-primary/25 cursor-pointer transition-colors"
+                  title="Version 4.0 (點擊 5 次開啟開發者授權)"
                 >
                   v4
                 </button>

@@ -4,6 +4,21 @@
 
 This log records every documentation synchronization, bootstrap scan, and file modification event across the repository to guarantee zero documentation drift.
 
+### [2026-09-13] - Top-Left Brand Icon Home Navigation Upgrade
+- **Instant Return-to-Home Across All Viewport States**:
+  - **Sidebar Brand Header (`SidebarNavigation.tsx`)**:
+    - Converted the top-left `ψ` brand logo button and `DeepAgents` brand title from static/secret-counter-only elements into interactive, accessible Home buttons with `cursor-pointer`, sleek hover states (`group-hover:shadow-cyan-500/40`, `group-hover:scale-105`), active click animations, and descriptive `title="返回首頁 (Home)"`.
+    - Maintained developer authorization secret trigger on the adjacent `v4` badge and keyboard shortcut `Ctrl+Shift+U`.
+    - Clicking the brand logo triggers `handleHomeClick`: invokes `resetToHome()`, clears any active search query or labs-only filter, and closes the mobile drawer if on small screens.
+  - **Collapsed State Floating Toolbar (`GuidePage.tsx`)**:
+    - Added the sleek `ψ` Home icon button directly at `top-3.5 left-3.5` alongside the `目錄導航` button when the sidebar is collapsed, ensuring users can return home with a single tap in any responsive viewport state without needing to open the navigation drawer first.
+  - **Interactive Breadcrumbs (`ReaderCanvas.tsx`)**:
+    - Connected the top breadcrumb's `Docs` anchor directly to `resetToHome()`, and the track name anchor directly to `setActiveSite(manifest.id)` for frictionless hierarchical navigation.
+  - **State Orchestration (`chapterStore.ts`)**:
+    - Added `resetToHome()` action resetting `activeSite` to `deepagents`, `currentChapterId` to `da01`, clearing code line selections and milestone tutorial overlays, updating the URL hash to `#da01`, and smoothly scrolling the reading canvas to the top.
+- **Verification**:
+  - `npm --prefix frontend run typecheck && npm --prefix frontend run build` completed in 7.11s with 0 errors.
+
 ### [2026-09-13] - Post-Training Track ASCII Architectural Diagrams & Intuitive Explanations Expansion
 - **Comprehensive ASCII Visual Architecture Expansion Across All 18 Chapters (`rlvr/tutorials/`)**:
   - Implemented high-density, monospaced ASCII architectural diagrams, memory topology maps, timeline sequences, and vector field visualizations enclosed in clean ````text` code blocks across every single chapter.
