@@ -173,6 +173,8 @@ flowchart LR
     class ATTRACT attract;
     class REPEL repel;
     class BUNGEE bungee;
+```
+
 ```text
 ====================================================================================================
                            DPO 3-FORCE TUG-OF-WAR VECTOR FIELD
@@ -220,7 +222,7 @@ flowchart LR
 
 ---
 
-### 1. 實驗準備與合成偏好批次管道 (Synthetic Batch Pipeline & Tensors)
+### Stage 1: 實驗準備與合成偏好批次管道 (Synthetic Batch Pipeline & Tensors)
 
 > 💡 **「試卷遮蔽」心智模型 (The Exam Paper Masking Metaphor)**：
 > 想像老師給學生發了一張數學考卷：考卷上半部印著題幹（Prompt $x$），下半部是學生作答區（$y_w$ 或 $y_l$）。
@@ -296,7 +298,7 @@ print(f"  Supervised target tokens per sequence: {batch['chosen_labels'].shape[1
 
 ---
 
-### 2. 因果對數機率抽取核心模組 (Causal Log-Prob Gathering with torch.gather)
+### Stage 2: 因果對數機率抽取核心模組 (Causal Log-Prob Gathering with torch.gather)
 
 > 💡 **「水晶球預言與智慧取物夾」心智模型 (Crystal Ball & Robotic Claw)**：
 > - **為什麼要進行因果位移（Causal Shift）？**
@@ -340,12 +342,8 @@ def get_batch_logps(
         return masked_logps.sum(dim=-1) / token_counts  # [B] 平均 Token 機率
     else:
         return masked_logps.sum(dim=-1)                 # [B] 總累積對數機率
-```
 
-我們驗證該抽取模組在合成 Logits 上的數值穩定性：
-
-```python
-# 測試因果對數機率抽取
+# 測試因果對數機率抽取與數值穩定性
 vocab_size = batch["vocab_size"]
 dummy_logits = torch.randn(4, 16, vocab_size, device=device)
 
@@ -368,7 +366,7 @@ print(f"  Finite check         : {torch.isfinite(chosen_logps).all().item()}")
 
 ---
 
-### 3. 向量化 DPO 損失引擎與即時遙測字典 (Vectorized DPO Loss Engine & Telemetry Signals)
+### Stage 3: 向量化 DPO 損失引擎與即時遙測字典 (Vectorized DPO Loss Engine & Telemetry Signals)
 
 > 💡 **「成對 Elo 結算盤」心智模型 (The Pairwise Elo Match Board)**：
 > 如果在 Python 裡寫 `for` 迴圈去一條條比對勝者與敗者，在 GPU 上會引發嚴重的核心調度延遲。
@@ -441,7 +439,7 @@ for k, v in metrics.items():
 
 ---
 
-### 4. 病態曲率與致命失效邊界模擬 (Pathological Curvatures & Stress Tests)
+### Stage 4: 病態曲率與致命失效邊界模擬 (Pathological Curvatures & Stress Tests)
 
 如同凸優化理論中所揭示的「病態峽谷」（Pathological Curvatures）與「陡峭極值」（Steep Optima），DPO 在無保護的梯度優化下會遭遇兩大工業界已知災難：**概率塌陷（Likelihood Displacement）** 與 **長度作弊陷阱（Verbosity Bias Trap）**。我們通過可重現的模擬實驗主動復現這兩種崩潰現象。
 
@@ -550,7 +548,7 @@ _ = simulate_verbosity_bias()
 
 ---
 
-### 5. 工業級急診修復與對比消融實驗 (Production Remediation & Comparative Ablation)
+### Stage 5: 工業級急診修復與對比消融實驗 (Production Remediation & Comparative Ablation)
 
 > 💡 **「打樁錨定與密度計處方」心智模型 (Bedrock Piling & Density Meter Remedy)**：
 > - **急救處方 1：SFT 錨定打樁（鋼樁釘入岩層）**：
@@ -609,13 +607,10 @@ def compute_simpo_loss(
         "simpo/accuracy": round(accuracy.item(), 4)
     }
     return loss, metrics
-```
 
-#### 消融對比驗證 (Ablation Benchmark)
-
-我們將急救處方置於相同的病態輸入下進行橫向消融：
-
-```python
+# ==============================================================================
+# 消融對比驗證 (Ablation Benchmark)
+# ==============================================================================
 print("🔬 [Comparative Ablation Benchmark]")
 
 # 1. 驗證 SFT 錨定對抗概率塌陷的效果
@@ -658,7 +653,9 @@ print(f"  ✓ SimPO Verdict: Concise Answer correctly DEFEATS Verbose Fluff!")
 
 ---
 
-### 6. 四維遙測監控雷達表 (WandB Telemetry Signals)
+## 五、工業級現場急救手冊與四維遙測監控雷達 (Runbook & 4D Telemetry Radar)
+
+### 1. 四維遙測監控雷達表 (WandB Telemetry Signals)
 
 | 遙測指標 (Telemetry Signal) | 健康運算形態 | 異常警報與失效原因分析 | 根本原因 (Root Cause) |
 |---|---|---|---|
@@ -669,7 +666,7 @@ print(f"  ✓ SimPO Verdict: Concise Answer correctly DEFEATS Verbose Fluff!")
 
 ---
 
-### 7. 工業級現場急救錦囊 (Industrial Incident Runbook)
+### 2. 工業級現場急救錦囊 (Industrial Incident Runbook)
 
 - **事故 1：概率同時暴跌塌陷 (Likelihood Displacement)**
   - *現象*：`rewards/accuracy` 顯示高達 95%，但模型的生成質量極差，甚至開始輸出亂碼。檢查發現 `policy_chosen_logps` 與 `policy_rejected_logps` 都在大幅暴跌。
@@ -685,7 +682,7 @@ print(f"  ✓ SimPO Verdict: Concise Answer correctly DEFEATS Verbose Fluff!")
 
 ---
 
-## 五、前沿系統架構深度思辨與極限設計 (Frontier Architecture Scenarios & Whiteboard Defense)
+## 六、前沿系統架構深度思辨與極限設計 (Frontier Architecture Scenarios & Whiteboard Defense)
 
 > [!IMPORTANT]
 > **頂級實驗室 (OpenAI / Anthropic / Meta / Cohere) 高頻實戰追問**:

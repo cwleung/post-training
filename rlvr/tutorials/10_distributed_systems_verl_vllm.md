@@ -201,7 +201,7 @@ $$\text{VRAM}_{\text{total}} = \underbrace{\frac{2 \cdot P}{DP_{\text{size}}}}_{
 
 ---
 
-### 1. 實驗準備與叢集硬體拓撲數據模型 (Cluster Topology Pipeline & Config)
+### Stage 1: 實驗準備與叢集硬體拓撲數據模型 (Cluster Topology Pipeline & Config)
 
 ```python
 import torch
@@ -243,7 +243,7 @@ print(f"  Intra-Node: NVLink {cluster['nvlink_bandwidth_gbps']} GB/s | Inter-Nod
 
 ---
 
-### 2. 3D-HybridEngine 動態重分片核心計算模組 (Dynamic Resharding Core Engine)
+### Stage 2: 3D-HybridEngine 動態重分片核心計算模組 (Dynamic Resharding Core Engine)
 
 > 💡 **「矩陣重組切片積木」心智模型 (The Sharding Block Transformer)**：
 > 假設我們有一個全量大小為 $[8, 8]$ 的權重矩陣：
@@ -286,7 +286,7 @@ tp_s, fsdp_s = simulate_tp_to_fsdp_resharding((8, 8), world_size=4)
 
 ---
 
-### 3. 向量化叢集顯存精算與吞吐量遙測 (Vectorized Cluster Telemetry Engine)
+### Stage 3: 向量化叢集顯存精算與吞吐量遙測 (Vectorized Cluster Telemetry Engine)
 
 ```python
 def compute_64x_h100_vram_telemetry(
@@ -348,7 +348,7 @@ for k, v in telemetry_fp8.items():
 
 ---
 
-### 4. 病態曲率與致命木桶短板/死鎖模擬 (Straggler Effect & NCCL Timeout Hang)
+### Stage 4: 病態曲率與致命木桶短板/死鎖模擬 (Straggler Effect & NCCL Timeout Hang)
 
 #### 實驗 4.1：長尾樣本引發集體等待崩潰 (Straggler Latency Explosion)
 
@@ -386,7 +386,7 @@ simulate_straggler_effect()
 
 ---
 
-### 5. 工業級急救處方與對比消融實驗 (Production Remediation & FP8 Ablation)
+### Stage 5: 工業級急救處方與對比消融實驗 (Production Remediation & FP8 Ablation)
 
 ```python
 def simulate_fp8_vs_fp16_kv_ablation():

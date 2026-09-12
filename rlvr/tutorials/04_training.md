@@ -167,7 +167,7 @@ Next Macro Step: <────────────────────�
 
 ---
 
-### 1. 實驗準備與顯存精算數據模型 (Synthetic VRAM Budget Simulator)
+### Stage 1: 實驗準備與顯存精算數據模型 (Synthetic VRAM Budget Simulator)
 
 ```python
 import torch
@@ -238,7 +238,7 @@ for k, v in budget.items():
 
 ---
 
-### 2. 向量化 LoRA 低秩分解核心模組 (LoRA Low-Rank Forward Engine)
+### Stage 2: 向量化 LoRA 低秩分解核心模組 (LoRA Low-Rank Forward Engine)
 
 > 💡 **「透明描圖紙夾層」心智模型 (The Tracing Paper Layer)**：
 > 凍結的權重 $W_0$ 是一張印好的黑白地圖；
@@ -294,7 +294,7 @@ print(f"  Output tensor shape      : {tuple(h_out.shape)}")
 
 ---
 
-### 3. 向量化 GRPOTrainer 梯度累積引擎與即時遙測 (Gradient Accumulation Engine)
+### Stage 3: 向量化 GRPOTrainer 梯度累積引擎與即時遙測 (Gradient Accumulation Engine)
 
 ```python
 def run_simulated_training_step(
@@ -347,7 +347,7 @@ for k, v in step_metrics.items():
 
 ---
 
-### 4. 病態曲率與致命顯存崩潰模擬 (Pathological OOM & Checkpointing Failure)
+### Stage 4: 病態曲率與致命顯存崩潰模擬 (Pathological OOM & Checkpointing Failure)
 
 #### 實驗 4.1：關閉梯度檢查點導致顯存雪崩模擬 (Without Gradient Checkpointing)
 
@@ -416,7 +416,7 @@ simulate_7b_on_16gb()
 
 ---
 
-### 5. 工業級急救處方與對比消融實驗 (Production Remediation & Ablation)
+### Stage 5: 工業級急救處方與對比消融實驗 (Production Remediation & Ablation)
 
 面對 7B 以上大模型或長思維鏈的顯存壓力，終極處方為 **4-bit NF4 + 梯度檢查點 + PagedAdamW 8-bit** 組合拳。
 

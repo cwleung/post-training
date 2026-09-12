@@ -708,7 +708,7 @@ Step   | Observed Alpha   | EMA Alpha    | Optimal K  | Status & Action
 
 ### 1. 推論服務四維即時遙測監控雷達
 
-| 監控信號 (WandB / Prometheus) | 健康基準 (Healthy Range) | 警戒閾值 (Alert Trigger) | 致命根本原因 (Root Cause Diagnosis) | 一線止血動作 (Remediation Runbook) |
+| 遙測信號 (Telemetry Signal / WandB) | 健康基準 (Healthy Range) | 警戒閾值 (Alert Trigger) | 致命根本原因 (Root Cause Diagnosis) | 一線止血動作 (Remediation Runbook) |
 | :--- | :--- | :--- | :--- | :--- |
 | **TPOT (Time Per Output Token)** | $\le 20\text{ ms / tok}$ | $> 50\text{ ms / tok}$ | 顯存帶寬飽和（MBU > 95%）或長文本下 KV-Cache 頻繁發生跨卡/跨主機 Swap | 限制單 Batch 總長度，啟用 W4A16 量化壓縮權重 |
 | **Speculative Alpha ($\bar{\alpha}$)** | $65\% \sim 85\%$ | $< 35\%$ | Draft 模型與 Target 模型領域漂移（如自然語言模型推理複雜代碼） | 觸發熔斷器，回退至大模型直接解碼，動態縮小 $K$ |

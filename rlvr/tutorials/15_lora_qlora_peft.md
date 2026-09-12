@@ -211,7 +211,7 @@ Benefit: Dense center has high precision steps; sparse tails have wide intervals
 
 ---
 
-### 1. 實驗準備與 NF4 量化查找表核心管道 (Synthetic NF4 Quantization Pipeline)
+### Stage 1: 實驗準備與 NF4 量化查找表核心管道 (Synthetic NF4 Quantization Pipeline)
 
 ```python
 import torch
@@ -277,7 +277,7 @@ print(f"  Reconstruction MAE   : {quant_err.item():.6f} (極低誤差！)")
 
 ---
 
-### 2. 向量化 All-Linear LoRA 前向傳播核心模組 (All-Linear LoRA Forward Module)
+### Stage 2: 向量化 All-Linear LoRA 前向傳播核心模組 (All-Linear LoRA Forward Module)
 
 ```python
 class AllLinearLoRAProjection(nn.Module):
@@ -332,7 +332,7 @@ print(f"  Initial Delta W Norm: {delta_initial:.4f} (初始狀態完全等價於
 
 ---
 
-### 3. 向量化 70B 模型單卡顯存精算引擎與即時遙測 (70B VRAM Budget Telemetry)
+### Stage 3: 向量化 70B 模型單卡顯存精算引擎與即時遙測 (70B VRAM Budget Telemetry)
 
 ```python
 def calculate_70b_single_gpu_budget(seq_len: int = 4096, lora_rank: int = 32) -> dict:
@@ -392,7 +392,7 @@ for k, v in budget_70b.items():
 
 ---
 
-### 4. 病態曲率與致命精度漂移模擬 (Pathological Merging Precision Drift Stress Test)
+### Stage 4: 病態曲率與致命精度漂移模擬 (Pathological Merging Precision Drift Stress Test)
 
 #### 實驗 4.1：在 4-bit 狀態下錯誤合併權重導致的不可逆噪聲 (4-bit Lossy Merge)
 
@@ -432,7 +432,7 @@ simulate_precision_drift_on_merge()
 
 ---
 
-### 5. 工業級急救處方與對比消融實驗 (Production Remediation & Merge Ablation)
+### Stage 5: 工業級急救處方與對比消融實驗 (Production Remediation & Merge Ablation)
 
 ```python
 def production_merge_recipe():

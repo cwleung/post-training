@@ -186,7 +186,7 @@ Sample B (深思考 2000 tokens):  [ Long CoT Math ] ➔ 原生 GRPO: 梯度除�
 
 ---
 
-### 1. 實驗準備與分組採樣批次管道 (Synthetic Group Batch Pipeline & Tensors)
+### Stage 1: 實驗準備與分組採樣批次管道 (Synthetic Group Batch Pipeline & Tensors)
 
 > 💡 **「分組考卷矩陣」心智模型 (The Group Exam Sheet Matrix)**：
 > 想像我們一次給 2 位學生（$B=2$ 個問題）發考卷，每道題允許學生獨立構思 4 種解法（$G=4$ 個 Rollout 軌跡）。
@@ -269,7 +269,7 @@ tensor([[1., 0., 1., 0.],
 
 ---
 
-### 2. Z-Score 組內相對優勢計算核心模組 (Z-Score Group Advantage Engine)
+### Stage 2: Z-Score 組內相對優勢計算核心模組 (Z-Score Group Advantage Engine)
 
 > 💡 **「分母除零的避震彈簧」心智模型 (Shock Absorber & Epsilon Guard)**：
 > 在計算 $A_i = \frac{r_i - \mu}{\sigma + \epsilon}$ 時，如果全組同學得分一樣（如 Batch 1 全部為 0），標準差 $\sigma$ 嚴格為 0。
@@ -315,7 +315,7 @@ for b in range(batch["batch_size"]):
 
 ---
 
-### 3. 向量化 GRPO 損失引擎與 Schulman $k_3$ 即時遙測 (Vectorized GRPO Loss & Telemetry)
+### Stage 3: 向量化 GRPO 損失引擎與 Schulman $k_3$ 即時遙測 (Vectorized GRPO Loss & Telemetry)
 
 > 💡 **「重要性比率安全剪刀」心智模型 (PPO Clipping Shears)**：
 > 策略更新時，$\rho_{i,t} = \exp(\log \pi_\theta - \log \pi_{\text{old}})$ 表示新舊策略的倍數關係。
@@ -404,7 +404,7 @@ for k, v in metrics.items():
 
 ---
 
-### 4. 病態曲率與致命失效邊界模擬 (Pathological Curvatures & Stress Tests)
+### Stage 4: 病態曲率與致命失效邊界模擬 (Pathological Curvatures & Stress Tests)
 
 在實際大規模分散式 RLVR 訓練中，GRPO 會遭遇兩大工業現場災難：**方差歸零全零梯度陷阱（All-Zero Gradient Collapse）** 與 **長度除數扼殺思維鏈（Length Bias Short-circuit）**。我們通過可重現的模擬實驗主動復現這兩種崩潰現象。
 
@@ -512,7 +512,7 @@ simulate_length_bias()
 
 ---
 
-### 5. 工業級急救處方與對比消融實驗 (Production Remediation & Comparative Ablation)
+### Stage 5: 工業級急救處方與對比消融實驗 (Production Remediation & Comparative Ablation)
 
 面對上述兩大致命缺陷，工業界落地了兩套關鍵急救方案：
 1. **動態組過濾（Dynamic Group Filtering）**：自動檢測組內標準差 $\sigma$，若 $\sigma < \epsilon_{\text{threshold}}$（全對或全錯），將該題從反向傳播中剔除，避免無效計算佔用帶寬。

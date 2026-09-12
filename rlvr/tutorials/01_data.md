@@ -141,7 +141,7 @@ graph TD
 
 ---
 
-### 1. 實驗準備與合成資料結構管道 (Synthetic Raw GSM8K & Extraction)
+### Stage 1: 實驗準備與合成資料結構管道 (Synthetic Raw GSM8K & Extraction)
 
 ```python
 import re
@@ -193,7 +193,7 @@ for idx, r in enumerate(processed_records):
 
 ---
 
-### 2. Chat Template 封裝與 Left-Padding 對齊模組 (Left-Padding Collation Module)
+### Stage 2: Chat Template 封裝與 Left-Padding 對齊模組 (Left-Padding Collation Module)
 
 ```python
 SYSTEM_PROMPT = """You are a helpful math reasoning assistant.
@@ -247,7 +247,7 @@ print("  Batch 1 Tokens (No padding needed)  :", input_ids[1].tolist())
 
 ---
 
-### 3. 向量化 Prompt 遮蔽矩陣與有效 Token 統計 (Prompt Masking Telemetry)
+### Stage 3: 向量化 Prompt 遮蔽矩陣與有效 Token 統計 (Prompt Masking Telemetry)
 
 > 💡 **「只為回答算 Loss」心智模型 (Supervise Only Answers)**：
 > 在訓練自回歸模型時，Prompt 部分的 `labels` 必須被置為 `-100`。
@@ -295,7 +295,7 @@ print("  Labels row 0       :", labels[0].tolist())
 
 ---
 
-### 4. 病態曲率與致命錯誤填充崩潰模擬 (Pathological Right-Padding Stress Tests)
+### Stage 4: 病態曲率與致命錯誤填充崩潰模擬 (Pathological Right-Padding Stress Tests)
 
 #### 實驗 4.1：右側填充自回歸生成中斷模擬 (Right-Padding KV Corruption)
 
@@ -324,7 +324,7 @@ simulate_padding_direction_impact()
 
 ---
 
-### 5. 工業級急救處方與難度過濾消融實驗 (Production Goldilocks Filtering Ablation)
+### Stage 5: 工業級急救處方與難度過濾消融實驗 (Production Goldilocks Filtering Ablation)
 
 ```python
 def simulate_goldilocks_filtering():

@@ -173,7 +173,7 @@ $$\mathcal{L}_{\text{SimPO}}(\theta) = -\mathbb{E}_{(x, y_w, y_l) \sim \mathcal{
 
 ---
 
-### 1. 實驗準備與長度不平衡偏好批次管道 (Synthetic Imbalanced Batch Pipeline)
+### Stage 1: 實驗準備與長度不平衡偏好批次管道 (Synthetic Imbalanced Batch Pipeline)
 
 > 💡 **「字數灌水測試」心智模型 (The Word-Count Inflation Test)**：
 > 我們專門構造一組考驗算法道德底線的批次：
@@ -245,7 +245,7 @@ print(f"  Rejected logps  : {batch['rejected_logps'].tolist()}")
 
 ---
 
-### 2. 每 Token 密度提取與邊界 Logits 核心模組 (Density & Margin Gathering)
+### Stage 2: 每 Token 密度提取與邊界 Logits 核心模組 (Density & Margin Gathering)
 
 > 💡 **「密度計與長度天平」心智模型 (The Hydrometer & Length Scale)**：
 > 序列累積機率就像一桶水的「總重量」，而每 Token 密度 $\frac{\log \pi}{|y|}$ 則是這桶水的「純度/密度」。
@@ -289,7 +289,7 @@ for b in range(batch["batch_size"]):
 
 ---
 
-### 3. 向量化 SimPO 損失引擎與即時遙測字典 (Vectorized SimPO Loss Engine)
+### Stage 3: 向量化 SimPO 損失引擎與即時遙測字典 (Vectorized SimPO Loss Engine)
 
 > 💡 **「目標邊界閥門」心智模型 (The Margin Valve)**：
 > 損失核心為 $-\log \sigma((r_w - r_l) - \gamma)$。
@@ -357,7 +357,7 @@ for k, v in metrics.items():
 
 ---
 
-### 4. 病態曲率與致命失效邊界模擬 (Pathological Curvatures & Stress Tests)
+### Stage 4: 病態曲率與致命失效邊界模擬 (Pathological Curvatures & Stress Tests)
 
 #### 實驗 4.1：長度作弊陷阱對比實驗 (DPO Verbosity Trap vs SimPO Neutrality)
 
@@ -439,7 +439,7 @@ simulate_margin_oversaturation()
 
 ---
 
-### 5. 工業級急救處方與對比消融實驗：KTO 展望理論單樣本損失 (Production Remediation & Ablation)
+### Stage 5: 工業級急救處方與對比消融實驗：KTO 展望理論單樣本損失 (Production Remediation & Ablation)
 
 面對非成對生產日誌（用戶點擊 👍 / 點踩 👎），我們實現 Kahneman-Tversky 展望理論優化器（KTO），並與 SimPO 進行橫向消融。
 

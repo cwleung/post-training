@@ -32,8 +32,13 @@ export default {
     },
     {
       "level": 2,
-      "text": "五、前沿系統架構深度思辨與極限設計 (Frontier Architecture Scenarios & Whiteboard Defense)",
-      "anchor": "五前沿系統架構深度思辨與極限設計-frontier-architecture-scenarios--whiteboard-defense"
+      "text": "五、工業級現場急救手冊與四維遙測監控雷達 (Runbook & 4D Telemetry Radar)",
+      "anchor": "五工業級現場急救手冊與四維遙測監控雷達-runbook--4d-telemetry-radar"
+    },
+    {
+      "level": 2,
+      "text": "六、前沿系統架構深度思辨與極限設計 (Frontier Architecture Scenarios & Whiteboard Defense)",
+      "anchor": "六前沿系統架構深度思辨與極限設計-frontier-architecture-scenarios--whiteboard-defense"
     },
     {
       "level": 2,

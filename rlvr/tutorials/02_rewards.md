@@ -167,7 +167,7 @@ Weight (λ)
 
 ---
 
-### 1. 實驗準備與合成樣本管道 (Synthetic Completions Pipeline & Pathological Batch)
+### Stage 1: 實驗準備與合成樣本管道 (Synthetic Completions Pipeline & Pathological Batch)
 
 ```python
 import re
@@ -223,7 +223,7 @@ for idx, s in enumerate(batch):
 
 ---
 
-### 2. 符號標準化與防欺詐抽取模組 (Robust Normalization & Extraction)
+### Stage 2: 符號標準化與防欺詐抽取模組 (Robust Normalization & Extraction)
 
 > 💡 **「剝洋蔥與唯一閉合」心智模型 (The Onion Peeling & Strict Closure)**：
 > 模型作弊時常常在答案周圍包裝符號（如 `$90.0`、`90.` 或 `90 %`），或者輸出多個 `<answer>`。
@@ -275,7 +275,7 @@ for idx, s in enumerate(batch):
 
 ---
 
-### 3. 向量化多信號獎勵引擎與即時遙測 (Vectorized Multi-Objective Engine)
+### Stage 3: 向量化多信號獎勵引擎與即時遙測 (Vectorized Multi-Objective Engine)
 
 ```python
 def compute_comprehensive_rewards(
@@ -352,7 +352,7 @@ print(f"  Raw reward scores: {rewards.tolist()}")
 
 ---
 
-### 4. 病態曲率與致命作弊復現模擬 (Pathological Hacking Stress Tests)
+### Stage 4: 病態曲率與致命作弊復現模擬 (Pathological Hacking Stress Tests)
 
 #### 實驗 4.1：無防禦驗證器被作弊擊穿模擬 (Unprotected Verifier Failure)
 
@@ -416,7 +416,7 @@ simulate_format_saturation()
 
 ---
 
-### 5. 工業級急救處方與動態權重退火消融 (Production Dynamic Annealing Ablation)
+### Stage 5: 工業級急救處方與動態權重退火消融 (Production Dynamic Annealing Ablation)
 
 ```python
 def simulate_weight_annealing_schedule(total_steps: int = 400):
