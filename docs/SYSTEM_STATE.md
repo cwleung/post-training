@@ -172,6 +172,22 @@ This log records every documentation synchronization, bootstrap scan, and file m
 
 ---
 
+### [2026-09-13] - Post-Training Track Manifest & Navigation Chapter Number Coherence Normalization
+- **Strict Sequential Order (01 through 18) Restoration**:
+  - `frontend/src/entities/manifest/rlvrManifest.ts`: Re-aligned all 18 chapters in strictly monotonic 01-18 order across the 4 Architectural Pillars:
+    - **Pillar I** (Chapters 01 - 05): Data Preparation, Rewards & Verifiers, GRPO (Hotspot), Training LoRA, Pass@k Metrics.
+    - **Pillar II** (Chapters 06 - 09): Agentic RLVR, DPO (Hotspot), Ablations & Scaling, SFT Cold-Start (Hotspot).
+    - **Pillar III** (Chapters 10 - 13): Distributed veRL/vLLM (Hotspot), SimPO / ReMax (Hotspot), PRMs & MCTS, Data Flywheel.
+    - **Pillar IV** (Chapters 14 - 18): 64x H100 Triage Playbook (Hotspot), LoRA / QLoRA PEFT (Hotspot), Inference Optimization, 4D Evaluation, Alignment Safety.
+  - Resolved non-coherent chapter jumps (e.g. 03 -> 07 -> 11 -> 02 -> 10 ...) so sidebar and reader canvas Next/Previous navigation flows 01 -> 02 -> 03 -> ... -> 18.
+  - Initial chapter for track defaults naturally to `rlvr01` (Chapter 01: Data Preparation).
+- **Milestone Mapping & Local Index Synchronization**:
+  - `frontend/src/entities/milestone/milestoneTutorials.ts`: Aligned `aliasMap` (`rlvr_pillar1` -> `rlvr_stage1`, `rlvr_pillar2` -> `rlvr_stage3`, `rlvr_pillar3` -> `rlvr_stage4`, `rlvr_pillar4` -> `rlvr_stage5`).
+  - `rlvr/tutorials/INDEX.md`: Reordered 4 Pillar curriculum index tables to strictly sequential 01-18 file order.
+- **Verification**: Ran `npm --prefix frontend run typecheck && npm --prefix frontend run build` (compiled clean in 7.63s).
+
+---
+
 ### [2026-09-13] - Responsive Mobile Drawer & Viewport Resize Auto-Collapse Hardening
 - **Dynamic Viewport Synchronization (`frontend/src/pages/guide/GuidePage.tsx`)**:
   - Replaced one-shot mount effect with dynamic `resize` event listener tracking viewport width transitions across the 768px (`md`) boundary.

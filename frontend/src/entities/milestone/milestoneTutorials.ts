@@ -2313,10 +2313,10 @@ export function getMilestoneTutorial(part: {
 }): MilestoneTutorial {
   // Alias mapping for Post-Training Track pillars to bespoke Kaggle tutorials
   const aliasMap: Record<string, string> = {
-    rlvr_pillar1: 'rlvr_stage3', // GRPO + DPO/SimPO Preference Optimization
-    rlvr_pillar2: 'rlvr_stage2', // veRL + vLLM Distributed Systems & LoRA
-    rlvr_pillar3: 'rlvr_stage1', // GSM8K + Deterministic Verifier & PRM Data Flywheel
-    rlvr_pillar4: 'rlvr_stage4', // DPO / SimPO / 64x H100 Triage Playbook
+    rlvr_pillar1: 'rlvr_stage1', // GSM8K + Deterministic Verifiers & Pass@k
+    rlvr_pillar2: 'rlvr_stage3', // SimPO vs DPO & SFT Cold-Start
+    rlvr_pillar3: 'rlvr_stage4', // veRL + PRMs & Data Flywheel
+    rlvr_pillar4: 'rlvr_stage5', // AWQ + Speculative Decoding & Systems Design
   };
 
   const resolvedId = aliasMap[part.id] || part.id;
