@@ -2,52 +2,47 @@
 export default {
   "id": "rlvr05",
   "num": "05",
-  "title": "評估基準與組合數學 (Evaluation Benchmarking & Pass@k)",
+  "title": "Chapter 05: 評估基準與組合數學 (Evaluation Benchmarking & Pass@k)",
   "icon": "📈",
   "file": "05_evaluation",
   "hasVisualizer": "rlvr_eval",
-  "readTime": "24 min",
-  "summary": "Post-Training 實戰：Pass@1 貪婪 vs Pass@k 探索天花板、超幾何無偏估計量、Bootstrap 置信區間、作弊警報與 TPCS 推理經濟學。",
+  "readTime": "30 min",
+  "summary": "Pass@1 貪婪 vs Pass@k 探索天花板、超幾何無偏估計量組合數學推導、Majority@k 自洽表決、Bootstrap 95% 置信區間與 TPCS 推理經濟學",
   "toc": [
     {
       "level": 2,
-      "text": "核心心智模型：Pass@1 直覺回答 vs. Pass@k 潛力天花板",
-      "anchor": "核心心智模型pass1-直覺回答-vs-passk-潛力天花板"
+      "text": "一、工業背景與技術演進 (Background & Architectural Evolution)",
+      "anchor": "一工業背景與技術演進-background--architectural-evolution"
     },
     {
       "level": 2,
-      "text": "5.1 評估策略：訓練前後的基準對照 (Before vs. After)",
-      "anchor": "51-評估策略訓練前後的基準對照-before-vs-after"
+      "text": "二、架構決策樹與 Trade-off 對比 (Architectural Decision Framework)",
+      "anchor": "二架構決策樹與-trade-off-對比-architectural-decision-framework"
     },
     {
       "level": 2,
-      "text": "5.2 無偏 Pass@k 估計器的組合數學推導",
-      "anchor": "52-無偏-passk-估計器的組合數學推導"
+      "text": "三、系統心智模型與邊界直覺 (Systems Mechanics & Mathematical Formulations)",
+      "anchor": "三系統心智模型與邊界直覺-systems-mechanics--mathematical-formulations"
     },
     {
       "level": 2,
-      "text": "5.3 統計顯著性與 Bootstrap 95% 置信區間",
-      "anchor": "53-統計顯著性與-bootstrap-95-置信區間"
+      "text": "四、漸進式可執行代碼實驗室 (Interactive Notebook Lab)",
+      "anchor": "四漸進式可執行代碼實驗室-interactive-notebook-lab"
     },
     {
       "level": 2,
-      "text": "5.4 作弊警報：識別 Reward Hacking 與策略坍塌",
-      "anchor": "54-作弊警報識別-reward-hacking-與策略坍塌"
+      "text": "五、工業級現場急救手冊與四維遙測監控雷達 (Production Runbook & Telemetry Radar)",
+      "anchor": "五工業級現場急救手冊與四維遙測監控雷達-production-runbook--telemetry-radar"
     },
     {
       "level": 2,
-      "text": "5.5 推理成本經濟學：每正確解 Token 成本 (TPCS)",
-      "anchor": "55-推理成本經濟學每正確解-token-成本-tpcs"
+      "text": "六、前沿系統架構深度思辨與極限設計 (Frontier Architecture & Whiteboard Defense)",
+      "anchor": "六前沿系統架構深度思辨與極限設計-frontier-architecture--whiteboard-defense"
     },
     {
       "level": 2,
-      "text": "5.6 失效模式與迭代診斷決策樹",
-      "anchor": "56-失效模式與迭代診斷決策樹"
-    },
-    {
-      "level": 2,
-      "text": "🤔 架構深度思辨與工業界陷阱",
-      "anchor": "-架構深度思辨與工業界陷阱-architectural-insight--production-pitfalls"
+      "text": "本章小結與學習路徑 (Summary & Roadmap)",
+      "anchor": "本章小結與學習路徑-summary--roadmap"
     }
   ]
 };

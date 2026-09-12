@@ -8,13 +8,10 @@ This document provides architectural, historical, and editorial context on the e
 
 - **Pedagogical & Content Gold Standard**:
   Established by the **Post-Training Track** (`rlvr/tutorials/` & `frontend/src/entities/chapter/data/rlvr/`):
-  - **UvA Deep Learning Tutorials**:
-    [UvA SGA: Sampling Discrete Structures (ReadTheDocs / Jupyter Notebook)](https://uvadlc-notebooks.readthedocs.io/en/latest/tutorial_notebooks/DL2/sampling/introduction.html)
-    - *Key Takeaways*: Theoretical formulation before equations; rigorous continuous relaxations; closed-form LaTeX derivations; parameter boundary analyses ($\tau \to 0$ vs $\tau \to \infty$); dual-objective relaxed surrogate vs discrete accuracy tracking; formal academic citations.
+  - **Mathematical Rigor**: Theoretical formulation before equations; rigorous continuous relaxations; closed-form LaTeX derivations; parameter boundary analyses ($\tau \to 0$ vs $\tau \to \infty$); dual-objective relaxed surrogate vs discrete accuracy tracking; formal academic citations.
   - **Frontier AI Lab Engineering Practices (OpenAI / DeepMind / Anthropic / Meta / Apple)**:
     - *Key Takeaways*: Vivid intuitive mental models and physical analogies; Mermaid visual memory and pipeline architectures; 4-dimensional telemetry signal tables; production emergency triage runbooks; interview defense STAR playbooks.
-- **ReadTheDocs / Jupyter Book UI/UX Reference**:
-  [UVA Applied Machine Learning Tutorials — Tutorial 2](https://uva-applied-ml.readthedocs.io/en/latest/notebooks/2_reg_knn_linreg.html)
+- **ReadTheDocs / Technical Documentation UI/UX Reference**:
   - *Key Takeaways*: Hierarchical breadcrumb navigation, clean notebook cell styling, sticky table of contents, and responsive reading canvas.
 
 ---
@@ -30,7 +27,7 @@ The platform evolved across three distinct architectural epochs:
 | **Architecture** | Flat controller (`app.js`) | Feature-Sliced Design (FSD) | Feature-Sliced Design (`shared`, `entities`, `widgets`, `pages`, `app`) |
 | **Curriculum Tracks** | Single static track | 3 tracks (DeepAgents, RL, RLVR) | 3 tracks: **DeepAgents**, **RL Track**, **Post-Train (MLE Handbook)** |
 | **Code Presentation** | External CodeInspector pane | CodeInspector line-by-line | **Notebook-Style Markdown Code Cells** (CodeInspector retired from ReaderCanvas; `codeLines: []`) |
-| **Pedagogy** | Basic lecture notes | UvA Deep Learning 6-stage | **Post-Training Track 7-Pillar Standard** (Mental Models, Mermaid, Math, Code, Telemetry, Runbooks, Interview Defense) |
+| **Pedagogy** | Basic lecture notes | Progressive 6-stage | **Post-Training Track 7-Pillar Standard** (Mental Models, Mermaid, Math, Code, Telemetry, Runbooks, Interview Defense) |
 | **Simulations** | Ad-hoc HTML5 canvas | Static modal prototypes | **18 Interactive Parameter Simulators** (`labCatalog.ts`, dedicated React components) |
 | **Career Assets** | None | Prototype milestone cards | **4-Step Kaggle Practice + STAR Playbook + 1-Click Resume Generator** |
 | **Language & Terms** | Mixed Simplified Chinese | Mixed / English | **Fluent Traditional Chinese (繁體中文)** with international English ML terms |
@@ -98,9 +95,9 @@ $$\mathcal{L}_{\text{Objective}}(\theta) = -\mathbb{E} \left[ \log \sigma \left(
 
 ---
 
-## [X].3 UvA-DLC 漸進式可執行代碼實驗室 (Progressive Executable Notebook Laboratory)
+## [X].3 漸進式可執行代碼實驗室 (Progressive Executable Notebook Laboratory)
 
-> 嚴格遵循 [UvA DL Tutorial 4](https://uvadlc-notebooks.readthedocs.io/en/latest/tutorial_notebooks/tutorial4/Optimization_and_Initialization.html) 規範：嚴禁單一孤立代碼片段。以 5-Stage 漸進式流程展開，且每段代碼必配真實終端輸出。
+> 嚴格遵循漸進式實驗室規範：嚴禁單一孤立代碼片段。以 5-Stage 漸進式流程展開，且每段代碼必配真實終端輸出。
 
 ### 階段 1: 合成數據與批次管道 (Synthetic Batch Pipeline & Tensors)
 ```python

@@ -8,7 +8,7 @@ export default {
   "hasVisualizer": "dpo",
   "tag": "🔥 Core Hotspot",
   "readTime": "22 min",
-  "summary": "Post-Training 核心考點：三階段 RLHF 到 DPO 代數革命、隱式獎勵推拉力學、UvA-DLC 漸進式 5 階代碼實驗室（概率塌陷與長度作弊復現、SimPO 消融）、DPO vs GRPO 決策矩陣與 Frontier Lab 面試真題手撕。",
+  "summary": "Post-Training 核心考點：三階段 RLHF 到 DPO 代數革命、隱式獎勵推拉力學、漸進式 5 階代碼實驗室（概率塌陷與長度作弊復現、SimPO 消融）、DPO vs GRPO 決策矩陣與 Frontier Lab 面試真題手撕。",
   "toc": [
     {
       "level": 2,
@@ -27,8 +27,8 @@ export default {
     },
     {
       "level": 2,
-      "text": "四、UvA-DLC 漸進式代碼實驗室：DPO 向量化流水線、病態曲率復現與工業級急救 (Interactive Notebook Lab)",
-      "anchor": "四uva-dlc-漸進式代碼實驗室dpo-向量化流水線病態曲率復現與工業級急救-interactive-notebook-lab"
+      "text": "四、漸進式可執行代碼實驗室：DPO 向量化流水線、病態曲率復現與工業級急救 (Interactive Notebook Lab)",
+      "anchor": "四漸進式可執行代碼實驗室dpo-向量化流水線病態曲率復現與工業級急救-interactive-notebook-lab"
     },
     {
       "level": 2,

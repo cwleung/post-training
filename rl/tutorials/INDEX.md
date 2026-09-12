@@ -3,7 +3,7 @@
 > Auto-maintained by Agent. Do not edit manually.
 
 ## Purpose
-An 18-part comprehensive technical curriculum focusing on Reinforcement Learning & Alignment in Traditional Chinese (繁體中文), conforming to the UvA Deep Learning 6-stage tutorial anatomy (core mental models, step-by-step mathematical formulations, production PyTorch code snippets, parameter trade-offs, alert callouts, architectural insights & production pitfalls, and scholarly citations).
+An 18-part comprehensive technical curriculum focusing on Reinforcement Learning & Alignment in Traditional Chinese (繁體中文), conforming to the progressive 6-stage tutorial anatomy (core mental models, step-by-step mathematical formulations, production PyTorch code snippets, parameter trade-offs, alert callouts, architectural insights & production pitfalls, and scholarly citations).
 
 ## Contents
 | File / Subdir | Type | Responsibility / Exports |
@@ -29,5 +29,5 @@ An 18-part comprehensive technical curriculum focusing on Reinforcement Learning
 
 ## Invariants & Rules
 - Strictly sequential chapter numbering (01 through 18).
-- Every tutorial adheres to the UvA Deep Learning 6-stage anatomy in Traditional Chinese (繁體中文).
+- Every tutorial adheres to the progressive 6-stage anatomy in Traditional Chinese (繁體中文).
 - All equations use standard LaTeX notation ($...$ and $$...$$).

@@ -8,7 +8,7 @@ export default {
   "hasVisualizer": "rlvr_simpo",
   "tag": "🔥 Core Hotspot",
   "readTime": "24 min",
-  "summary": "Post-Training 核心考點：免參考模型 SimPO (節省 50% 顯存)、目標邊界 γ 直覺、根除長度作弊、無 Critic 的 ReMax、KTO 遙測對齊與 Frontier Lab 面試真題手撕。",
+  "summary": "Post-Training 核心考點：免參考模型 SimPO (節省 50% 顯存)、卸下沉重行囊心智模型、目標邊界 γ 直覺、根除長度作弊、漸進式 5 階代碼實驗室、KTO 展望消融與 Frontier Lab 面試真題手撕。",
   "toc": [
     {
       "level": 2,
@@ -27,13 +27,18 @@ export default {
     },
     {
       "level": 2,
-      "text": "四、代碼剖析、實時遙測巡檢與失效急救",
-      "anchor": "四代碼剖析實時遙測巡檢與失效急救"
+      "text": "四、漸進式可執行代碼實驗室：SimPO 向量化流水線、長度作弊終結與 KTO 展望消融 (Interactive Notebook Lab)",
+      "anchor": "四漸進式可執行代碼實驗室simpo-向量化流水線長度作弊終結與-kto-展望消融-interactive-notebook-lab"
     },
     {
       "level": 2,
-      "text": "五、前沿系統架構深度思辨與極限設計 (Frontier Architecture Scenarios & Whiteboard Defense)",
-      "anchor": "五前沿系統架構深度思辨與極限設計-frontier-architecture-scenarios--whiteboard-defense"
+      "text": "五、工業級現場急救手冊與四維遙測監控雷達 (Runbook & 4D Telemetry Radar)",
+      "anchor": "五工業級現場急救手冊與四維遙測監控雷達-runbook--4d-telemetry-radar"
+    },
+    {
+      "level": 2,
+      "text": "六、前沿系統架構深度思辨與極限設計 (Frontier Architecture Scenarios & Whiteboard Defense)",
+      "anchor": "六前沿系統架構深度思辨與極限設計-frontier-architecture-scenarios--whiteboard-defense"
     },
     {
       "level": 2,

@@ -6,43 +6,43 @@ export default {
   "icon": "🎯",
   "file": "02_rewards",
   "hasVisualizer": "rlvr_rewards",
-  "readTime": "18 min",
-  "summary": "Post-Training 實戰：確定性 Verifiers、格式規範度評分、多目標獎勵排程退火與 Goodhart's Law 作弊防禦全景。",
+  "readTime": "20 min",
+  "summary": "Post-Training 實戰：確定性 Verifiers、自動閱卷機心智模型、符號標準化、漸進式 5 階代碼實驗室（空想欺詐與標籤轟炸復現、動態退火消融）、4D 遙測雷達與 Frontier Lab 面試真題手撕。",
   "toc": [
     {
       "level": 2,
-      "text": "核心心智模型：RLHF 主觀裁判 vs. RLVR 確定性驗證器",
-      "anchor": "核心心智模型rlhf-主觀裁判-vs-rlvr-確定性驗證器"
+      "text": "一、工業背景與技術演進：從主觀裁判到確定性驗證器",
+      "anchor": "一工業背景與技術演進從主觀裁判到確定性驗證器"
     },
     {
       "level": 2,
-      "text": "2.1 驗證器在 GRPO 中的核心作用",
-      "anchor": "21-驗證器在-grpo-中的核心作用"
+      "text": "二、架構決策樹與 Trade-off 對比",
+      "anchor": "二架構決策樹與-trade-off-對比"
     },
     {
       "level": 2,
-      "text": "2.2 實作正確性驗證器 (Correctness Verifier)",
-      "anchor": "22-實作正確性驗證器-correctness-verifier"
+      "text": "三、系統心智模型與邊界直覺 (Systems Mechanics & Boundary Intuition)",
+      "anchor": "三系統心智模型與邊界直覺-systems-mechanics--boundary-intuition"
     },
     {
       "level": 2,
-      "text": "2.3 實作格式結構獎勵 (Format Reward)",
-      "anchor": "23-實作格式結構獎勵-format-reward"
+      "text": "四、漸進式可執行代碼實驗室：多信號驗證器、Reward Hacking 復現與動態退火 (Interactive Notebook Lab)",
+      "anchor": "四漸進式可執行代碼實驗室多信號驗證器reward-hacking-復現與動態退火-interactive-notebook-lab"
     },
     {
       "level": 2,
-      "text": "2.4 多獎勵組合與權重退火調度 (Weight Decay Schedule)",
-      "anchor": "24-多獎勵組合與權重退火調度-weight-decay-schedule"
+      "text": "五、工業級現場急救手冊與四維遙測監控雷達 (Runbook & 4D Telemetry Radar)",
+      "anchor": "五工業級現場急救手冊與四維遙測監控雷達-runbook--4d-telemetry-radar"
     },
     {
       "level": 2,
-      "text": "2.5 常見作弊模式 (Reward Hacking) 與防禦矩陣",
-      "anchor": "25-常見作弊模式-reward-hacking-與防禦矩陣"
+      "text": "六、前沿系統架構深度思辨與極限設計 (Frontier Architecture Scenarios & Whiteboard Defense)",
+      "anchor": "六前沿系統架構深度思辨與極限設計-frontier-architecture-scenarios--whiteboard-defense"
     },
     {
       "level": 2,
-      "text": "🤔 架構深度思辨與工業界陷阱",
-      "anchor": "-架構深度思辨與工業界陷阱-architectural-insight--production-pitfalls"
+      "text": "本章小結與學習路徑",
+      "anchor": "本章小結與學習路徑"
     }
   ]
 };

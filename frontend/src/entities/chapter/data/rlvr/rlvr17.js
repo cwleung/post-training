@@ -6,34 +6,43 @@ export default {
   "icon": "📊",
   "file": "17_llm_evaluation_benchmarking_prompt_optimization",
   "hasVisualizer": "eval_workbench",
-  "readTime": "25 min",
-  "summary": "四維度平衡矩陣、G-Eval 機率加權、LLM-as-a-Judge 偏差消除、DSPy MIPROv2 提示編譯",
+  "readTime": "32 min",
+  "summary": "四維評估矩陣、LLM-as-a-Judge 三大偏差消除、G-Eval 機率加權連續評分、DSPy MIPROv2 提示編譯與 CI/CD 發布門禁",
   "toc": [
     {
       "level": 2,
-      "text": "17.1 四維度工業級評估矩陣 (The 4-Dimensional Metric Matrix)",
-      "anchor": "171-四維度工業級評估矩陣-the-4-dimensional-metric-matrix"
+      "text": "一、工業背景與技術演進 (Background & Architectural Evolution)",
+      "anchor": "一工業背景與技術演進-background--architectural-evolution"
     },
     {
       "level": 2,
-      "text": "17.2 LLM-as-a-Judge 與 G-Eval 機制深度剖析",
-      "anchor": "172-llm-as-a-judge-與-g-eval-機制深度剖析"
+      "text": "二、架構決策樹與 Trade-off 對比 (Architectural Decision Framework)",
+      "anchor": "二架構決策樹與-trade-off-對比-architectural-decision-framework"
     },
     {
       "level": 2,
-      "text": "17.3 程式化提示優化：DSPy 與 MIPROv2",
-      "anchor": "173-程式化提示優化dspy-與-miprov2"
+      "text": "三、系統心智模型與邊界直覺 (Systems Mechanics & Mathematical Formulations)",
+      "anchor": "三系統心智模型與邊界直覺-systems-mechanics--mathematical-formulations"
     },
     {
       "level": 2,
-      "text": "17.4 工業級 MLOps 評估閘門 (CI/CD Quality Gatekeeper)",
-      "anchor": "174-工業級-mlops-評估閘門-cicd-quality-gatekeeper"
+      "text": "四、漸進式可執行代碼實驗室 (Interactive Notebook Lab)",
+      "anchor": "四漸進式可執行代碼實驗室-interactive-notebook-lab"
     },
     {
       "level": 2,
-      "text": "17.5 面試高頻考點與思辨題 (Interview Playbook)",
-      "anchor": "175-面試高頻考點與思辨題-interview-playbook"
+      "text": "五、工業級現場急救手冊與四維遙測監控雷達 (Production Runbook & Telemetry Radar)",
+      "anchor": "五工業級現場急救手冊與四維遙測監控雷達-production-runbook--telemetry-radar"
+    },
+    {
+      "level": 2,
+      "text": "六、前沿系統架構深度思辨與極限設計 (Frontier Architecture & Whiteboard Defense)",
+      "anchor": "六前沿系統架構深度思辨與極限設計-frontier-architecture--whiteboard-defense"
+    },
+    {
+      "level": 2,
+      "text": "本章小結與學習路徑 (Summary & Roadmap)",
+      "anchor": "本章小結與學習路徑-summary--roadmap"
     }
-  ],
-  "codeLines": []
+  ]
 };

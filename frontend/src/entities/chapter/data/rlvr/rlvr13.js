@@ -2,42 +2,47 @@
 export default {
   "id": "rlvr13",
   "num": "13",
-  "title": "數據飛輪與基準去污染 (Data Flywheel & Decontamination)",
+  "title": "Chapter 13: 數據飛輪與基準去污染 (Data Flywheel & Decontamination)",
   "icon": "🔄",
   "file": "13_data_flywheel_and_decontamination",
   "hasVisualizer": "flywheel",
-  "readTime": "25 min",
-  "summary": "Post-Training 實戰：五階段數據飛輪閉環、Magpie 自回歸提示詞合成、AST 安全沙箱執行、13-Gram 測試集去污染與 Llama 3 六輪混合排程。",
+  "readTime": "30 min",
+  "summary": "五階段數據飛輪閉環、Magpie 自發提問機制、AST 安全沙箱執行、13-Gram 測試集去污染金標與 Llama 3 六輪混合排程",
   "toc": [
     {
       "level": 2,
-      "text": "核心心智模型：五階段端到端後訓練數據飛輪",
-      "anchor": "核心心智模型五階段端到端後訓練數據飛輪"
+      "text": "一、工業背景與技術演進 (Background & Architectural Evolution)",
+      "anchor": "一工業背景與技術演進-background--architectural-evolution"
     },
     {
       "level": 2,
-      "text": "13.1 Magpie：免種子提示詞的自發數據生成 (NeurIPS 2024)",
-      "anchor": "131-magpie免種子提示詞的自發數據生成-neurips-2024"
+      "text": "二、架構決策樹與 Trade-off 對比 (Architectural Decision Framework)",
+      "anchor": "二架構決策樹與-trade-off-對比-architectural-decision-framework"
     },
     {
       "level": 2,
-      "text": "13.2 自動化沙箱驗證與 AST 語法樹安全防禦",
-      "anchor": "132-自動化沙箱驗證與-ast-語法樹安全防禦"
+      "text": "三、系統心智模型與邊界直覺 (Systems Mechanics & Mathematical Formulations)",
+      "anchor": "三系統心智模型與邊界直覺-systems-mechanics--mathematical-formulations"
     },
     {
       "level": 2,
-      "text": "13.3 基準測試去污染工程 (13-Gram Filter)",
-      "anchor": "133-基準測試去污染工程-13-gram-filter"
+      "text": "四、漸進式可執行代碼實驗室 (Interactive Notebook Lab)",
+      "anchor": "四漸進式可執行代碼實驗室-interactive-notebook-lab"
     },
     {
       "level": 2,
-      "text": "13.4 Llama 3 六輪多階段迭代混合排程 (Data Mixture Scheduling)",
-      "anchor": "134-llama-3-六輪多階段迭代混合排程-data-mixture-scheduling"
+      "text": "五、工業級現場急救手冊與四維遙測監控雷達 (Production Runbook & Telemetry Radar)",
+      "anchor": "五工業級現場急救手冊與四維遙測監控雷達-production-runbook--telemetry-radar"
     },
     {
       "level": 2,
-      "text": "🤔 架構深度思辨與工業界陷阱",
-      "anchor": "-架構深度思辨與工業界陷阱-architectural-insight--production-pitfalls"
+      "text": "六、前沿系統架構深度思辨與極限設計 (Frontier Architecture & Whiteboard Defense)",
+      "anchor": "六前沿系統架構深度思辨與極限設計-frontier-architecture--whiteboard-defense"
+    },
+    {
+      "level": 2,
+      "text": "本章小結與學習路徑 (Summary & Roadmap)",
+      "anchor": "本章小結與學習路徑-summary--roadmap"
     }
   ]
 };

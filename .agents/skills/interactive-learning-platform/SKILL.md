@@ -13,9 +13,9 @@ This skill guides you through developing, testing, maintaining, and extending th
 ## External & Background References
 
 - **Pedagogical & Content Gold Standard**: Established by the **Post-Training Track** (`rlvr/tutorials/` & `frontend/src/entities/chapter/data/rlvr/`), incorporating:
-  - **UvA Deep Learning Tutorials**: Rigorous mathematical derivations, continuous reparameterizations, and parameter boundary analyses ([UvA SGA Reference](https://uvadlc-notebooks.readthedocs.io/en/latest/tutorial_notebooks/DL2/sampling/introduction.html)).
+  - **Rigorous Mathematical Foundations**: Continuous reparameterizations, closed-form derivations, and parameter boundary analyses.
   - **Frontier AI Lab Engineering Practices**: Intuitive mental models, Mermaid memory & dataflow graphs, production telemetry signals, industrial emergency triage runbooks, and Frontier AI Lab (OpenAI / Anthropic / DeepMind / Apple / Meta) interview defense playbooks.
-- **UI/UX & Documentation Layout Reference**: [UVA Applied Machine Learning Tutorials (ReadTheDocs / Jupyter Book)](https://uva-applied-ml.readthedocs.io/en/latest/notebooks/2_reg_knn_linreg.html).
+- **UI/UX & Documentation Layout Reference**: ReadTheDocs / Sphinx Technical Documentation Layout.
 - [Platform Architecture & Evolution Blueprint](./references/recipe.md)
 - [Data Models & TypeScript Entity Interfaces](./references/data-model.md)
 - [18 Visual Simulation Labs Catalog & Formulations](./references/visual-labs.md)
@@ -122,9 +122,9 @@ Every curriculum chapter on this platform must conform to the **7-Pillar Standar
 │     • LaTeX formulations ($...$ and $$...$$) with closed-form derivations       │
 │     • Numbered algorithmic steps; boundary analysis (τ → 0, β → ∞, G limits)    │
 ├─────────────────────────────────────────────────────────────────────────────────┤
-│  5. UvA-DLC 漸進式可執行代碼實驗室 (UvA-DLC Progressive Executable Notebook Suite) │
+│  5. 漸進式可執行代碼實驗室 (Progressive Executable Notebook Laboratory Suite)        │
 │     • 嚴格杜絕單一孤立代碼片段 (NEVER a single disconnected code snippet)         │
-│     • 5-Stage 漸進式實驗室標準 (inspired by UvA DL Tutorial 4 Optimization & Init):│
+│     • 5-Stage 漸進式實驗室標準:                                                   │
 │       1. 合成數據與批次管道 (Synthetic Batch Pipeline & Tensors)                │
 │       2. 核心因果張量前向與對數機率抽取 (Causal Log-Prob Gathering with torch.gather) │
 │       3. 向量化損失引擎與即時遙測字典 (Vectorized Loss Engine & WandB Telemetry)  │
@@ -171,8 +171,8 @@ Every curriculum chapter on this platform must conform to the **7-Pillar Standar
        class DOWNA,UPB lora;
    ```
 
-3. **UvA-DLC 漸進式代碼實驗室與交替輸出區塊 (UvA-DLC Progressive Notebook & Alternating Outputs)**:
-   - 參照 [UvA DL Notebook Tutorial 4 (Optimization & Initialization)](https://uvadlc-notebooks.readthedocs.io/en/latest/tutorial_notebooks/tutorial4/Optimization_and_Initialization.html) 的黃金規範，**嚴禁在章節中只展示孤立的單一函數或片段**。
+3. **漸進式代碼實驗室與交替輸出區塊 (Progressive Notebook & Alternating Outputs)**:
+   - 參照現代可執行代碼實驗室黃金規範，**嚴禁在章節中只展示孤立的單一函數或片段**。
    - 代碼小節必須按照 5 階流水線層層推進：
      1. **合成數據與批次管道 (Synthetic Batch Pipeline & Tensors)**：以自包含代碼構建真實形狀的輸入張量、Attention Masks 與因果 Label 遮蔽。
      2. **因果對數機率抽取核心模組 (Causal Log-Prob Gathering with torch.gather)**：實現嚴格自回歸位移切片、詞表索引 gather、遮罩過濾與平均/求和累積。
@@ -285,7 +285,7 @@ Before finalizing any changes to the interactive platform:
   - [ ] Features an intuitive mental model with real-world metaphors.
   - [ ] Includes a styled Mermaid visual architecture / memory allocation graph.
   - [ ] Provides rigorous KaTeX formulas and step-by-step mathematical derivations.
-  - [ ] **UvA-DLC 5-Stage Progressive Code Conformance**:
+  - [ ] **5-Stage Progressive Code Conformance**:
     - [ ] Strictly zero isolated single snippets; code is an end-to-end 5-stage laboratory (Data Setup $\to$ Causal Gathering $\to$ Vectorized Engine $\to$ Pathological Simulation $\to$ Remediation & Ablation).
     - [ ] Alternating Notebook Blocks: Every Python code block is immediately followed by a dedicated console execution output block (`[Execution Output / Telemetry Log]`).
     - [ ] Reproduces real industrial failure modes (e.g. Likelihood Displacement, Verbosity Bias) with concrete iteration traces.

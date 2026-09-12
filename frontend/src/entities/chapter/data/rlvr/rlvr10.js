@@ -8,7 +8,7 @@ export default {
   "hasVisualizer": "rlvr_distributed",
   "tag": "🔥 Core Hotspot",
   "readTime": "25 min",
-  "summary": "Post-Training 核心考點：雙模態系統瓶頸、veRL + vLLM 3D-HybridEngine 推訓解耦、動態重分片 (<800ms)、KV-Cache 顯存精算、NCCL 死鎖排查與 Frontier Lab 面試真題手撕。",
+  "summary": "Post-Training 核心考點：雙模態系統瓶頸、雙離合變速箱心智模型、veRL + vLLM 3D-HybridEngine 動態重分片 (<800ms)、漸進式 5 階代碼實驗室（木桶短板與 NCCL 死鎖復現、FP8 KV 消融）、4D 遙測雷達與 Frontier Lab 面試手撕。",
   "toc": [
     {
       "level": 2,
@@ -27,13 +27,18 @@ export default {
     },
     {
       "level": 2,
-      "text": "四、代碼剖析、實時遙測巡檢與失效急救",
-      "anchor": "四代碼剖析實時遙測巡檢與失效急救"
+      "text": "四、漸進式可執行代碼實驗室：3D-HybridEngine 顯存精算、動態重分片與 NCCL 異常模擬 (Interactive Notebook Lab)",
+      "anchor": "四漸進式可執行代碼實驗室3d-hybridengine-顯存精算動態重分片與-nccl-異常模擬-interactive-notebook-lab"
     },
     {
       "level": 2,
-      "text": "五、前沿系統架構深度思辨與極限設計 (Frontier Architecture Scenarios & Whiteboard Defense)",
-      "anchor": "五前沿系統架構深度思辨與極限設計-frontier-architecture-scenarios--whiteboard-defense"
+      "text": "五、工業級現場急救手冊與四維遙測監控雷達 (Runbook & 4D Telemetry Radar)",
+      "anchor": "五工業級現場急救手冊與四維遙測監控雷達-runbook--4d-telemetry-radar"
+    },
+    {
+      "level": 2,
+      "text": "六、前沿系統架構深度思辨與極限設計 (Frontier Architecture Scenarios & Whiteboard Defense)",
+      "anchor": "六前沿系統架構深度思辨與極限設計-frontier-architecture-scenarios--whiteboard-defense"
     },
     {
       "level": 2,

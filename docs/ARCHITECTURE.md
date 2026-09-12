@@ -86,12 +86,12 @@ graph TD
 ### 2.4 Web Frontend (`frontend/`)
 - Modern Single Page Application (SPA) built with Vite, TypeScript, React 19, and Tailwind CSS v4.
 - Consumes the FastAPI backend over REST endpoints at `/api/*` and bundles static markdown modules for client-side GitHub Pages deployment.
-- **UvA-DLC Progressive Notebook Presentation**: Renders curriculum markdown cells with alternating executable code blocks and labeled console output blocks (`[Execution Output / Telemetry Log]`).
+- **Progressive Notebook Presentation**: Renders curriculum markdown cells with alternating executable code blocks and labeled console output blocks (`[Execution Output / Telemetry Log]`).
 - Embeds 18 interactive parameter simulation labs (`labCatalog.ts`) and 4-step Kaggle milestone career defense workbenches with STAR playbooks.
 
 ### 2.5 Educational Curriculum (`tutorials/` & `rlvr/tutorials/`)
 - **DeepAgents Track (`tutorials/`)**: 31 sequentially structured markdown tutorials covering harness engineering, trajectory evaluation, observability, and self-improving loops.
-- **Post-Training MLE Handbook (`rlvr/tutorials/`)**: 18-part curriculum adhering to the Post-Training Track 7-Pillar standard, featuring the UvA-DLC 5-stage progressive code laboratory (Synthetic Batch $\to$ Causal Gathering $\to$ Vectorized Engine $\to$ Pathological Stress Tests $\to$ Remediation & Ablation).
+- **Post-Training MLE Handbook (`rlvr/tutorials/`)**: 18-part curriculum adhering to the Post-Training Track 7-Pillar standard, featuring the progressive 5-stage code laboratory (Synthetic Batch $\to$ Causal Gathering $\to$ Vectorized Engine $\to$ Pathological Stress Tests $\to$ Remediation & Ablation).
 
 ### 2.6 Agent Customizations (`.agents/`)
 - **Rules (`.agents/rules/`)**: Persistent behavioral contracts loaded in agent sessions (e.g. `auto-index.md` zero-drift mandate).

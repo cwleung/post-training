@@ -7,42 +7,42 @@ export default {
   "file": "04_training",
   "hasVisualizer": "rlvr_training",
   "readTime": "22 min",
-  "summary": "Post-Training 實戰：16GB 單卡顯存預算精算、LoRA 低秩分解、GRPOConfig 訓練排程與四維遙測監控指標。",
+  "summary": "Post-Training 實戰：16GB 單卡顯存拼圖精算、透明描圖紙 LoRA、水庫調洪梯度累積、漸進式 5 階代碼實驗室（OOM 崩潰復現、4-bit NF4 量化消融）、4D 遙測雷達與 Frontier Lab 面試手撕。",
   "toc": [
     {
       "level": 2,
-      "text": "核心心智模型：16GB 單卡如何撬動大模型強化學習？",
-      "anchor": "核心心智模型16gb-單卡如何撬動大模型強化學習"
+      "text": "一、工業背景與技術演進：消費級單卡撬動大模型強化學習",
+      "anchor": "一工業背景與技術演進消費級單卡撬動大模型強化學習"
     },
     {
       "level": 2,
-      "text": "4.1 硬體規格與模型選型矩陣",
-      "anchor": "41-硬體規格與模型選型矩陣"
+      "text": "二、架構決策樹與 Trade-off 對比",
+      "anchor": "二架構決策樹與-trade-off-對比"
     },
     {
       "level": 2,
-      "text": "4.2 模型載入與 PEFT LoRA 配置",
-      "anchor": "42-模型載入與-peft-lora-配置"
+      "text": "三、系統心智模型與邊界直覺 (Systems Mechanics & Boundary Intuition)",
+      "anchor": "三系統心智模型與邊界直覺-systems-mechanics--boundary-intuition"
     },
     {
       "level": 2,
-      "text": "4.3 設定 GRPO 訓練參數 (GRPOConfig)",
-      "anchor": "43-設定-grpo-訓練參數-grpoconfig"
+      "text": "四、漸進式可執行代碼實驗室：顯存精算模擬器、LoRA 前向與累積步引擎 (Interactive Notebook Lab)",
+      "anchor": "四漸進式可執行代碼實驗室顯存精算模擬器lora-前向與累積步引擎-interactive-notebook-lab"
     },
     {
       "level": 2,
-      "text": "4.4 訓練啟動與四維遙測監控 (Telemetry Signals)",
-      "anchor": "44-訓練啟動與四維遙測監控-telemetry-signals"
+      "text": "五、工業級現場急救手冊與四維遙測監控雷達 (Runbook & 4D Telemetry Radar)",
+      "anchor": "五工業級現場急救手冊與四維遙測監控雷達-runbook--4d-telemetry-radar"
     },
     {
       "level": 2,
-      "text": "4.5 顯存爆炸 (OOM) 工業級急救錦囊",
-      "anchor": "45-顯存爆炸-oom-工業級急救錦囊"
+      "text": "六、前沿系統架構深度思辨與極限設計 (Frontier Architecture Scenarios & Whiteboard Defense)",
+      "anchor": "六前沿系統架構深度思辨與極限設計-frontier-architecture-scenarios--whiteboard-defense"
     },
     {
       "level": 2,
-      "text": "🤔 架構深度思辨與工業界陷阱",
-      "anchor": "-架構深度思辨與工業界陷阱-architectural-insight--production-pitfalls"
+      "text": "本章小結與學習路徑",
+      "anchor": "本章小結與學習路徑"
     }
   ]
 };

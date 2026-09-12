@@ -151,7 +151,7 @@ const AlertBlockquote: React.FC<{ children?: React.ReactNode }> = ({ children })
   );
 };
 
-// CodeBlock component: UvA DLC ReadTheDocs minimal style with Prism syntax highlighting & docked terminal output
+// CodeBlock component: ReadTheDocs minimal style with Prism syntax highlighting & docked terminal output
 const CodeBlock: React.FC<{ lang: string; codeString: string }> = ({ lang, codeString }) => {
   const [copied, setCopied] = useState(false);
   const [isWrapped, setIsWrapped] = useState(true);
@@ -186,7 +186,7 @@ const CodeBlock: React.FC<{ lang: string; codeString: string }> = ({ lang, codeS
     return null;
   }, [codeString, lang, isOutputBlock]);
 
-  // Specialized Sleek Terminal / Execution Output Block (UvA DLC / Jupyter nbsphinx style)
+  // Specialized Sleek Terminal / Execution Output Block (Interactive Notebook / Jupyter style)
   if (isOutputBlock) {
     let displayTitle = '';
     let cleanedOutput = codeString;
@@ -223,7 +223,7 @@ const CodeBlock: React.FC<{ lang: string; codeString: string }> = ({ lang, codeS
           </button>
         </div>
 
-        {/* Output Gutter & Content (Jupyter / UvA DLC Out: flow) */}
+        {/* Output Gutter & Content (Interactive Notebook Out: flow) */}
         <div className="flex items-start gap-2.5 p-2.5 sm:p-3 font-mono leading-relaxed">
           <div className="shrink-0 select-none text-emerald-500/70 font-mono text-[10px] pt-0.5 font-semibold">
             Out:
@@ -243,7 +243,7 @@ const CodeBlock: React.FC<{ lang: string; codeString: string }> = ({ lang, codeS
     );
   }
 
-  // Regular Source Code Block (Python, TS, Bash, etc. - UvA DLC / Jupyter In: flow)
+  // Regular Source Code Block (Python, TS, Bash, etc. - Interactive Notebook In: flow)
   return (
     <div className="group relative my-3.5 overflow-hidden rounded-lg border border-border/70 bg-[#0d1117] shadow-xs transition-all hover:border-border">
       {/* Floating Hover Controls in Top-Right Corner */}
@@ -544,7 +544,7 @@ export const ReaderCanvas: React.FC<ReaderCanvasProps> = ({ onOpenLab }) => {
               </p>
             )}
 
-            {/* Sleek Resource & Action Strip (UvA DLC ReadTheDocs Badges Style) */}
+            {/* Sleek Resource & Action Strip (ReadTheDocs Badges Style) */}
             <div className="flex flex-wrap items-center gap-2.5 pt-1 text-xs">
               {/* Kaggle Milestone Playbook Pill */}
               {currentPart.milestone && (
@@ -821,7 +821,7 @@ export const ReaderCanvas: React.FC<ReaderCanvasProps> = ({ onOpenLab }) => {
           </div>
         </div>
 
-        {/* Right Sticky Rail: On this page (TOC) - UvA DLC / ReadTheDocs In-Page Outline */}
+        {/* Right Sticky Rail: On this page (TOC) - ReadTheDocs In-Page Outline */}
         {tocHeadings.length > 0 && (
           <aside className="hidden xl:block w-60 shrink-0">
             <div className="sticky top-8 max-h-[calc(100vh-5rem)] overflow-y-auto pl-4 border-l border-border/50 text-xs space-y-3.5 scrollbar-thin">

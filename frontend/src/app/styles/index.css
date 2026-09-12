@@ -125,7 +125,7 @@ html, body {
   transition: background-color 0.2s ease, color 0.2s ease;
 }
 
-/* Typography Prose Theme Token Mapping (ReadTheDocs / UvA DLC Standard: 14px / 1.68) */
+/* Typography Prose Theme Token Mapping (ReadTheDocs Technical Standard: 14px / 1.68) */
 .prose {
   font-size: 14px;
   line-height: 1.68;

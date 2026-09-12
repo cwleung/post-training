@@ -55,7 +55,7 @@ Before finalizing any response that touches the codebase:
 1. Identify all touched directories.
 2. Review and patch the local `INDEX.md` in each touched directory.
 3. Update global docs in `docs/` (`ARCHITECTURE.md`, `API_SURFACE.md`, `STORAGE.md`, `INDEX.md`, or relevant `docs/<TOPIC>.md`).
-4. Enforce UvA-DLC Progressive Notebook Standard: Ensure any tutorial/curriculum code additions or edits strictly conform to the 5-stage progressive pipeline with alternating execution output blocks (never single isolated snippets).
+4. Enforce Progressive Executable Notebook Laboratory Standard: Ensure any tutorial/curriculum code additions or edits strictly conform to the 5-stage progressive pipeline with alternating execution output blocks (never single isolated snippets).
 5. Append an entry to `docs/SYSTEM_STATE.md`.
 
 Refer to the `auto-index` skill (`~/.gemini/config/skills/auto-index/SKILL.md`) for complete workflow guidance.

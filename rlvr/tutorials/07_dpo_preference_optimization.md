@@ -184,9 +184,9 @@ flowchart LR
 
 ---
 
-## 四、UvA-DLC 漸進式代碼實驗室：DPO 向量化流水線、病態曲率復現與工業級急救 (Interactive Notebook Lab)
+## 四、漸進式可執行代碼實驗室：DPO 向量化流水線、病態曲率復現與工業級急救 (Interactive Notebook Lab)
 
-> 參考 [UvA Deep Learning Tutorial 4 (Optimization & Initialization)](https://uvadlc-notebooks.readthedocs.io/en/latest/tutorial_notebooks/tutorial4/Optimization_and_Initialization.html) 的漸進式實驗規範，本實驗室從底層合成偏好張量開始，依序構建因果對數機率抽取、向量化 DPO 損失引擎，並在病態曲率下主動復現**「概率塌陷」**與**「長度作弊」**兩大工程災難，最後給出工業級修復與消融驗證。
+> 本實驗室按照嚴格的漸進式工程實踐標準，從底層合成偏好張量開始，依序構建因果對數機率抽取、向量化 DPO 損失引擎，並在病態曲率下主動復現**「概率塌陷」**與**「長度作弊」**兩大工業現場災難，最後給出工業級修復與消融驗證。
 
 ---
 
@@ -413,7 +413,7 @@ for k, v in metrics.items():
 
 ### 4. 病態曲率與致命失效邊界模擬 (Pathological Curvatures & Stress Tests)
 
-如同 UvA Tutorial 4 中所演示的「病態峽谷」（Pathological Curvatures）與「陡峭極值」（Steep Optima），DPO 在無保護的梯度優化下會遭遇兩大工業界已知災難：**概率塌陷（Likelihood Displacement）** 與 **長度作弊陷阱（Verbosity Bias Trap）**。我們通過可重現的模擬實驗主動復現這兩種崩潰現象。
+如同凸優化理論中所揭示的「病態峽谷」（Pathological Curvatures）與「陡峭極值」（Steep Optima），DPO 在無保護的梯度優化下會遭遇兩大工業界已知災難：**概率塌陷（Likelihood Displacement）** 與 **長度作弊陷阱（Verbosity Bias Trap）**。我們通過可重現的模擬實驗主動復現這兩種崩潰現象。
 
 #### 實驗 4.1：整體概率塌陷模擬 (Likelihood Displacement Crash)
 
