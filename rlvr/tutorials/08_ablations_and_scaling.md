@@ -107,6 +107,35 @@ $$P_{\text{waste}}(G, p) = p^G + (1 - p)^G$$
 - 當 $G = 8$ 且 $p = 0.3$：$P_{\text{waste}} = 0.3^8 + 0.7^8 \approx 0.00006 + 0.0576 = 0.0577$（**浪費率驟降至 5.8%**）。
 - 結論：$G \ge 8$ 是抑制算力浪費的工業臨界值。
 
+```text
+====================================================================================================
+      GROUP SIZE G ZERO-GRADIENT WASTE RATE vs SUCCESS PROBABILITY p (組大小算力浪費率曲線)
+====================================================================================================
+
+Zero-Gradient Waste Rate P_waste(G, p) = p^G + (1 - p)^G
+      ▲
+100% ┼──*───────────────────────────────*───────────────────────────────* (All Wrong or All Right)
+     │   \                             / \                             /
+     │    \                           /   \                           /
+ 75% ┼     \        G = 2            /     \        G = 2            /
+     │      \      (58% waste @ p=0.3)      \                       /
+ 50% ┼       \                     /         \                     /
+     │        \                   /           \                   /
+ 25% ┼         \    G = 4        /             \    G = 4        /
+     │          \               /               \               /
+     │           \  G = 8      /                 \  G = 8      /
+  0% ┼────────────\___________/───────────────────\___________/────────► Success Probability p
+    0.0          0.2         0.4                 0.6         0.8         1.0
+                 <──── GOLDILOCKS REGION (p ~ 0.5, Max Gradient Signal) ────>
+
+[ EMPIRICAL WASTE RATE AT p = 0.30 ]
+G = 2  : [████████████████████████████] 58.0% of all GPU rollout steps emit ZERO gradient!
+G = 4  : [████████████]                24.8% waste
+G = 8  : [███]                          5.8% waste (Industrial Golden Standard!)
+G = 16 : [░]                            0.3% waste (Excellent stability, but watch VRAM budget)
+====================================================================================================
+```
+
 ---
 
 ### 2. 金鳳花區信息熵與梯度方差極大化
@@ -117,6 +146,32 @@ $$\text{Var}(r) = p(1 - p)$$
 該方差在 $p = 0.5$ 處取得唯一全局極大值：
 $$\max_{p \in [0, 1]} \text{Var}(r) = 0.5 \times (1 - 0.5) = 0.25$$
 當 $p \to 0$ 或 $p \to 1$ 時，$\text{Var}(r) \to 0$。這從數學上證明了：**解決率在 50% 附近的題目（Goldilocks Zone）能為 GRPO 提供最大強度的梯度更新信號**。
+
+```text
+====================================================================================================
+      GOLDILOCKS CURRICULUM VARIANCE PEAK & KL BUNGEE LEASH (金鳳花方差峰值與 KL 彈力繩圖)
+====================================================================================================
+
+[ 1. SAMPLE VARIANCE & GRADIENT INFORMATION: Var(r) = p(1 - p) ]
+Sample Variance Var(r)
+      ▲
+0.25 ┼──────────────────────────────────╭*╮────────────────────────────────── (Global Maximum)
+     │                                ╭* │ *╮
+0.20 ┼                               ╭*  │  *╮
+     │                              ╭*   │   *╮
+0.10 ┼                             ╭*    │    *╮
+     │                           ╭*      │      *╮
+0.00 ┼*─────────────────────────*────────┴────────*─────────────────────────*► Pass Rate p
+     0.0 (Too Hard: All 0s)    0.3              0.7     1.0 (Too Easy: All 1s)
+     Var = 0, Advantage = 0    <── GOLDILOCKS ──>      Var = 0, Advantage = 0
+     ZERO GRADIENT EMITTED!    MAXIMUM GRADIENT SIGNAL  ZERO GRADIENT EMITTED!
+
+[ 2. KL BUNGEE LEASH BEHAVIOR vs COEFFICIENT β ]
+β = 0.00 : [ FREE FALL ] Policy drifts to nonsense gibberish reward hacking; catastrophic collapse!
+β = 0.04 : [ INDUSTRIAL GOLDEN RATIO ] Balanced tether; allows novel reasoning steps without drift.
+β = 0.20 : [ RIGID CHOKEHOLD ] Policy paralyzed; cannot deviate from SFT reference; zero improvement.
+====================================================================================================
+```
 
 ---
 

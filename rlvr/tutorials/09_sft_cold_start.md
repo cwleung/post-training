@@ -86,6 +86,29 @@ $$m_t = \begin{cases} 0, & \text{if } t \le L_{\text{prompt}} \\ 1, & \text{if }
 $$\mathcal{L}_{\text{SFT}}(\theta) = -\frac{1}{\sum_{t=1}^T m_t} \sum_{t=1}^T m_t \log \pi_\theta(z_t \mid z_{<t})$$
 在 PyTorch 實現中，將 $m_t = 0$ 對應位置的標籤值賦予 `-100`，由底層 CUDA 核心 `F.cross_entropy(..., ignore_index=-100)` 自動忽略該位置的梯度傳播。
 
+```text
+====================================================================================================
+           STRUCTURED XML REASONING SANDBOX & LOSS MASKING (結構化推理沙盒與標籤遮蔽圖)
+====================================================================================================
+
+Token Sequence Stream:
+[Prompt Tokens: x_1 ... x_L] │ [Assistant Thinking: y_1 ... y_k] │ [Final Answer: y_{k+1} ... y_T]
+                             │ <think> ... </think>              │ <answer> ... </answer>
++────────────────────────────┼───────────────────────────────────┼───────────────────────────────+
+| "Janet has 16 eggs..."     | "<think> 16 - 3 = 13 + 5 = 18 </think>" | "<answer> 18 </answer>" |
++────────────────────────────┼───────────────────────────────────┼───────────────────────────────+
+              │                                      │                               │
+              ▼                                      ▼                               ▼
+     [ Prompt Masking ]                    [ CoT Step Supervision ]           [ Verifiable Output ]
+       labels = -100                           labels = token_ids              labels = token_ids
+     Gradient Mask m_t = 0                  Gradient Mask m_t = 1           Gradient Mask m_t = 1
+  (Zero gradient backprop)                (Supervises reasoning path)       (Supervises exact match)
++────────────────────────────+───────────────────────────────────────────────────────────────────+
+| CrossEntropy Ignore Index  | Backpropagates Causal Negative Log-Likelihood Loss                |
++────────────────────────────+───────────────────────────────────────────────────────────────────+
+====================================================================================================
+```
+
 ---
 
 ### 2. 邊界分析：數據量與 Token 熵的極限行為
@@ -100,6 +123,34 @@ $$\mathcal{L}_{\text{SFT}}(\theta) = -\frac{1}{\sum_{t=1}^T m_t} \sum_{t=1}^T m_
   $$\mathcal{H}(t) = -\sum_{v \in V} \pi_\theta(v \mid z_{<t}) \log \pi_\theta(v \mid z_{<t})$$
   - 健康的冷啟動模型在回覆起點的平均 Token 熵應維持在 $1.2 \le \mathcal{H} \le 2.2$。
   - 若 SFT 結束後平均熵跌破 $< 0.4$，表明模型已被「洗腦式過擬合」，對所有問題給出幾乎確定性的單一路徑，RL 階段將徹底喪失探索活力。
+
+```text
+====================================================================================================
+      SFT COLD-START GOLDILOCKS ZONE & ENTROPY PHASE TRANSITION (SFT 冷啟動黃金區間與熵相變圖)
+====================================================================================================
+
+Pass@8 Rate (%) / Format Compliance (%)
+      ▲
+100% ┼──────────────────────────────┬───────────────────────────────────────────────────────────
+     │                              │         OVER-FITTING DANGER ZONE
+     │                     *********│*********************************** Format Compliance
+     │                   **         │                                    (Maintains ~100%)
+     │                 **           │
+     │               **             │
+ 50% ┼             **               │
+     │           **                 │
+     │         **                   │
+     │       **                     │─────────────────────────────────── Token Entropy H
+     │     **  (Pass@8 ~ 35%)       │                                    (Collapses < 0.4!)
+     │   **                         │................................... Parroting Ceiling
+  0% ┼**────────────────────────────┴───────────────────────────────────► Sample Count (N)
+     0          500              3,000 ~ 8,000                        50,000+
+     [ COLD DEAD-LOCK ]         [ GOLDILOCKS REASONING ZONE ]        [ OVERFITTING PRISON ]
+     Format = 10%               Format > 99%, Pass@8 ~ 35%           Token Entropy H < 0.3
+     RL Exploration = 0         Token Entropy H in [1.2, 2.2]        RL exploration frozen!
+     Advantage = 0 always       HAND-OFF TO GRPO REINFORCEMENT!      Exploration fails
+====================================================================================================
+```
 
 ---
 

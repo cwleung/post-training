@@ -133,6 +133,33 @@ $$\nabla_{e_i} \mathcal{L}_{\text{adv}} = \frac{\partial \mathcal{L}_{\text{adv}
 $$\text{Candidates}(i) = \text{Top-}k \left( - \nabla_{e_i} \mathcal{L}_{\text{adv}} \cdot W_{\text{embed}}^T \right)$$
 在每個迭代步中，從這 $k \times l$ 個候選變更中隨機採樣一個批次進行前向計算，貪婪選取損失最低的後綴替換當前 $e_{1:l}$，直到越獄成功。
 
+```text
+====================================================================================================
+      GCG DISCRETE GRADIENT COORDINATE OPTIMIZATION MAP (GCG 離散座標梯度反向傳播圖)
+====================================================================================================
+
+Target Affirmative Prefix: "Sure, here is how to..." (Forcing positive response mode)
+                               │
+                Loss = -∑ log P_θ(y_target | Prompt x + Suffix e)
+                               │
+            ┌──────────────────┴──────────────────┐  Backpropagate gradient to discrete embeddings:
+            ▼                                     ▼
+   ∇_{E(e_1)} L_adv ∈ R^d               ∇_{E(e_l)} L_adv ∈ R^d
+            │                                     │
+            ▼ Project onto Vocab:                 ▼ Project onto Vocab:
+   - ∇_{E(e_1)} · W_embed^T              - ∇_{E(e_l)} · W_embed^T
+            │                                     │
+            ▼ Top-K Candidate Tokens:             ▼ Top-K Candidate Tokens:
+   ["!", "#", "===", "step"]             ["system", "bypass", "rule"]
+            │                                     │
+            └──────────────────┬──────────────────┘
+                               ▼
+        [ BATCH EVALUATION OF CANDIDATE SUFFIXES ]
+        Greedily pick candidate with lowest L_adv
+        Iterate until loss drops to jailbreak threshold!
+====================================================================================================
+```
+
 ---
 
 ### 3. 困惑度防禦定理 (Perplexity Defense Theorem)
@@ -146,6 +173,41 @@ $$\text{PPL}(X) = \exp\left( -\frac{1}{T} \sum_{t=1}^T \log P_{\text{eval}}(x_t 
 - 自然語言提示詞的困惑度通常滿足 $\text{PPL}(X_{\text{natural}}) \in [10, 80]$；
 - 經過 GCG 優化的對抗性後綴由於強行扭曲注意力權重，其局部困惑度通常暴漲至 $\text{PPL}(X_{\text{adv}}) \ge 350$；
 - 在系統入口部署輕量級困惑度過濾器，若 $\text{PPL} > \tau_{\text{threshold}}$（如設為 150），直接一票否決阻斷請求，能夠以 $O(T)$ 運算量攔截 95% 以上的白盒對抗攻擊！
+
+```text
+====================================================================================================
+      THREE-LAYER DEFENSE-IN-DEPTH ALIGNMENT PERIMETER (生產級三層縱深安全防禦體系)
+====================================================================================================
+
+Adversarial Prompt x + Suffix e (e.g. GCG Attack)
+                 │
+                 ▼
++─────────────────────────────────────────────────+
+| LAYER 1: INGRESS PERPLEXITY GATEKEEPER          |  Fast O(T) N-gram / LM Perplexity Check
+| PPL(x) > 150.0? (Abnormal gibberish detected!)  |──> [ BLOCKED / HARD DROP 403 ]
++────────────────────────┬────────────────────────+    (Intercepts 95%+ of GCG attacks!)
+                         │ (PPL <= 150: Natural phrasing)
+                         ▼
++─────────────────────────────────────────────────+
+| LAYER 2: RANDOMIZED SMOOTHING (SmoothLLM)       |  Perturb prompt with character swap/insert
+| Majority consensus across N perturbed variations|──> Neutralizes fragile adversarial tokens
++────────────────────────┬────────────────────────+
+                         │
+                         ▼
++─────────────────────────────────────────────────+
+| CORE ALIGNED MODEL: Constitutional DPO / SimPO  |  Generates compliant, helpful response
++────────────────────────┬────────────────────────+
+                         │
+                         ▼
++─────────────────────────────────────────────────+
+| LAYER 3: EGRESS SAFETY CLASSIFIER & AUDIT       |  XSTest Calibrated Guardrail Head
+| Severe Toxicity or Exploitation instruction?   |──> Safe Refusal / Constitutional Rewrite
++────────────────────────┬────────────────────────+
+                         │
+                         ▼
+            [ EMITTED USER RESPONSE ]
+====================================================================================================
+```
 
 ---
 

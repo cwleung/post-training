@@ -86,6 +86,35 @@ $$\mathcal{G}_N(\mathcal{D}_{\text{test}}) = \bigcup_{d \in \mathcal{D}_{\text{t
 $$\mathcal{G}_N(x) \cap \mathcal{G}_N(\mathcal{D}_{\text{test}}) \ne \emptyset$$
 則嚴格判定樣本 $x$ 受到基準污染，指示變量 $\mathcal{C}(x) = 1$，該樣本必須被永久物理刪除。工業金標設定 $N = 13$。
 
+```text
+====================================================================================================
+      13-GRAM INVERTED INDEX HASH DECONTAMINATION ENGINE (13-Gram 禁區倒排索引與去污染架構)
+====================================================================================================
+
+[ STEP 1: BENCHMARK FORBIDDEN HASH INVERTED INDEX (Pre-computed & Locked) ]
+Test Benchmark Docs (GSM8K/MATH) ──> Sliding 13-Gram Window ──> Hash64 ──> [ FORBIDDEN HASH SET ]
+e.g. "Janet sells 16 duck eggs a day for two dollars each at the"  ──> 0x8F3A2B1C...
+                                                                        0x99AE41F0...
+
+[ STEP 2: STREAMING TRAINING CANDIDATE EVALUATION ]
+Candidate Doc: "Yesterday, Janet sells 16 duck eggs a day for two dollars each at the farmers market..."
+Tokens:        [w_1, w_2, w_3, ... , w_13] ──> Hash(13-gram) ──┐
+               [w_2, w_3, w_4, ... , w_14] ──> Hash(13-gram) ──┤
+               ...                                              ▼
+                                                  +──────────────────────────────+
+                                                  | Fast Hash Collision Lookup   |
+                                                  | (O(1) in-memory Bloom/Set)   |
+                                                  +──────────────┬───────────────+
+                                                                 │
+                                          ┌──────────────────────┴──────────────────────┐
+                                          ▼ (Match Found! Contamination = 1)            ▼ (Zero Collisions)
+                                +──────────────────────────────────+           +──────────────────+
+                                | 🚨 CONTAMINATED SAMPLE DETECTED  |           | ✅ CLEAN SAMPLE  |
+                                | Action: Hard Delete & Log Audit  |           | Proceed to LSH   |
+                                +──────────────────────────────────+           +──────────────────+
+====================================================================================================
+```
+
 ---
 
 ### 2. MinHash LSH 海量數據去重數學定理
@@ -100,6 +129,33 @@ $$\mathbb{P}[h_{\min}(A) = h_{\min}(B)] = J(A, B)$$
 兩個樣本在至少一個波段中完全匹配的命中概率為：
 $$P_{\text{match}} = 1 - (1 - J(A, B)^r)^b$$
 當 $J(A, B) \ge 0.8$ 時，$P_{\text{match}} \to 1.0$；當 $J(A, B) \le 0.3$ 時，$P_{\text{match}} \to 0.0$。實現以 $O(1)$ 時間複雜度篩除海量近似冗餘數據。
+
+```text
+====================================================================================================
+           MinHash LSH BANDS S-CURVE & DEDUPLICATION FILTER (MinHash LSH S 型過濾曲線與分桶圖)
+====================================================================================================
+
+Collision Probability P_match
+      ▲
+1.00 ┼─────────────────────────────────────────────╭──────────────────────────
+     │                                            ╭│
+     │                                           ╭ │
+     │                                          ╭  │
+ 0.5 ┼─────────────────────────────────────────╭───┼────────────────────────── (Inflection point: s ~ (1/b)^(1/r))
+     │                                       ╭     │
+     │                                      ╭      │
+     │                                    ╭        │
+ 0.0 ┼───────────────────────────────────╭─────────┴──────────────────────────► Jaccard Similarity s
+     0.0                0.2             0.5       0.8                        1.0
+     <── SAFE: RETAIN UNIQUE DATA ──────><── S-CURVE ──><── DUPLICATE: DROP ──>
+
+[ BAND PARTITION MATRIX: K = b × r (e.g. b = 20 bands, r = 5 rows, Total K = 100 hashes) ]
+Band 1: [ h_1,  h_2,  h_3,  h_4,  h_5  ] ──> Hash to Bucket ID ──> Bucket collision check
+Band 2: [ h_6,  h_7,  h_8,  h_9,  h_10 ] ──> Hash to Bucket ID ──> Any single band match
+...                                                                   qualifies pair for
+Band 20:[ h_96, h_97, h_98, h_99, h_100] ──> Hash to Bucket ID ──> full Jaccard verification!
+====================================================================================================
+```
 
 ---
 

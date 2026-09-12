@@ -96,6 +96,37 @@ flowchart TD
 > 它利用底層 `torch.distributed.all_to_all_single` 算子，讓 8 張卡直接沿著已分配的記憶體塊（Buffer）交換數據切片。
 > **沒有任何全量模型臨時副本，零顯存膨脹，在 NVLink 上像流水一樣在 40ms 內完成跨並行維度轉置！**
 
+```text
+====================================================================================================
+           veRL + vLLM 3D-HYBRIDENGINE DUAL-CLUTCH GEARBOX TOPOLOGY (離合器式動態重分片拓撲)
+====================================================================================================
+
+      [ ROLLOUT GENERATION CLUTCH ]                    [ LEARNER TRAINING CLUTCH ]
+      Engine: vLLM Worker Engines                     Engine: PyTorch FSDP2 Engine
+      Layout: Tensor Parallelism (TP=8)               Layout: Fully Sharded Data Parallel (DP=64)
++─────────────────────────────────────────+     +─────────────────────────────────────────+
+| GPU 0: QKV Head Slice 0..3 (PagedAttn)  |     | GPU 0: Layer 0..1 Parameter & Grad Shards|
+| GPU 1: QKV Head Slice 4..7 (PagedAttn)  |     | GPU 1: Layer 2..3 Parameter & Grad Shards|
+| GPU 2: QKV Head Slice 8..11 (PagedAttn) |     | GPU 2: Layer 4..5 Parameter & Grad Shards|
+| ...                                     |     | ...                                     |
+| GPU 7: QKV Head Slice 28..31 (PagedAttn)|     | GPU 7: Layer 14..15 Parameter & Shards  |
++────────────────────┬────────────────────+     +────────────────────▲────────────────────+
+                     │                                               │
+                     │  1. Rollout Ends: Evict KV-Cache              │
+                     │  2. Trigger NCCL all_to_all_single (< 800ms)  │
+                     └───────────────────────┬───────────────────────┘
+                                             │
+                       ======================▼======================
+                         NCCL HIGH-SPEED ZERO-COPY MEMORY OVERPASS
+                         NVLink (900 GB/s) + InfiniBand (800 Gbps)
+                       =============================================
+                                             │
+      [ WEIGHT SYNCHRONIZATION ] <───────────┴─────────── [ BACKWARD COMPLETED ]
+      Broadcast updated weights back                      Optimizer step updates shards,
+      to vLLM TP memory buffers (< 40ms)                  releases gradient buffers
+====================================================================================================
+```
+
 ```mermaid
 sequenceDiagram
     autonumber
@@ -110,6 +141,40 @@ sequenceDiagram
     Note over L: 全速反向傳播，滿載 Tensor Cores (160+ TFLOPs)
     L->>NCCL: 權重更新完畢，廣播回傳
     NCCL->>R: 更新 vLLM 權重指針，開啟下一輪迭代
+```
+
+```text
+====================================================================================================
+           KV-CACHE PAGEDATTENTION LOGICAL VS PHYSICAL BLOCK MAPPING (虛擬分頁記憶體映射圖)
+====================================================================================================
+
+Logical Token Sequence (Seq Len = 48 tokens, Block Size = 16 tokens):
++──────────────────────────+──────────────────────────+──────────────────────────+
+|  Logical Block 0 (0..15) | Logical Block 1 (16..31) | Logical Block 2 (32..47) |
++─────────────┬────────────+─────────────┬────────────+─────────────┬────────────+
+              │                          │                          │
+              ▼                          ▼                          ▼
+       +───────────────+          +───────────────+          +───────────────+
+       | Logical Ptr 0 |          | Logical Ptr 1 |          | Logical Ptr 2 |
+       +───────┬───────+          +───────┬───────+          +───────┬───────+
+               │                          │                          │
+               └──────────────┬───────────┴───────────┬──────────────┘
+                              ▼                       ▼
+            +───────────────────────────────────────────────────+
+            |      BLOCK TABLE (虛擬頁表: Logical ID ──> Physical ID)   |
+            |      Block 0 ──> Physical Page 7                  |
+            |      Block 1 ──> Physical Page 2                  |
+            |      Block 2 ──> Physical Page 11                 |
+            +───────────────────────────────────────────────────+
+                              │           │           │
+       ┌──────────────────────┘           │           └───────────────────────┐
+       ▼                                  ▼                                   ▼
++───────────────+                  +───────────────+                   +───────────────+
+| Physical M 7  |                  | Physical M 2  |                   | Physical M 11 |
+| Non-Contiguous|                  | Non-Contiguous|                   | Non-Contiguous|
+| DRAM Block    |                  | DRAM Block    |                   | DRAM Block    |
++───────────────+                  +───────────────+                   +───────────────+
+====================================================================================================
 ```
 
 ### 2. 集群單卡顯存預算精確形式化（一行閉式預算）

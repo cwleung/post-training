@@ -93,6 +93,27 @@ flowchart TD
     class UPD opt;
 ```
 
+```text
+====================================================================================================
+                        DPO vs SimPO MEMORY & MATHEMATICAL TOPOLOGY
+====================================================================================================
+
+❌ DPO TOPOLOGY (依賴參考模型 + 無顯式邊界):
+   GPU VRAM: [ Policy Model π_θ ] + [ Reference Model π_ref ] (需雙份顯存常駐!)
+   Reward Formulation: r_DPO(x, y) = β log (π_θ / π_ref)
+   Problem: 1. 顯存佔用翻倍 (Reference 佔據 40%~50% VRAM)
+            2. 無長度歸一化 ➔ 只要長度足夠長，總 Log-Prob 便能掩蓋低劣品質 (Verbosity Trap)
+
+✅ SimPO TOPOLOGY (零參考模型 + 長度歸一化 + 目標邊界 γ):
+   GPU VRAM: [ Policy Model π_θ ]  ➔ 💥 REFERENCE MODEL COMPLETELY REMOVED! (節省 50% 顯存!)
+   Reward Formulation: r_SimPO(x, y) = (β / |y|) * log π_θ(y|x)
+   Target Margin Condition:
+      [ r_SimPO(y_w) ] ───── (必須淨勝至少 γ 安全裕量) ─────► [ r_SimPO(y_l) + γ ]
+                                                                       ▲
+                                            若淨勝幅度不足 γ，持續強力反向傳播更新！
+====================================================================================================
+```
+
 ### 2. 核心目標函數（一行形式化）
 
 $$\mathcal{L}_{\text{SimPO}}(\theta) = -\mathbb{E}_{(x, y_w, y_l) \sim \mathcal{D}} \left[ \log \sigma \left( \frac{\beta}{|y_w|} \log \pi_\theta(y_w \mid x) - \frac{\beta}{|y_l|} \log \pi_\theta(y_l \mid x) - \gamma \right) \right]$$
@@ -105,6 +126,27 @@ $$\mathcal{L}_{\text{SimPO}}(\theta) = -\mathbb{E}_{(x, y_w, y_l) \sim \mathcal{
 > - SimPO 的 $\gamma$ 就像在勝負天平之間加設了一道「硬性門檻」：
 >   *「勝者的每 Token 密度不僅要贏，而且必須淨勝出一個安全裕量 $\frac{\gamma}{\beta}$！」*
 > - 只要勝者領先幅度不足 $\gamma$，Logits 就是負數，梯度就會持續強力施壓，迫使模型在難分高下的困難樣本上繼續深挖本質差異！
+
+```text
+====================================================================================================
+                    KTO PROSPECT THEORY ASYMMETRIC LOSS FUNCTION
+====================================================================================================
+   Perceived Value v(x)
+                 ▲
+       (收益區)  │          * * * * (點讚激勵: 邊際收益遞減)
+                 │      *
+                 │    *
+                 │  *
+   ──────────────┼────────────────────────► Objective Value Δr
+                 │  *
+                 │   *
+                 │     * (點踩懲罰: 損失厭惡陡峭曲線 λ_D > λ_U)
+                 │       *
+        (損失區) │         *
+                 ▼
+   核心哲學：一次嚴重安全翻車的傷害，需要十次優質回答才能彌補！點踩梯度被放大 1.33~2.0 倍！
+====================================================================================================
+```
 
 ---
 

@@ -106,6 +106,25 @@ $$M_{\text{total}} = M_{\text{base}} + M_{\text{lora}} + M_{\text{optimizer}} + 
    $$M_{\text{kv\_cache}} = 2 \times B \times G \times L \times n_{\text{layers}} \times n_{\text{kv\_heads}} \times d_{\text{head}} \times 2\text{ Bytes (FP16)}$$
    組大小 $G$ 和生成長度 $L$ 呈乘積級膨脹，是引發 OOM 的最大元兇！
 
+```text
+====================================================================================================
+               16GB GPU VRAM JIGSAW ALLOCATION & HEADROOM BOUNDARY MAP (消費級 16GB 顯存切分圖)
+====================================================================================================
+
+Total 16GB Physical VRAM (e.g. NVIDIA RTX 4090 / T4)
++--------------------------------------------------------------------------------------------------+
+|                                    16,384 MB Total Physical VRAM                                 |
++-------------------+-----------------+------------------+--------------------+--------------------+
+| 4-bit Base Model  | LoRA Trainable  | 8-bit Optimizer  | Dynamic KV-Cache   | Peak Activation    | Free Safety Headroom|
+| (Qwen2.5-3B NF4)  | Adapter Weights | States (AdamW)   | (G=4, Context 2k)  | (Grad Checkpoint)  | (OOM Prevention)    |
+|   ~ 2,350 MB      |   ~ 180 MB      |   ~ 360 MB       |   ~ 3,200 MB       |   ~ 3,500 MB       |   ~ 6,794 MB        |
+|    (14.3%)        |    (1.1%)       |    (2.2%)        |    (19.5%)         |    (21.4%)         |    (41.5%)          |
++-------------------+-----------------+------------------+--------------------+--------------------+---------------------+
+| <─────── STATIC ALLOCATION ───────> | <──────────────── DYNAMIC ROLLOUT & BACKWARD ──────────────> | <─── DANGER MARGIN ─>
+| Loaded once at startup              | Scaled by Group G=4, SeqLen L=2048 | Scaled by Batch & Layers| Absorbs Length Bursts
++--------------------------------------------------------------------------------------------------+
+```
+
 > 💡 **「水庫調洪與時域累積」心智模型 (Gradient Accumulation Flood Control)**：
 > - 為什麼單卡 16GB 能等效實現 $32$ 道題的大批次優化？
 > - 想像山洪（32 道難題組成的巨大批次）一口氣衝進狹窄的渠道（16GB GPU），堤壩瞬間崩潰（OOM）。
@@ -114,6 +133,31 @@ $$M_{\text{total}} = M_{\text{base}} + M_{\text{lora}} + M_{\text{optimizer}} + 
 >   2. 算完損失後，`loss.backward()` 計算出梯度，累加在參數的 `.grad` 緩衝區中；
 >   3. 絕不執行 `optimizer.step()`，而是立即釋放前向與反向的中間激活值；
 >   4. 如此往復 8 次，渠道裡積累了 8 道題目的綜合水流，最後一口氣開閘放水（`optimizer.step()`）！
+
+```text
+====================================================================================================
+           GRADIENT ACCUMULATION FLOOD CONTROL RESERVOIR & TIMELINE (梯度水庫調洪與時域累積時序圖)
+====================================================================================================
+
+Micro-step 1:  Prompt 1 (G=4) ──> Forward ──> Loss ──> loss.backward() ──> .grad += g1 (Act freed)
+                                                                               │
+Micro-step 2:  Prompt 2 (G=4) ──> Forward ──> Loss ──> loss.backward() ──> .grad += g2 (Act freed)
+                                                                               │
+Micro-step 3:  Prompt 3 (G=4) ──> Forward ──> Loss ──> loss.backward() ──> .grad += g3 (Act freed)
+                                     ... (repeats N = 8 times)                 │
+Micro-step 8:  Prompt 8 (G=4) ──> Forward ──> Loss ──> loss.backward() ──> .grad += g8 (Act freed)
+                                                                               │
+               +───────────────────────────────────────────────────────────────▼─────────────────+
+               | .grad Buffer Reservoir: Accumulates [g1 + g2 + ... + g8] / 8 (Effective Batch=32)|
+               +───────────────────────────────────────────────────────────────┬─────────────────+
+                                                                               │
+Optimizer Step:                                                  optimizer.step()
+                                                                               │
+Buffer Flush:                                                    optimizer.zero_grad()
+                                                                               │
+Next Macro Step: <─────────────────────────────────────────────────────────────┘
+====================================================================================================
+```
 
 ---
 

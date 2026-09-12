@@ -103,6 +103,25 @@ graph TD
     class LeftPadding ok;
 ```
 
+```text
+====================================================================================================
+                        KV-CACHE & ATTENTION POINTER ALIGNMENT MAP
+====================================================================================================
+
+❌ RIGHT-PADDING (右側填充 - 致命位置錯位與 KV-Cache 碎片化):
+  Batch 0 (短題): [ Token 1 ][ Token 2 ][ Token 3 ][  PAD   ][  PAD   ] ➔ 掛鈎在位置 2 (被 PAD 隔斷)
+  Batch 1 (長題): [ Token 1 ][ Token 2 ][ Token 3 ][ Token 4 ][ Token 5 ] ➔ 掛鈎在位置 4
+                                                                  ▲
+                                          KV-Cache 寫入指針破碎！自回歸模型無法向量化對齊生成新 Token！
+
+✅ LEFT-PADDING (左側填充 - 工業級統一右對齊與零拷貝 KV 緩存):
+  Batch 0 (短題): [  PAD   ][  PAD   ][ Token 1 ][ Token 2 ][ Token 3 ] ➔ 掛鈎在位置 4 (完美對齊)
+  Batch 1 (長題): [ Token 1 ][ Token 2 ][ Token 3 ][ Token 4 ][ Token 5 ] ➔ 掛鈎在位置 4 (完美對齊)
+                                                                  ▲
+                                      所有 Batch 最後一個 Token 嚴格齊平！新 Token 緊貼最右側極速並行生成！
+====================================================================================================
+```
+
 ---
 
 ### 2. 邊界直覺與 Goldilocks 甜蜜區
@@ -233,6 +252,17 @@ print("  Batch 1 Tokens (No padding needed)  :", input_ids[1].tolist())
 > 💡 **「只為回答算 Loss」心智模型 (Supervise Only Answers)**：
 > 在訓練自回歸模型時，Prompt 部分的 `labels` 必須被置為 `-100`。
 > 任何優化算法都絕不能浪費梯度去學習「如何生成題目本身」！
+
+```text
+====================================================================================================
+                     CAUSAL LOSS MASKING (PROMPT MASK = -100) GRADIENT MAP
+====================================================================================================
+Input Tokens : [  Q: What is 12*8?  ] [ <think> 12*8=96 </think> ] [ <answer> 96 </answer> ]
+Target Labels: [       -100         ] [   <think> 12*8=96 </think> ] [ <answer> 96 </answer> ]
+Cross-Entropy: [      IGNORED       ] [   Loss Calculated! (1.42)  ] [  Loss Calculated! (0.85) ]
+Backprop Grad: [ ∇L = 0 (不學題目)  ] [ ∇L ≠ 0 (學習思維鏈推導)    ] [ ∇L ≠ 0 (強化正確答案)   ]
+====================================================================================================
+```
 
 ```python
 def create_causal_training_labels(input_ids: torch.Tensor, prompt_lens: list[int]) -> torch.Tensor:

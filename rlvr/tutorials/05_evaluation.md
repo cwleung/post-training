@@ -93,6 +93,31 @@ $$\text{Pass@k} = 1 - \frac{\binom{n - c}{k}}{\binom{n}{k}} = 1 - \frac{\frac{(n
 - 當 $n - c < k$（錯誤總數小於抽樣數 $k$）：即使所有錯誤都被抽中，也必然至少抽中一個正確答案，$\text{Pass@k} \equiv 1.0$。
 - 當 $n \to \infty$（大樣本極限）：$\frac{n - c - j + 1}{n - j + 1} \to 1 - \frac{c}{n} = 1 - p$，退化為二項分佈公式 $\text{Pass@k} \to 1 - (1 - p)^k$。
 
+```text
+====================================================================================================
+      GREEDY PASS@1 VS COMBINATORIAL PASS@k ESTIMATION (Greedy vs 超幾何無偏抽樣對比圖)
+====================================================================================================
+
+[ 1. GREEDY PASS@1: Deterministic Argmax Trajectory ]
+Prompt x ──> Top-1 Token Selection (T=0.0) ──> Single Deterministic Answer y_greedy
+                                                        │
+                      Pass@1 = I(y_greedy == y_true) ───▼  (High variance; masks model potential)
+
+[ 2. UNBIASED PASS@k: Hypergeometric Stochastic Sampling (T=0.7, n=16 Rollouts) ]
+              ┌──> Path 1 ──> c_1 = 1 (Correct)
+              ├──> Path 2 ──> c_2 = 0 (Wrong)
+Prompt x ────┼──> Path 3 ──> c_3 = 1 (Correct)   Total correct answers: c = 6 out of n = 16
+              ├──> ...
+              └──> Path 16 ──> c_16 = 0 (Wrong)
+                        │
+                        ▼ Hypergeometric without replacement:
+           Pass@k = 1 - ∏_{j=1}^k (n - c - j + 1) / (n - j + 1)
+                        │
+         k=1: Pass@1 = 37.5%  |  k=4: Pass@4 = 85.2%  |  k=8: Pass@8 = 98.9%
+Unbiased Guarantee: Eliminates exponential sampling variance without generating C(n, k) pairs!
+====================================================================================================
+```
+
 ---
 
 ### 2. 每正確解 Token 成本 (TPCS) 經濟學公式
@@ -105,6 +130,25 @@ $$\text{TPCS} = \frac{\sum_{i=1}^M L_i}{\sum_{i=1}^M \mathbb{I}(\text{Sample } i
 RLVR 具備算力經濟優勢的充要條件為：
 $$\text{TPCS}_{\text{rl}} < \text{TPCS}_{\text{base}} \iff \frac{L_{\text{rl}}}{A_{\text{rl}}} < \frac{L_{\text{base}}}{A_{\text{base}}} \iff \frac{A_{\text{rl}}}{A_{\text{base}}} > \frac{L_{\text{rl}}}{L_{\text{base}}}$$
 即：**準確率的相對提升倍率必須大於思考長度的膨脹倍率**！
+
+```text
+====================================================================================================
+      MAJORITY@k SELF-CONSISTENCY CONSENSUS CLUSTERING (自洽性多數表決頻次直方圖)
+====================================================================================================
+
+Sampled Answers from K = 16 Reasoning Paths (Temperature = 0.7):
+Rollouts: ["42", "42", "18", "42", "42", "36", "42", "42", "42", "18", "42", "42", "42", "42", "42", "18"]
+
+[ FREQUENCY CLUSTER HISTOGRAM ]
+Answer "42" (Correct) : [████████████] 12 / 16 votes (75.0% Consensus Winner) ──> EMITTED!
+Answer "18" (Error A) : [███]           3 / 16 votes (18.75% Stray Cluster)
+Answer "36" (Error B) : [█]             1 / 16 votes ( 6.25% Stray Cluster)
+                        │
+                        ▼
+Consensus Confidence = max_v (Count(v) / K) = 12 / 16 = 75.0%
+Mathematical Invariant: High reasoning consensus directly correlates with high correctness probability!
+====================================================================================================
+```
 
 ---
 

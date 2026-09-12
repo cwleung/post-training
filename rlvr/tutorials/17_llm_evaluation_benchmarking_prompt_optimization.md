@@ -89,6 +89,28 @@ $$S_{\text{G-Eval}} = \mathbb{E}[\text{score}] = \sum_{k=1}^5 k \cdot P(\text{sc
 **連續性與梯度優勢**：
 傳統整數打分中，一個質量從 $3.1$ 提升到 $3.9$ 的模型，由於被離散化截斷，其輸出標籤可能停留在 $3$ 或隨機跳躍；而 G-Eval 得分是連續可微的平滑曲面，其方差遠低於單次採樣標量，非常適合充當微調獎勵或早停依據。
 
+```text
+====================================================================================================
+           G-EVAL LOGPROB PROBABILITY-WEIGHTED CONTINUOUS EXPECTATION (連續期望評分分佈圖)
+====================================================================================================
+
+LLM-as-a-Judge Output Logits at Score Token Position:
+Token "1": Logit = -3.2 ──> P(1) = 0.01 [░]
+Token "2": Logit = -1.5 ──> P(2) = 0.05 [█]
+Token "3": Logit = +0.8 ──> P(3) = 0.22 [█████]
+Token "4": Logit = +1.6 ──> P(4) = 0.48 [███████████]
+Token "5": Logit = +0.9 ──> P(5) = 0.24 [██████]
+                            │
+                            ▼ Weighted Sum Expectation:
+              S_G-Eval = ∑_{k=1}^5 k · P(score = k)
+                       = 1(0.01) + 2(0.05) + 3(0.22) + 4(0.48) + 5(0.24) = 3.89
+
+[ ADVANTAGE OVER DISCRETE GREEDY ARGMAX ]
+Greedy Mode (Argmax) : Outputs rigid integer "4" (masks subtle improvements from 3.5 to 3.9)
+G-Eval Expected Mode : Emits smooth, differentiable continuous score 3.89 (Low variance, High sensitivity)
+====================================================================================================
+```
+
 ---
 
 ### 2. 雙向對稱評估 (Swap Evaluation) 消除位置偏差定理
@@ -100,6 +122,28 @@ $$\mathbb{P}[W(y_1, y_2) = 1] = \sigma(\Delta Q + \delta_{\text{pos}}), \quad \D
 定義雙向對稱判決函數 $\hat{W}(y_A, y_B)$：
 $$\hat{W}(y_A, y_B) = \begin{cases} A \text{ wins}, & \text{if } W(y_A, y_B) = 1 \text{ and } W(y_B, y_A) = 2 \\ B \text{ wins}, & \text{if } W(y_A, y_B) = 2 \text{ and } W(y_B, y_A) = 1 \\ \text{Tie / Inconsistent}, & \text{otherwise} \end{cases}$$
 透過此對稱性抵消，當且僅當 $A$ 在兩次交換位置後均戰勝 $B$ 時才記為勝出，位置偏見 $\delta_{\text{pos}}$ 在期望意義下被完全消除。
+
+```text
+====================================================================================================
+           SWAP EVALUATION POSITION BIAS ELIMINATION PIPELINE (雙向交換消除位置偏見架構圖)
+====================================================================================================
+
+[ FORWARD RUN: Order (Cand A, Cand B) ]
+Input:  [ Position 1: Model A ] vs [ Position 2: Model B ]
+Judge:  Evaluates quality ──> Decides: "Position 1 (Model A) Wins" ──┐
+                                                                     │
+[ REVERSE RUN: Order (Cand B, Cand A) ]                              ▼
+Input:  [ Position 1: Model B ] vs [ Position 2: Model A ]   [ SYMMETRIC RESOLVER ]
+Judge:  Evaluates quality ──> Decides: "Position 2 (Model A) Wins" ──┤
+                                                                     │
+                                                                     ▼
+           +─────────────────────────────────────────────────────────────────+
+           | Condition Check: Did Model A win in BOTH slot orientations?      |
+           | YES: Declare Model A Genuine Winner (100% immune to pos bias!)  |
+           | NO (e.g. Pos 1 won both times): Flag as "Position Bias Flaw"!   |
+           +─────────────────────────────────────────────────────────────────+
+====================================================================================================
+```
 
 ---
 

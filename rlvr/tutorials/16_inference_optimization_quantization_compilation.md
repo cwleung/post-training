@@ -101,6 +101,39 @@ $$I_{\text{decode}} = \frac{2 \times 1 \times d^2}{2 d^2 + 2 \times 1 \times d} 
 $$P_{\text{attainable}} = I_{\text{decode}} \times B_{\text{mem}} \approx 1 \times 2,039 \text{ GFLOPS} = 2.039 \text{ TFLOPS}$$
 算力利用率（MFU）僅為 $\frac{2.039}{312} \approx 0.65\%$！這就是為什麼 **權重量化（減少分母字節數）** 是 Decode 加速的最直接利刃。
 
+```text
+====================================================================================================
+           ROOFLINE MODEL & OPERATIONAL INTENSITY BOUNDARY MAP (屋頂模型與計算強度邊界圖)
+====================================================================================================
+
+Attainable Performance P (TFLOPS)
+      ▲
+312.0 ┼───────────────────────────────────┬──────────────────────────────────────── (P_peak = 312 TFLOPS)
+      │                                   │          COMPUTE-BOUND REGION
+      │                                   │          (Prefill Phase: Batch >> 1,
+      │                                  *├───────── Matrix-Matrix Multiplication)
+      │                                 * │          Attainable P = P_peak
+      │                                *  │
+      │                               *   │
+      │                              *    │
+      │                             *     │
+      │                            *      │
+      │                           *       │
+      │                          *        │
+      │                         *         │
+      │   MEMORY-BOUND REGION  *          │
+      │   (Decode Phase: B=1, *           │
+      │    Vector-Matrix GEMV)*           │
+  2.0 ┼* (I=1, P=2.04 TFLOPS)*            │
+      │* MFU = 0.65%        *             │
+  0.0 ┼*───────────────────*──────────────┴───────────────────────────────────────►
+     0.1                  1.0            153.0 (I_turn)                         Operational
+                                                                                Intensity I (FLOPs/Byte)
+Slope = Memory Bandwidth B_mem (2,039 GB/s for NVIDIA A100 SXM4)
+Key Takeaway: Autoregressive Decode is trapped deep in the Memory Wall! Quantization cuts byte traffic.
+====================================================================================================
+```
+
 ---
 
 ### 2. AWQ 激活感知縮放的二階數學保證
@@ -123,6 +156,33 @@ $$\alpha(x) = \min\left(1, \frac{p(x)}{q(x)}\right)$$
 
 若拒絕，則從修正殘差分佈中採樣新 Token $x \sim p'(x)$：
 $$p'(x) = \frac{\max(0, p(x) - q(x))}{\sum_{x'} \max(0, p(x') - q(x'))}$$
+
+```text
+====================================================================================================
+      SPECULATIVE DECODING REJECTION SAMPLING PIPELINE (投機解碼前瞻草稿與平行驗證管線圖)
+====================================================================================================
+
+[ STEP 1: FAST DRAFT PROPOSAL ]
+Draft Model (e.g. 0.5B, Latency ~ 2ms/tok) generates K = 3 speculative tokens sequentially:
+Prompt (x_0) ──> Draft ──> x_1 ──> Draft ──> x_2 ──> Draft ──> x_3
+                        q(x_1)          q(x_2)          q(x_3)
+
+[ STEP 2: ONE-SHOT PARALLEL TARGET VERIFICATION ]
+Target Model (e.g. 70B, Latency ~ 25ms/step) evaluates entire sequence [x_0, x_1, x_2, x_3] in PARALLEL:
+Target Forward ──> Produces target distributions: p(x_1), p(x_2), p(x_3), p(x_4)
+
+[ STEP 3: REJECTION SAMPLING & RESAMPLING ]
+For k = 1:  r ~ U(0, 1) ≤ p(x_1)/q(x_1)?  ──> [ ACCEPTED ]  ──> Keep x_1
+For k = 2:  r ~ U(0, 1) ≤ p(x_2)/q(x_2)?  ──> [ ACCEPTED ]  ──> Keep x_2
+For k = 3:  r ~ U(0, 1) ≤ p(x_3)/q(x_3)?  ──> [ REJECTED ]  ──> Discard x_3!
+                                                    │
+                                                    ▼ Resample from corrected residual:
+                                            x_3' ~ max(0, p(x) - q(x)) / norm
+[ OUTCOME: SPEEDUP WITHOUT LOSS ]
+Emitted Tokens in 1 Target Step: [x_1, x_2, x_3'] (3 tokens for cost of 1 target forward pass!)
+Mathematical Guarantee: Marginal distribution P_final(x) ≡ p_target(x) strictly preserved.
+====================================================================================================
+```
 
 **數學證明無損一致性**：
 最終採樣出 $x$ 的邊際機率 $P_{\text{final}}(x)$ 為接受機率與拒絕後重採樣機率之和：

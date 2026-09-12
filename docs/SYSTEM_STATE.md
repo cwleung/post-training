@@ -4,6 +4,34 @@
 
 This log records every documentation synchronization, bootstrap scan, and file modification event across the repository to guarantee zero documentation drift.
 
+### [2026-09-13] - Post-Training Track ASCII Architectural Diagrams & Intuitive Explanations Expansion
+- **Comprehensive ASCII Visual Architecture Expansion Across All 18 Chapters (`rlvr/tutorials/`)**:
+  - Implemented high-density, monospaced ASCII architectural diagrams, memory topology maps, timeline sequences, and vector field visualizations enclosed in clean ````text` code blocks across every single chapter.
+  - Verified with `scratch/audit_ascii.py`: **100% of chapters equipped with multiple rich ASCII visual charts** (2 to 7 ASCII diagrams per chapter alongside 3 to 4 Mermaid diagrams).
+  - **Highlighted Architectural & Systems Mechanics Visualizations**:
+    - `01_data.md`: KV-Cache & Attention Pointer Alignment Map (Left vs Right Padding) & Causal Prompt Masking Gradient Map (`labels = -100`).
+    - `02_rewards.md`: Multi-Signal Verifier Extraction Pipeline & Dynamic Weight Annealing Timeline ($\lambda_{\text{fmt}} \to 0$).
+    - `03_grpo_algorithm.md`: PPO vs GRPO Memory & Topology Comparison Map (0 Critic VRAM) & Dr. GRPO Length-Bias Normalization Mechanism.
+    - `04_training.md`: 16GB GPU VRAM Jigsaw Allocation Map & Gradient Accumulation Reservoir Timeline.
+    - `05_evaluation.md`: Greedy Pass@1 vs Combinatorial Pass@k Estimation Tree & Majority@k Consensus Voting Cluster.
+    - `06_agentic_rlvr.md`: Multi-Turn ReAct Trajectory Token Stream & Observation Masking (`m_t=0`) & Step Efficiency Penalty Curve.
+    - `07_dpo_preference_optimization.md`: The Miracle of the Vanishing Partition Function $Z(x)$ & DPO 3-Force Tug-of-War Vector Field.
+    - `08_ablations_and_scaling.md`: Group Size $G$ Zero-Gradient Waste Rate Curve ($P_{\text{waste}} = p^G + (1-p)^G$) & Goldilocks Curriculum Variance Peak.
+    - `09_sft_cold_start.md`: SFT Cold-Start Goldilocks Zone Phase Transition & Structured XML Reasoning Sandbox.
+    - `10_distributed_systems_verl_vllm.md`: veRL + vLLM 3D-HybridEngine Dual-Clutch Gearbox Topology & KV-Cache PagedAttention Block Map.
+    - `11_modern_preference_simpo_remax_kto.md`: DPO vs SimPO Memory & Mathematical Topology & KTO Prospect Theory Asymmetric Loss Map.
+    - `12_process_supervision_and_test_time_compute.md`: ORM vs PRM Credit Assignment Tree & Test-Time Compute (TTC) Step-Level Beam Search & Pruning Tree.
+    - `13_data_flywheel_and_decontamination.md`: 13-Gram Inverted Index Hash Decontamination Engine & MinHash LSH S-Curve Deduplication Filter.
+    - `14_post_training_systems_and_triage_playbook.md`: 64x H100 8-Node SuperPOD Interconnect & Online Incident Triage State Machine.
+    - `15_lora_qlora_peft.md`: LoRA Low-Rank Decomposition Matrix Multiplication Map & Uniform INT4 vs NF4 Equal-Quantile Bins Map.
+    - `16_inference_optimization_quantization_compilation.md`: Roofline Model Operational Intensity Boundary Map & Speculative Decoding Rejection Sampling Pipeline.
+    - `17_llm_evaluation_benchmarking_prompt_optimization.md`: G-Eval Logprob Continuous Expectation Curve & Swap Evaluation Position Bias Elimination Pipeline.
+    - `18_alignment_safety_red_teaming.md`: Three-Layer Defense-in-Depth Security Perimeter & GCG Discrete Coordinate Gradient Optimization Map.
+- **Verification & Zero Drift**:
+  - `full_suite_audit.py` passed with 18/18 chapters (100% of cells) green.
+  - Zero mentions of "UvA" or "UvA-DLC" verified across all tutorials.
+  - `npm --prefix frontend run typecheck && npm --prefix frontend run build` completed in 7.29s with exit code 0.
+
 ### [2026-09-13] - Post-Training Track Comprehensive Review, Reindexing & Kaggle Execution Certification
 - **Automated Hands-On Kaggle Execution Audit (100% Pass Rate Across All 18 Chapters)**:
   - Audited all code blocks across all 18 chapters (`rlvr/tutorials/01_data.md` through `18_alignment_safety_red_teaming.md`) using automated cumulative cell-by-cell execution runner (`full_suite_audit.py`).

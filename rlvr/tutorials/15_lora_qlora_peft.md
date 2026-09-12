@@ -105,6 +105,42 @@ flowchart LR
     class SUM,OUT opt;
 ```
 
+```text
+====================================================================================================
+           LoRA FORWARD PASS & INFERENCE ZERO-LATENCY WEIGHT MERGE (低秩矩陣分解與無損合併圖)
+====================================================================================================
+
+[ ONLINE FORWARD PASS DURING TRAINING ]
+                         x (Input Vector: 1 × d)
+                        ├───┬───────────────────────┐
+                        │   │                       │
+                        ▼   │                       ▼
+          +─────────────────+─+           +───────────────────+
+          | Frozen Base Weight|           | LoRA Down-Proj A  |   Matrix: r × d
+          | W_0 (4-bit / BF16)|           | Init: N(0, σ²)    |   (r ≪ d, e.g. r=16)
+          | Matrix: d × k     |           +─────────┬─────────+
+          +─────────┬─────────+                     ▼ (1 × r Intermediate bottleneck)
+                    │                     +───────────────────+
+                    │                     | LoRA Up-Proj B    |   Matrix: k × r
+                    │                     | Init: All Zeros 0 |
+                    │                     +─────────┬─────────+
+                    │                               ▼
+                    │                     [ Scaling Factor: × (α / r) ]
+                    │                               │
+                    ▼                               ▼
+                 h_base (1 × k)     ⊕         Δh_lora (1 × k)
+                    └───────────────┬───────────────┘
+                                    ▼
+                         h_out (Output Feature: 1 × k)
+
+[ OFFLINE ZERO-LATENCY MERGE FOR PRODUCTION SERVING ]
+                 W_merged = W_0 + (α / r) · (B × A)   ∈ R^{d × k}
++──────────────────────────────────────────────────────────────────────────────────────────────────+
+| Result: Fully folded into base Transformer linear layers with ZERO extra branch latency!         |
++──────────────────────────────────────────────────────────────────────────────────────────────────+
+====================================================================================================
+```
+
 ### 2. 核心代數公式與推論零延遲合併
 
 $$W = W_0 + \Delta W = W_0 + \frac{\alpha}{r} (B \cdot A)$$
@@ -120,6 +156,37 @@ $$W_{\text{merged}} = W_0 + \frac{\alpha}{r} (B \cdot A)$$
 > - **NF4 (NormalFloat 4)** 是按照**高斯鐘形曲線的等面積分位數**來劃分量化槽：
 >   每個量化槽裡的權重數量嚴格相等（各佔 1/16）。
 >   這在資訊論上**最大化了量化後的資訊熵**，使得 4-bit 量化權重的重建誤差達到數學下界！
+
+```text
+====================================================================================================
+           UNIFORM INT4 VS NF4 EQUAL-QUANTILE PROBABILITY BINS (均勻量化 vs NF4 等分位數資訊熵對比)
+====================================================================================================
+
+Standard Normal Distribution N(0, 1) Weight Distribution Density:
+                          ▲  Probability Density f(w)
+                          │           ***
+                          │         ** | **
+                          │        *   |   *
+                          │       *    |    *
+                          │      *     |     *
+                          │    **      |      **
+                     *****│****        |        ****│*****
+───────────────┼──────────┴────────────┼────────────┴──────────┼───────────────> Weight w
+              -3.0                    0.0                     +3.0
+
+[ 1. UNIFORM INT4: Rigid Linear Grid (Wasteful in sparse tails, High Rounding Error at peak) ]
+Slots:  | 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10| 11| 12| 13| 14| 15|
+Density: [  <0.1%  ] [    ~2%    ] [      ~90% concentrated       ] [    ~2%    ] [  <0.1%  ]
+Problem: Bins 0..2 and 13..15 barely hold any parameters! Bins 7..8 suffer massive quantization loss.
+
+[ 2. NF4 (NORMAL FLOAT 4): Equal Quantile Bins (Information Entropy Maximized) ]
+Slots:  | q0| q1| q2| q3| q4| q5| q6| q7| q8| q9|q10|q11|q12|q13|q14|q15|
+        ├───┴───┴───┴───┼───┼───┼───┼───┼───┼───┼───┼───┼───┴───┴───┴───┤
+Area:   <── 6.25% ea ──><─ 6.25% ea ─><─ 6.25% ea ─><── 6.25% each ──>
+Density: Each of the 16 quantization bins holds EXACTLY 1/16 (6.25%) of the weight distribution!
+Benefit: Dense center has high precision steps; sparse tails have wide intervals. Zero wasted slots.
+====================================================================================================
+```
 
 ---
 

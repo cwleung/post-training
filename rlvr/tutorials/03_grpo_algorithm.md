@@ -104,6 +104,31 @@ flowchart TD
     class OPT opt;
 ```
 
+```text
+====================================================================================================
+                        PPO vs GRPO MEMORY & TOPOLOGY COMPARISON MAP
+====================================================================================================
+
+❌ TRADITIONAL PPO (經典三模型臃腫架構 - 顯存牆):
+   GPU VRAM
+   ┌──────────────────────────────────────────────────────────────────────────────┐
+   │ [ Policy Model π_θ (Weights + Grads + AdamW) ]  ➔ 4x Model Memory (e.g. 16GB) │
+   │ [ Critic / Value Model V_φ (Weights + Grads) ]  ➔ 4x Model Memory (e.g. 16GB) │
+   │ [ Reference Model π_ref (Frozen BF16)        ]  ➔ 1x Model Memory (e.g.  4GB) │
+   └──────────────────────────────────────────────────────────────────────────────┘
+   Total Required: ~36GB VRAM! 70B 模型需要 4~8 倍節點，顯卡半數都在養 Critic！
+
+✅ GRPO ARCHITECTURE (零 Critic 組內相對優勢 - 革命性省顯存):
+   GPU VRAM
+   ┌──────────────────────────────────────────────────────────────────────────────┐
+   │ [ Policy Model π_θ (Weights + Grads + AdamW) ]  ➔ 4x Model Memory (e.g. 16GB) │
+   │ [ Reference Model π_ref (Frozen BF16)        ]  ➔ 1x Model Memory (e.g.  4GB) │
+   │ [ 💥 CRITIC MODEL COMPLETELY REMOVED!        ]  ➔ 0 GB (節省 100% Critic 顯存) │
+   └──────────────────────────────────────────────────────────────────────────────┘
+   優勢計算：對同一 Prompt 採樣 G 個解答 {o_1, o_2, ..., o_G} ➔ 由自身相互打分進行 Z-Score 標準化！
+====================================================================================================
+```
+
 ### 2. 核心目標函數（一行形式化）
 
 $$\mathcal{J}_{\text{GRPO}}(\theta) = \mathbb{E}_{q \sim \mathcal{D}, \{o_i\}_{i=1}^G \sim \pi_{\theta_{\text{old}}}} \left[ \frac{1}{G} \sum_{i=1}^G \frac{1}{|o_i|} \sum_{t=1}^{|o_i|} \left( \min\left( \rho_{i,t} \hat{A}_i,\ \text{clip}(\rho_{i,t}, 1-\varepsilon, 1+\varepsilon) \hat{A}_i \right) - \beta D_{\text{KL}}(\pi_\theta \| \pi_{\text{ref}}) \right) \right]$$
@@ -117,6 +142,20 @@ $$\mathcal{J}_{\text{GRPO}}(\theta) = \mathbb{E}_{q \sim \mathcal{D}, \{o_i\}_{i
 > - 但在 Z-Score 常模體系下：均值 $\mu = 0.5 / 8 = 0.0625$，標準差 $\sigma \approx 0.176$。
 > - 這位得 0.5 分的同學的相對優勢是：$\hat{A} = (0.5 - 0.0625) / 0.176 \approx \mathbf{+2.48}$！
 > - 這就像在漆黑的荒野中點燃了一根火柴，GRPO 透過標準化將這根微弱的思維火花瞬間放大為巨大的正向梯度，引導整個模型迅速朝這個突破口進化！
+
+```text
+====================================================================================================
+                      DR. GRPO LENGTH-BIAS NORMALIZATION MECHANISM
+====================================================================================================
+Sample A (短思考 100 tokens):   [  Fast answer  ] ➔ 原生 GRPO: 梯度乘上 1/100 (單 Token 步長巨大!)
+Sample B (深思考 2000 tokens):  [ Long CoT Math ] ➔ 原生 GRPO: 梯度除以 2000 (單 Token 步長被稀釋 20 倍!)
+                                                  ▲
+                                         長度懲罰扼殺長思維鏈湧現！
+
+✅ DR. GRPO 處方：移除非對稱長度歸一化，統一在 Token 級別應用優勢 Â_i！
+   深思考與短思考享有平等的 Token 更新權重，長思維鏈頓悟 (Aha Moment) 自由湧現！
+====================================================================================================
+```
 
 ---
 

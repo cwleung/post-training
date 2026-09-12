@@ -95,6 +95,25 @@ $$m_t = \begin{cases} 1, & \text{if } z_t \in \bigcup_{h=1}^H a_h \quad (\text{A
 多輪 GRPO 截斷策略梯度目標函數為：
 $$\mathcal{L}_{\text{Agent-GRPO}}(\theta) = -\frac{1}{\sum_{t=1}^T m_t} \sum_{t=1}^T m_t \cdot \min\left( \frac{\pi_\theta(z_t \mid z_{<t})}{\pi_{\text{old}}(z_t \mid z_{<t})} \hat{A}_i, \ \text{clip}\left(\frac{\pi_\theta(z_t \mid z_{<t})}{\pi_{\text{old}}(z_t \mid z_{<t})}, 1-\epsilon, 1+\epsilon\right) \hat{A}_i \right)$$
 
+```text
+====================================================================================================
+      MULTI-TURN AGENTIC ReAct TRAJECTORY & LOSS MASKING (多輪 Agentic 軌跡與環境遮蔽圖)
+====================================================================================================
+
+Token Sequence Stream:
+[ User Task x ] ──> [ Action a_1 ] ──> [ Observation o_1 ] ──> [ Action a_2 ] ──> [ Terminal Result ]
+"Fix issue..."      <tool_call>...     "Stdout: Error 404"     <tool_call>...     "Bug resolved!"
++─────────────────+──────────────────+───────────────────────+──────────────────+───────────────────+
+| Prompt Tokens   | Agent Gen Tokens | Docker / Bash Output  | Agent Gen Tokens | Final Submission  |
+| Mask m_t = 0    | Mask m_t = 1     | Mask m_t = 0 (SHIELD) | Mask m_t = 1     | Mask m_t = 1      |
++─────────────────+──────────────────+───────────────────────+──────────────────+───────────────────+
+  (Zero gradient)   (GRPO Backprop)    (DO NOT TRAIN ON ENV!)  (GRPO Backprop)    (GRPO Backprop)
+
+CRITICAL INVARIANT: Environment Observation o_h MUST HAVE loss_mask = 0!
+If m_t = 1 on observations: Policy attempts to predict external Linux bash outputs, corrupting model!
+====================================================================================================
+```
+
 ---
 
 ### 2. 複合多輪獎勵塑形函數 (Multi-Turn Reward Formulation)
@@ -110,6 +129,34 @@ $$R(\tau) = r_{\text{outcome}} + \lambda_{\text{schema}} \cdot r_{\text{schema}}
 - 若 $\lambda_{\text{step}} = 0$：模型發現調用無害工具（如 `ls`）不會受到任何懲罰，在遇到複雜 bug 時會持續空轉直到觸發最大輪數超時截斷。
 - 若 $\lambda_{\text{step}} > \frac{r_{\text{outcome}}}{H_{\text{avg}}}$：步數懲罰過於嚴厲，模型會選擇在第 1 步直接給出猜測答案以避免扣分，完全放棄使用工具探索。
 - 工業甜蜜區：設定 $\lambda_{\text{step}} \in [0.02, 0.05]$，使得一次成功的長鏈探索（如 10 步修復成功，淨得分 $1.0 - 0.5 = 0.5$）依然顯著優於快速失敗（淨得分 $0.0 - 0.05 = -0.05$）。
+
+```text
+====================================================================================================
+           STEP EFFICIENCY PENALTY & REWARD LANDSCAPE (計程車跳表步數懲罰與淨回報邊界圖)
+====================================================================================================
+
+Net Reward R(tau)
+      ▲
+ +1.0 ┼─────────────────────────────────╮ (Success at H=1: r_out=1.0 - 0.05 = 0.95)
+      │                                  \
+      │                                   \
+      │   SWEET SPOT (lambda_step = 0.05)  \  Success Trajectory Curve: R = 1.0 - 0.05 * H
+      │   Explores tools with urgency       \
+ +0.5 ┼──────────────────────────────────────\── (Success at H=10: Net R = +0.50 >> Failure!)
+      │                                       \
+  0.0 ┼────────────────────────────────────────\───────────────────────────────────────►
+      │                                         \  (Failure Trajectory: R = 0.0 - 0.05 * H)
+ -0.5 ┼──────────────────────────────────────────\─────────────────────────────────────
+      │                                           \
+ -1.0 ┼────────────────────────────────────────────\────────────────────────────────────
+      0                    5                      10                     20 (Max Steps H)
+
+[ THREE REGIMES OF STEP PENALTY ]
+1. lambda_step = 0.00 : Lazy Infinite Looping (Runs redundant 'ls' / 'cat' until timeout OOM)
+2. lambda_step = 0.05 : Goldilocks Industrial Standard (Prefers quick fix, still willing to explore)
+3. lambda_step = 0.30 : Premature Resignation (Gives up at step 1; refuses to call diagnostic tools)
+====================================================================================================
+```
 
 ---
 

@@ -94,6 +94,31 @@ $$y_t = \frac{1}{K} \sum_{k=1}^K v^{(k)} \in [0, 1]$$
 過程獎勵模型 $R_\psi(x, S_{1:t})$ 採用二元交叉熵損失（Binary Cross-Entropy）進行訓練：
 $$\mathcal{L}_{\text{PRM}}(\psi) = -\sum_{t=1}^T \left[ y_t \log \sigma(R_\psi(x, S_{1:t})) + (1 - y_t) \log (1 - \sigma(R_\psi(x, S_{1:t}))) \right]$$
 
+```text
+====================================================================================================
+           ORM (OUTCOME) VS PRM (PROCESS) CREDIT ASSIGNMENT TOPOLOGY (結果 vs 過程監督比較圖)
+====================================================================================================
+
+[ 1. ORM (OUTCOME REWARD MODEL): Sparse Terminal Feedback ]
+Question x ──> Step 1 ──> Step 2 (FATAL ERROR!) ──> Step 3 ──> Step 4 ──> Final Answer y
+                                                                                  │
+Credit Assignment: NONE! The model cannot tell which step broke! ─────────────▼
+Feedback: Single scalar R_ORM(x, y) = 0 (punishes entire trajectory, including good steps)
+Hazard: If the final answer happens to match by lucky coincidence, R_ORM = 1 (Rewards hallucinations!)
+
+[ 2. PRM (PROCESS REWARD MODEL): Dense Step-by-Step Supervision ]
+Question x ──> Step 1 ──────────> Step 2 ───────────────> Step 3 ──────────> Step 4
+                 │                  │ (FATAL CALC ERROR)    │                  │
+                 ▼                  ▼                       ▼                  ▼
+             PRM Head           PRM Head                PRM Head           PRM Head
+             p_1 = 0.98         p_2 = 0.04              p_3 = 0.12         p_4 = 0.05
+                 │                  │                       │                  │
+                 ▼                  ▼                       ▼                  ▼
+             [ HEALTHY ]       [ PRUNED HERE! ]        [ SAVED GPU ]       [ ZERO WASTE ]
+Dense Signals: Localizes exact point of failure; terminates invalid search branches immediately!
+====================================================================================================
+```
+
 ---
 
 ### 2. 軌跡聚合數學極限與均值偽陽性證明
@@ -113,6 +138,32 @@ $$\mathcal{L}_{\text{PRM}}(\psi) = -\sum_{t=1}^T \left[ y_t \log \sigma(R_\psi(x
 - **木桶最短板聚合 (Minimum)**：
   $$\text{Score}_{\text{min}} = \min_{t \in \{1, \dots, T\}} p_t = p_{t^*} = 0.0$$
   **結論**：在嚴格邏輯任務中，算術均值存在毀滅性系統缺陷，必須採用連乘或木桶最短板。
+
+```text
+====================================================================================================
+      TEST-TIME COMPUTE (TTC) STEP-LEVEL BEAM SEARCH & PRUNING TREE (測試時算力步級剪枝樹)
+====================================================================================================
+
+                             [ ROOT: Math Problem x ]
+                                        │
+           ┌────────────────────────────┴────────────────────────────┐
+           ▼                                                         ▼
+     [ Step 1a: p=0.96 ]                                       [ Step 1b: p=0.45 ]
+           │ (Expand beam)                                           │ (Low PRM score)
+     ┌─────┴─────────────────────┐                             [ PRUNED ✂️: Drop ]
+     ▼                           ▼
+[ Step 2a: p=0.98 ]         [ Step 2b: p=0.15 ]
+     │                           │ (Hallucinated lemma)
+     │                           [ PRUNED ✂️: Drop ]
+     ▼
+[ Step 3a: p=0.95 ]
+     │
+     ▼
+[ Final Output: SymPy Certified 100% Correct ]
+
+Key Efficiency Gain: Explores 85% fewer total tokens than brute-force Best-of-N sampling!
+====================================================================================================
+```
 
 ---
 

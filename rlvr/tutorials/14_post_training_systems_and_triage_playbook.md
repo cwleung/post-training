@@ -95,12 +95,62 @@ $$\text{VRAM}_{\text{per\_gpu}} = \frac{M_{\text{weight\_sharded}}}{64} + \frac{
 5. **單卡總佔用與安全餘裕**：
    $$\text{VRAM}_{\text{used}} = 2.19 + 13.13 + 1.25 + 14.00 = 30.57\text{ GB} \implies \text{Headroom} = 80.00 - 30.57 = 49.43\text{ GB (極度健康!)}$$
 
+```text
+====================================================================================================
+      64x H100 8-NODE SUPERPOD TOPOLOGY & PARALLELISM MATRIX (64 卡叢集拓撲與並行層級圖)
+====================================================================================================
+
+      NODE 0 (8x H100 80GB)                            NODE 7 (8x H100 80GB)
++─────────────────────────────────+              +─────────────────────────────────+
+| GPU 0  GPU 1  GPU 2 ...  GPU 7  |              | GPU 56 GPU 57 GPU 58 ... GPU 63 |
++────┬─────┬──────┬──────────┬────+              +────┬─────┬──────┬──────────┬────+
+     │     │      │          │                        │     │      │          │
+  ═══╧═════╧══════╧══════════╧════════════════════════╧═════╧══════╧══════════╧═══
+           INTRA-NODE NVLINK MESH (900 GB/s All-to-All Low Latency Domain)
+           Parallelism: Tensor Parallelism (TP = 8 within node)
+  ════════════════════════════════════════════════════════════════════════════════
+     │                                                │
+     ▼ (InfiniBand NIC 0..7)                          ▼ (InfiniBand NIC 0..7)
++──────────────────────────────────────────────────────────────────────────────────+
+| INTER-NODE RAIL-ALIGNED NDR INFINIBAND NETWORK FABRIC (800 Gbps / ~100 GB/s)      |
+| Parallelism: Zero-Bubble Fully Sharded Data Parallel (DP_FSDP2 = 8 Nodes × 8 GPUs)|
++──────────────────────────────────────────────────────────────────────────────────+
+Key Rule: TP is locked within NVLink (Never crosses nodes); DP shards across InfiniBand!
+====================================================================================================
+```
+
 ---
 
 ### 2. 核心通訊拓撲與邊界禁區 (Boundary Intuition)
 
 - **TP 嚴禁跨節點**：NVLink 帶寬（900 GB/s）是 InfiniBand（100 GB/s）的 9 倍。若將張量並行（TP）設置為跨節點（如 TP=16），All-Reduce 通訊延遲將暴增 9 倍，Tensor Core 計算將有 85% 時間處於通信等待停滯狀態。
 - **PP 引入 Bubble 浪費**：在上下文 16K 下，流水線並行（PP）會產生難以消除的 Pipeline Bubble（氣泡比率 $\frac{P-1}{M + P - 1}$），且需要大量的跨階段激活值暫存顯存。因此優先選擇 **Zero-Bubble TP=8 + 跨節點 FSDP2** 架構。
+
+```text
+====================================================================================================
+      ONLINE INCIDENT TRIAGE & RESUSCITATION PIPELINE (線上訓練事故監控與自愈狀態機)
+====================================================================================================
+
+[ HEALTHY TELEMETRY STREAM: Loss in [0.8, 1.8], Grad Norm in [0.5, 2.0], Entropy in [1.2, 2.5] ]
+                                            │
+               ┌────────────────────────────┼────────────────────────────┐
+               ▼                            ▼                            ▼
+      [ ENTROPY COLLAPSE ]          [ GRADIENT EXPLOSION ]       [ MEMORY EXPLOSION / OOM ]
+      Trigger: H < 0.25             Trigger: ||g|| > 25.0        Trigger: CUDA VRAM > 98%
+      Symptom: Parrots 1 token      Symptom: Loss = NaN          Symptom: OOM Crash
+               │                            │                            │
+               ▼                            ▼                            ▼
+      [ AUTO-RESUSCITATION ]       [ AUTO-RESUSCITATION ]       [ AUTO-RESUSCITATION ]
+      1. Dynamic KL Annealing:     1. Rollback last checkpoint  1. Dynamic SeqLen throttling:
+         Boost beta × 3.0          2. Adaptive Clip: g_clip=0.3    cap max_new_tokens to 1024
+      2. Temp boost: T=1.2         3. Halve learning rate:      2. Flush PyTorch cache
+      3. Inject exploratory data      lr = lr × 0.5             3. Force FP8 KV-Cache
+               │                            │                            │
+               └────────────────────────────┼────────────────────────────┘
+                                            ▼
+                    [ TELEMETRY STABILIZED: RESUME TRAINING ]
+====================================================================================================
+```
 
 ---
 
