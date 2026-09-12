@@ -4,6 +4,28 @@
 
 This log records every documentation synchronization, bootstrap scan, and file modification event across the repository to guarantee zero documentation drift.
 
+### [2026-09-13] - Sphinx ReadTheDocs & UvA DLC Academic Typography Calibration
+- **Reading Body & Typography Calibration (`ReaderCanvas.tsx`, `index.css`)**:
+  - Calibrated `.prose` base font size from 16px/14.5px down to authentic Sphinx ReadTheDocs 14px (`line-height: 1.68`) preventing oversized typography bloat.
+  - Publication header H1 adjusted from oversized `text-4xl` (36px) to compact academic `text-xl sm:text-2xl md:text-[1.65rem]` (24-26px).
+  - Summary font calibrated to `text-[13.5px] sm:text-[14px]` with relaxed line-height.
+  - Markdown headings calibrated to clean proportions: H1 (`text-lg sm:text-xl md:text-[1.45rem]`), H2 (`text-base sm:text-lg md:text-[1.2rem]`), H3 (`text-[13.5px] sm:text-[14.5px]`), H4 (`text-[12.5px] sm:text-[13px]`).
+  - Body paragraphs (`text-[13.5px] sm:text-[14px]`, `leading-[1.68]`), lists (`text-[13px] sm:text-[13.5px]`, `leading-[1.65]`), table cells (`text-[12px] sm:text-[12.5px]`), inline code (`text-[11.5px] sm:text-[12px]`).
+  - Alert callouts (`AlertBlockquote`) styled with compact 12.5px-13px text, 10.5px label badges, and subtle borders.
+  - Footers and navigation buttons calibrated with `size="sm"` and `text-xs`.
+- **Seamless Jupyter / nbsphinx Code Cells (`CodeBlock`, `CodeInspector`)**:
+  - Eliminated visual window chrome, title bars, and OS traffic lights.
+  - Implemented authentic Jupyter `In:` (soft sky blue) and `Out:` (soft emerald) prompts with quiet subtitle metadata tags.
+  - Floating hover toolbars in top-right corner with zero static vertical height.
+  - Replaced text buttons `換行中` / `複製` with minimalist icon toggles (`WrapText`, `Copy` / `Check`).
+- **Right Rail TOC & Scrollspy**:
+  - Scrollspy-enabled sticky outline with compact `text-[11.5px]` (H2) and `text-[10.5px]` (H3) typography.
+- **Verification**:
+  - `npm --prefix frontend run typecheck` passed (exit code 0).
+  - `npm --prefix frontend run build` completed cleanly in 7.54s with zero errors.
+
+---
+
 ### [2026-09-13] - Root README English Modernization & Developer Mode Synchronization
 - **Root README English Modernization (`README.md`)**:
   - Replaced Traditional Chinese content with comprehensive English documentation.
@@ -543,7 +565,28 @@ This log records every documentation synchronization, bootstrap scan, and file m
   - Knowledge Item `interactive_ml_platform`: Synchronized `artifacts/overview.md` and `artifacts/features/interactive_inspector.md`.
 - **Verification**:
   - Typecheck and production bundle build verified.
+- **UI Bloat Elimination in Reader Canvas (`ReaderCanvas.tsx`)**:
+  - Eliminated bulky text labels (`換行中` / `不換行` and `複製` / `已複製`) from code block headers, replacing with sleek, minimalist icon controls with tooltips.
+  - Implemented specialized `isOutputBlock` detection for terminal/execution outputs:
+    - Stripped OS window traffic lights and redundant `TEXT` language badges.
+    - Extracted output bracketed headers (e.g. `[Execution Output / Batch Diagnostics]`) into a clean terminal header (`Terminal Output · Batch Diagnostics`).
+---
 
-
-
-
+### [2026-09-13] - UvA DLC ReadTheDocs-Grade Sleek Reading Body & Prism Highlighting
+- **Prism.js Syntax Highlighting & Pygments Theme (`frontend/src/app/styles/index.css`)**:
+  - Integrated `prismjs` for lightweight client-side syntax highlighting across Python, Bash, TypeScript, and JSON.
+  - Implemented Pygments-style syntax highlighting tokens matching Sphinx ReadTheDocs in both dark mode (`#0d1117` / `#0b0f19`) and light mode (`#f8fafc`): keywords (coral/red), strings (emerald/green), functions & classes (purple), comments (muted italic slate), numbers & booleans (sky blue), and built-ins (amber).
+- **Sleek Minimalist Code & Docked Output Cells (`frontend/src/widgets/reader-canvas/ReaderCanvas.tsx`)**:
+  - Eliminated bulky window title bars and static text buttons from code blocks.
+  - Added floating hover action pills in the top-right corner (`opacity-0 group-hover:opacity-100`) containing a subtle uppercase language tag, wrap toggle icon, and copy button with checkmark animation.
+  - Docked terminal execution outputs directly beneath source code blocks (`-mt-2.5 mb-6`) with a clean `#080d16` terminal header, `#05080f` dark obsidian output canvas, and emerald diagnostic text.
+- **Publication-Grade Header & Badge Strip**:
+  - Streamlined chapter header to eliminate large embedded cards above the fold.
+  - Formatted resources as a sleek, compact horizontal pill strip (Sphinx RTD style): Kaggle milestone playbook trigger (`Trophy`), interactive simulation lab trigger (`FlaskConical`), read time (`Clock`), competency tags, and completion toggle.
+- **Interactive In-Page Table of Contents (On this page)**:
+  - Added dynamic regex heading extraction (`##` and `###`) from chapter markdown content.
+  - Implemented responsive right rail (`hidden xl:block w-60 shrink-0`) with `IntersectionObserver` scrollspy tracking active section headings and enabling smooth scrolling navigation.
+- **Documentation & Verification**:
+  - Updated `frontend/src/widgets/reader-canvas/INDEX.md` and `frontend/src/app/styles/INDEX.md`.
+  - Verified `npm --prefix frontend run typecheck` passed (exit code 0).
+  - Verified `npm --prefix frontend run build` compiled clean production assets in 8.30s (exit code 0).

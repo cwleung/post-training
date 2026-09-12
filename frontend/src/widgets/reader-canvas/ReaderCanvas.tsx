@@ -1,8 +1,14 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState, useRef, useMemo } from 'react';
 import ReactMarkdown from 'react-markdown';
 import remarkMath from 'remark-math';
 import remarkGfm from 'remark-gfm';
 import rehypeKatex from 'rehype-katex';
+import Prism from 'prismjs';
+import 'prismjs/components/prism-python';
+import 'prismjs/components/prism-bash';
+import 'prismjs/components/prism-json';
+import 'prismjs/components/prism-typescript';
+import 'prismjs/components/prism-javascript';
 import {
   Clock,
   FlaskConical,
@@ -19,6 +25,8 @@ import {
   ShieldAlert,
   ExternalLink,
   WrapText,
+  Trophy,
+  List,
 } from 'lucide-react';
 import type { ChapterData } from '@/shared/types';
 import { getManifest, getAllChapters } from '@/entities/manifest';
@@ -28,7 +36,6 @@ import { MermaidRenderer } from '@/shared/lib/MermaidRenderer';
 import { Button } from '@/shared/ui/Button';
 import { Badge } from '@/shared/ui/Badge';
 import { cn } from '@/shared/lib/utils';
-import { MilestoneTutorialCard } from '@/entities/milestone';
 
 interface ReaderCanvasProps {
   onOpenLab?: (labId: string) => void;
@@ -54,37 +61,37 @@ const AlertBlockquote: React.FC<{ children?: React.ReactNode }> = ({ children })
 
     const configs: Record<string, { border: string; bg: string; text: string; label: string; icon: any }> = {
       IMPORTANT: {
-        border: 'border-violet-500/40',
-        bg: 'bg-violet-500/10',
-        text: 'text-violet-500 dark:text-violet-300',
+        border: 'border-l-violet-500 border-border/60',
+        bg: 'bg-violet-500/[0.04]',
+        text: 'text-violet-400 dark:text-violet-300',
         label: 'IMPORTANT · 核心考點與工業界陷阱',
         icon: Flame,
       },
       NOTE: {
-        border: 'border-cyan-500/40',
-        bg: 'bg-cyan-500/10',
-        text: 'text-cyan-600 dark:text-cyan-300',
+        border: 'border-l-sky-500 border-border/60',
+        bg: 'bg-sky-500/[0.04]',
+        text: 'text-sky-400 dark:text-sky-300',
         label: 'NOTE · 重要說明',
         icon: Info,
       },
       TIP: {
-        border: 'border-emerald-500/40',
-        bg: 'bg-emerald-500/10',
-        text: 'text-emerald-600 dark:text-emerald-300',
+        border: 'border-l-emerald-500 border-border/60',
+        bg: 'bg-emerald-500/[0.04]',
+        text: 'text-emerald-400 dark:text-emerald-300',
         label: 'TIP · 實戰技巧',
         icon: Sparkles,
       },
       WARNING: {
-        border: 'border-amber-500/40',
-        bg: 'bg-amber-500/10',
-        text: 'text-amber-600 dark:text-amber-300',
+        border: 'border-l-amber-500 border-border/60',
+        bg: 'bg-amber-500/[0.04]',
+        text: 'text-amber-400 dark:text-amber-300',
         label: 'WARNING · 警告注意',
         icon: AlertTriangle,
       },
       CAUTION: {
-        border: 'border-rose-500/40',
-        bg: 'bg-rose-500/10',
-        text: 'text-rose-600 dark:text-rose-300',
+        border: 'border-l-rose-500 border-border/60',
+        bg: 'bg-rose-500/[0.04]',
+        text: 'text-rose-400 dark:text-rose-300',
         label: 'CAUTION · 高危陷阱',
         icon: ShieldAlert,
       },
@@ -124,12 +131,12 @@ const AlertBlockquote: React.FC<{ children?: React.ReactNode }> = ({ children })
     const cleanedChildren = stripMarker(children);
 
     return (
-      <div className={`my-6 rounded-xl border ${config.border} ${config.bg} p-4 sm:p-5 text-foreground/90 shadow-xl backdrop-blur`}>
-        <div className={`flex items-center gap-2 font-title font-bold text-xs uppercase tracking-wider mb-3 ${config.text}`}>
-          <IconComp className="h-4 w-4" />
+      <div className={`my-3.5 rounded-r-lg rounded-l-xs border border-l-4 ${config.border} ${config.bg} p-3 sm:p-3.5 text-foreground/90 shadow-xs`}>
+        <div className={`flex items-center gap-2 font-mono font-semibold text-[10.5px] uppercase tracking-wider mb-1 ${config.text}`}>
+          <IconComp className="h-3.5 w-3.5 shrink-0" />
           <span>{config.label}</span>
         </div>
-        <div className="space-y-2 text-sm leading-relaxed">
+        <div className="space-y-1 text-[12.5px] sm:text-[13px] leading-relaxed text-foreground/85">
           {cleanedChildren}
         </div>
       </div>
@@ -138,13 +145,13 @@ const AlertBlockquote: React.FC<{ children?: React.ReactNode }> = ({ children })
 
   // Standard blockquote
   return (
-    <blockquote className="my-5 border-l-4 border-primary bg-muted/40 rounded-r-xl py-3 px-4 text-foreground/90 italic text-sm md:text-base">
+    <blockquote className="my-3.5 border-l-3 border-primary/60 bg-muted/20 rounded-r-lg py-2 px-3.5 text-foreground/85 italic text-[12.5px] sm:text-[13px] leading-relaxed font-normal">
       {children}
     </blockquote>
   );
 };
 
-// CodeBlock component with copy button and clean monospace formatting
+// CodeBlock component: UvA DLC ReadTheDocs minimal style with Prism syntax highlighting & docked terminal output
 const CodeBlock: React.FC<{ lang: string; codeString: string }> = ({ lang, codeString }) => {
   const [copied, setCopied] = useState(false);
   const [isWrapped, setIsWrapped] = useState(true);
@@ -155,50 +162,130 @@ const CodeBlock: React.FC<{ lang: string; codeString: string }> = ({ lang, codeS
     setTimeout(() => setCopied(false), 2000);
   };
 
-  return (
-    <div className="my-6 overflow-hidden rounded-xl border border-border bg-[#090d16] shadow-2xl">
-      <div className="flex items-center justify-between border-b border-border/80 bg-[#0f1422] px-4 py-2 text-xs">
-        <div className="flex items-center gap-2">
-          <span className="h-2.5 w-2.5 rounded-full bg-rose-500/80" />
-          <span className="h-2.5 w-2.5 rounded-full bg-amber-500/80" />
-          <span className="h-2.5 w-2.5 rounded-full bg-emerald-500/80" />
-          <span className="ml-2 font-mono text-[11px] font-semibold uppercase tracking-wider text-cyan-400">
-            {lang || 'snippet'}
-          </span>
-        </div>
-        <div className="flex items-center gap-2">
+  const isOutputBlock =
+    lang === 'text' ||
+    lang === 'output' ||
+    lang === 'terminal' ||
+    lang === 'console' ||
+    lang === 'log' ||
+    codeString.trim().startsWith('[Execution Output') ||
+    codeString.trim().startsWith('[Output');
+
+  // Prism syntax highlighting
+  const highlightedHtml = useMemo(() => {
+    if (isOutputBlock) return null;
+    const normalizedLang = lang ? lang.toLowerCase().trim() : 'python';
+    const grammar = Prism.languages[normalizedLang] || Prism.languages.python;
+    if (grammar) {
+      try {
+        return Prism.highlight(codeString, grammar, normalizedLang);
+      } catch (e) {
+        return null;
+      }
+    }
+    return null;
+  }, [codeString, lang, isOutputBlock]);
+
+  // Specialized Sleek Terminal / Execution Output Block (UvA DLC / Jupyter nbsphinx style)
+  if (isOutputBlock) {
+    let displayTitle = '';
+    let cleanedOutput = codeString;
+
+    const titleMatch = codeString.match(/^\s*\[(?:Execution Output|Output)(?:\s*\/\s*([^\]]+))?\]\s*\n?/i);
+    if (titleMatch) {
+      displayTitle = titleMatch[1]?.trim() ? titleMatch[1].trim() : '';
+      cleanedOutput = codeString.slice(titleMatch[0].length);
+    }
+
+    return (
+      <div className="group relative -mt-2 mb-4 overflow-hidden rounded-lg border border-border/50 bg-[#060910] shadow-xs transition-all hover:border-emerald-500/30">
+        {/* Floating Controls on Hover */}
+        <div className="absolute top-2 right-2 z-10 flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity duration-150 bg-[#0e1422]/90 backdrop-blur-md rounded-md p-0.5 border border-border/50">
           <button
             type="button"
             onClick={() => setIsWrapped(!isWrapped)}
-            className="flex items-center gap-1 rounded border border-slate-700/60 bg-slate-800/80 px-2 py-0.5 text-[11px] text-slate-300 hover:text-white transition-colors cursor-pointer"
-            title={isWrapped ? '切換為不換行 (橫向滾動)' : '切換為自動換行 (Code Wrap)'}
+            className="rounded p-1 text-slate-400 hover:text-emerald-300 hover:bg-slate-800 transition-colors cursor-pointer"
+            title={isWrapped ? '切換為不換行 (橫向滾動)' : '切換為自動換行'}
           >
-            <WrapText className="h-3 w-3" />
-            <span>{isWrapped ? '換行中' : '不換行'}</span>
+            <WrapText className="h-3.5 w-3.5" />
           </button>
           <button
             type="button"
             onClick={handleCopy}
-            className="flex items-center gap-1.5 rounded-md border border-slate-700/70 bg-slate-800/80 px-2.5 py-1 text-[11px] text-slate-300 hover:bg-slate-700 hover:text-white transition-colors cursor-pointer"
+            className="rounded p-1 text-slate-400 hover:text-emerald-300 hover:bg-slate-800 transition-colors cursor-pointer"
+            title="複製輸出"
           >
             {copied ? (
-              <>
-                <Check className="h-3 w-3 text-emerald-400" />
-                <span className="text-emerald-400">已複製</span>
-              </>
+              <Check className="h-3.5 w-3.5 text-emerald-400" />
             ) : (
-              <>
-                <Copy className="h-3 w-3" />
-                <span>複製</span>
-              </>
+              <Copy className="h-3.5 w-3.5" />
             )}
           </button>
         </div>
+
+        {/* Output Gutter & Content (Jupyter / UvA DLC Out: flow) */}
+        <div className="flex items-start gap-2.5 p-2.5 sm:p-3 font-mono leading-relaxed">
+          <div className="shrink-0 select-none text-emerald-500/70 font-mono text-[10px] pt-0.5 font-semibold">
+            Out:
+          </div>
+          <div className="flex-1 min-w-0 overflow-x-auto">
+            {displayTitle && (
+              <div className="text-[10px] font-mono text-emerald-400/80 mb-1 font-medium tracking-wide">
+                [{displayTitle}]
+              </div>
+            )}
+            <pre className={cn("m-0 p-0 font-mono text-[11px] sm:text-[11.5px] text-emerald-300/90 leading-relaxed font-normal bg-transparent border-none", isWrapped ? "whitespace-pre-wrap break-all" : "whitespace-pre")}>
+              <code>{cleanedOutput}</code>
+            </pre>
+          </div>
+        </div>
       </div>
-      <div className="overflow-x-auto p-4 bg-[#090d16]/95">
-        <pre className={cn("m-0 p-0 font-mono text-xs sm:text-[13px] text-slate-100 leading-relaxed font-normal bg-transparent border-none", isWrapped ? "whitespace-pre-wrap break-all" : "whitespace-pre")}>
-          <code>{codeString}</code>
-        </pre>
+    );
+  }
+
+  // Regular Source Code Block (Python, TS, Bash, etc. - UvA DLC / Jupyter In: flow)
+  return (
+    <div className="group relative my-3.5 overflow-hidden rounded-lg border border-border/70 bg-[#0d1117] shadow-xs transition-all hover:border-border">
+      {/* Floating Hover Controls in Top-Right Corner */}
+      <div className="absolute top-2 right-2 z-10 flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity duration-150 bg-[#161b22]/95 backdrop-blur-md rounded-md p-0.5 border border-border/60 shadow-md">
+        <span className="px-1.5 font-mono text-[9px] text-muted-foreground uppercase select-none">
+          {lang || 'python'}
+        </span>
+        <button
+          type="button"
+          onClick={() => setIsWrapped(!isWrapped)}
+          className="rounded p-1 text-slate-400 hover:text-slate-100 hover:bg-slate-700/60 transition-colors cursor-pointer"
+          title={isWrapped ? '切換為不換行 (橫向滾動)' : '切換為自動換行'}
+        >
+          <WrapText className="h-3.5 w-3.5" />
+        </button>
+        <button
+          type="button"
+          onClick={handleCopy}
+          className="rounded p-1 text-slate-400 hover:text-slate-100 hover:bg-slate-700/60 transition-colors cursor-pointer"
+          title="複製程式碼"
+        >
+          {copied ? <Check className="h-3.5 w-3.5 text-emerald-400" /> : <Copy className="h-3.5 w-3.5" />}
+        </button>
+      </div>
+
+      {/* Code Area with In: Gutter */}
+      <div className="flex items-start gap-2.5 p-3 sm:p-3.5 bg-[#0d1117]/95">
+        <div className="shrink-0 select-none text-sky-400/60 font-mono text-[10px] pt-0.5 font-semibold">
+          In:
+        </div>
+        <div className="flex-1 min-w-0 overflow-x-auto">
+          <pre className={cn("m-0 p-0 font-mono text-[11.5px] sm:text-[12px] leading-relaxed bg-transparent border-none", isWrapped ? "whitespace-pre-wrap break-all" : "whitespace-pre")}>
+            {highlightedHtml ? (
+              <code
+                className="font-mono text-slate-200"
+                dangerouslySetInnerHTML={{ __html: highlightedHtml }}
+              />
+            ) : (
+              <code className="font-mono text-slate-200">{codeString}</code>
+            )}
+          </pre>
+        </div>
       </div>
     </div>
   );
@@ -211,7 +298,6 @@ const MarkdownLink: React.FC<{
   onNavigateChapter: (chapterId: string) => void;
   allChapters: Array<{ id: string; num: string; file?: string }>;
 }> = ({ href = '', children, onNavigateChapter, allChapters }) => {
-  // Normalize localhost URLs to relative paths
   const normalizedHref = href
     .replace(/^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?\//, '');
 
@@ -220,7 +306,6 @@ const MarkdownLink: React.FC<{
   if (isMdLink) {
     const cleanHref = normalizedHref.split('#')[0].replace(/^\.\//, '').replace(/\.md$/, '');
 
-    // Match by file, id, or numeric chapter prefix (e.g., '06_agentic_rlvr' -> prefix 06)
     const matched = allChapters.find((ch) => {
       if (ch.file === cleanHref || ch.id === cleanHref) return true;
       const numMatch = cleanHref.match(/^(\d+)/);
@@ -247,7 +332,6 @@ const MarkdownLink: React.FC<{
     }
   }
 
-  // Handle in-page anchor links or chapter navigation smoothly
   if (normalizedHref.startsWith('#')) {
     const rawTarget = normalizedHref.replace(/^#/, '');
     const cleanTarget = rawTarget.replace(/^guide\//, '');
@@ -311,10 +395,54 @@ export const ReaderCanvas: React.FC<ReaderCanvasProps> = ({ onOpenLab }) => {
 
   const [chapter, setChapter] = useState<ChapterData | null>(null);
   const [loading, setLoading] = useState(true);
+  const [activeHeadingId, setActiveHeadingId] = useState<string>('');
   const articleRef = useRef<HTMLElement>(null);
 
   const manifest = getManifest(activeSite);
   const isDone = isChapterDone(currentChapterId);
+
+  // Extract In-Page Table of Contents (H2 and H3 headings)
+  const tocHeadings = useMemo(() => {
+    if (!chapter?.markdownContent) return [];
+    const lines = chapter.markdownContent.split('\n');
+    const items: Array<{ id: string; text: string; level: number }> = [];
+
+    for (const line of lines) {
+      const match = line.match(/^(#{2,3})\s+(.+)$/);
+      if (match) {
+        const level = match[1].length;
+        const rawText = match[2].trim().replace(/\*\*([^*]+)\*\*/g, '$1').replace(/`([^`]+)`/g, '$1');
+        const cleanText = rawText.replace(/\[([^\]]+)\]\([^)]+\)/g, '$1');
+        const id = cleanText.toLowerCase().replace(/[^\w\u4e00-\u9fa5\s-]/g, '').replace(/\s+/g, '-');
+        items.push({ id, text: cleanText, level });
+      }
+    }
+    return items;
+  }, [chapter?.markdownContent]);
+
+  // Scrollspy: track active heading in reading body
+  useEffect(() => {
+    if (!chapter?.markdownContent) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (entry.isIntersecting) {
+            setActiveHeadingId(entry.target.id);
+            break;
+          }
+        }
+      },
+      { rootMargin: '-60px 0px -70% 0px', threshold: 0.1 }
+    );
+
+    const headingEls = document.querySelectorAll('article h2[id], article h3[id]');
+    headingEls.forEach((el) => observer.observe(el));
+
+    return () => {
+      headingEls.forEach((el) => observer.unobserve(el));
+    };
+  }, [chapter?.markdownContent]);
 
   // Handle deep-link buttons within article content
   useEffect(() => {
@@ -384,300 +512,346 @@ export const ReaderCanvas: React.FC<ReaderCanvasProps> = ({ onOpenLab }) => {
   }
 
   return (
-    <main className="h-full w-full overflow-y-auto overflow-x-hidden bg-background p-4 md:p-8 text-foreground transition-colors duration-200">
-      <div className="mx-auto max-w-4xl space-y-6">
-        {/* 1. Breadcrumbs */}
-        <nav className="flex items-center gap-2 text-xs text-muted-foreground font-medium">
-          <span>Docs</span>
-          <span>/</span>
-          <span className="text-foreground/80">{manifest.shortName}</span>
-          <span>/</span>
-          <span className="text-primary">{currentPart.label.split('·')[0].trim()}</span>
-          <span className="ml-auto font-mono text-[11px] text-muted-foreground">
-            {chapter.readTime || '15 min'}
-          </span>
-        </nav>
+    <main className="h-full w-full overflow-y-auto overflow-x-hidden bg-background px-4 py-8 sm:px-8 md:px-10 lg:px-12 text-foreground transition-colors duration-200 selection:bg-cyan-500/20 selection:text-cyan-200">
+      <div className="mx-auto max-w-7xl xl:flex xl:gap-12 xl:justify-center">
+        {/* Main Reading Column */}
+        <div className="w-full max-w-3xl lg:max-w-4xl min-w-0 space-y-7">
+          {/* 1. Sleek Breadcrumbs (Sphinx RTD Style) */}
+          <nav className="flex items-center gap-2 text-xs text-muted-foreground/80 font-medium">
+            <span>Docs</span>
+            <span>/</span>
+            <span className="text-foreground/80">{manifest.shortName}</span>
+            <span>/</span>
+            <span className="text-primary">{currentPart.label.split('·')[0].trim()}</span>
+            <span className="ml-auto font-mono text-[11px] text-muted-foreground">
+              {chapter.readTime || '15 min'}
+            </span>
+          </nav>
 
-        {/* 2. Chapter Title & Header Meta */}
-        <div className="space-y-3 border-b border-border pb-5">
-          <div className="inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/10 px-3 py-1 text-xs font-semibold text-primary">
-            <span>{currentPart.label}</span>
-          </div>
-
-          <h1 className="font-title text-2xl md:text-3xl font-bold tracking-tight text-foreground">
-            {chapter.num} · {chapter.title}
-          </h1>
-
-          {chapter.summary && (
-            <p className="text-sm text-muted-foreground leading-relaxed">
-              {chapter.summary}
-            </p>
-          )}
-
-          {/* Milestone Kaggle Practice Tutorial Card */}
-          {currentPart.milestone && (
-            <MilestoneTutorialCard
-              part={currentPart}
-              onOpenModal={() => openMilestoneTutorial(currentPart.id)}
-            />
-          )}
-
-          {/* Competency tags */}
-          {chapter.competencies && chapter.competencies.length > 0 && (
-            <div className="flex flex-wrap items-center gap-1.5 pt-1">
-              {chapter.competencies.map((comp) => (
-                <Badge key={comp} variant="secondary" className="text-[11px]">
-                  {comp}
-                </Badge>
-              ))}
+          {/* 2. Publication Header: Title, Summary & Sleek Badge Strip */}
+          <div className="space-y-4 border-b border-border/60 pb-6">
+            <div className="inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/10 px-3 py-0.5 text-xs font-semibold text-primary">
+              <span>{currentPart.label}</span>
             </div>
-          )}
 
-          {/* Action Toolbar */}
-          <div className="flex flex-wrap items-center justify-between gap-3 pt-2 text-xs text-muted-foreground">
-            <div className="flex items-center gap-4 font-mono text-[11.5px]">
-              <span className="flex items-center gap-1">
-                <Clock className="h-3.5 w-3.5 text-primary" />
-                {chapter.readTime || '15 min'}
-              </span>
+            <h1 className="font-title text-xl sm:text-2xl md:text-[1.65rem] font-bold tracking-tight text-foreground leading-snug">
+              {chapter.num} · {chapter.title}
+            </h1>
+
+            {chapter.summary && (
+              <p className="text-[13.5px] sm:text-[14px] text-muted-foreground leading-relaxed font-normal">
+                {chapter.summary}
+              </p>
+            )}
+
+            {/* Sleek Resource & Action Strip (UvA DLC ReadTheDocs Badges Style) */}
+            <div className="flex flex-wrap items-center gap-2.5 pt-1 text-xs">
+              {/* Kaggle Milestone Playbook Pill */}
+              {currentPart.milestone && (
+                <button
+                  type="button"
+                  onClick={() => openMilestoneTutorial(currentPart.id)}
+                  className="inline-flex items-center gap-1.5 rounded-full border border-amber-500/35 bg-amber-500/10 px-3 py-1 font-semibold text-amber-300 hover:bg-amber-500/20 hover:border-amber-500/60 transition-all cursor-pointer shadow-xs"
+                  title="開啟 Kaggle 實戰里程碑步驟教程 (STAR 答辯 & 履歷亮點)"
+                >
+                  <Trophy className="h-3.5 w-3.5 text-amber-400 shrink-0" />
+                  <span>Kaggle 實戰：{currentPart.milestone.split('(')[0].trim()}</span>
+                </button>
+              )}
+
+              {/* Simulation Lab Pill */}
               {chapter.hasVisualizer && (
                 <button
                   type="button"
                   onClick={() => onOpenLab?.(chapter.hasVisualizer!)}
-                  className="flex items-center gap-1 text-purple-500 dark:text-purple-400 hover:underline font-semibold cursor-pointer underline-offset-4"
+                  className="inline-flex items-center gap-1.5 rounded-full border border-purple-500/35 bg-purple-500/10 px-3 py-1 font-semibold text-purple-300 hover:bg-purple-500/20 hover:border-purple-500/60 transition-all cursor-pointer shadow-xs"
+                  title={`開啟仿真實驗室: ${chapter.hasVisualizer}`}
                 >
-                  <FlaskConical className="h-3.5 w-3.5" />
+                  <FlaskConical className="h-3.5 w-3.5 text-purple-400 shrink-0" />
                   <span>仿真實驗室: {chapter.hasVisualizer}</span>
                 </button>
               )}
-            </div>
 
-            <Button
-              variant={isDone ? 'secondary' : 'default'}
-              size="sm"
-              onClick={() => toggleChapterDone(chapter.id)}
-              className="cursor-pointer"
-            >
-              {isDone ? (
-                <>
-                  <CheckCircle2 className="h-3.5 w-3.5 text-emerald-500" />
-                  <span>已完成學習</span>
-                </>
-              ) : (
-                <>
-                  <Circle className="h-3.5 w-3.5" />
-                  <span>標記為已完成</span>
-                </>
-              )}
-            </Button>
+              {/* Read Time Pill */}
+              <span className="inline-flex items-center gap-1 rounded-full border border-border/60 bg-muted/40 px-2.5 py-1 font-mono text-[11px] text-muted-foreground">
+                <Clock className="h-3 w-3 text-primary" />
+                <span>{chapter.readTime || '15 min'}</span>
+              </span>
+
+              {/* Competency Badges */}
+              {chapter.competencies && chapter.competencies.map((comp) => (
+                <Badge key={comp} variant="secondary" className="text-[11px] py-0.5">
+                  {comp}
+                </Badge>
+              ))}
+
+              {/* Mark Completed Button */}
+              <div className="ml-auto">
+                <Button
+                  variant={isDone ? 'secondary' : 'default'}
+                  size="sm"
+                  onClick={() => toggleChapterDone(chapter.id)}
+                  className="cursor-pointer text-xs h-7 px-3"
+                >
+                  {isDone ? (
+                    <>
+                      <CheckCircle2 className="h-3.5 w-3.5 text-emerald-500" />
+                      <span>已完成學習</span>
+                    </>
+                  ) : (
+                    <>
+                      <Circle className="h-3.5 w-3.5" />
+                      <span>標記為已完成</span>
+                    </>
+                  )}
+                </Button>
+              </div>
+            </div>
+          </div>
+
+          {/* 3. Main Chapter Body (Markdown / HTML) */}
+          <article ref={articleRef} className="prose prose-slate dark:prose-invert max-w-none prose-p:leading-[1.68] prose-p:text-[13.5px] sm:prose-p:text-[14px] prose-headings:font-title prose-headings:tracking-tight prose-headings:scroll-mt-20 prose-pre:p-0 prose-pre:my-0 prose-pre:bg-transparent prose-table:my-0">
+            {chapter.markdownContent ? (
+              <ReactMarkdown
+                remarkPlugins={[remarkMath, remarkGfm]}
+                rehypePlugins={[[rehypeKatex, { output: 'html' }]]}
+                components={{
+                  h1({ children, ...props }) {
+                    const text = extractNodeText(children).trim();
+                    if (
+                      text.toLowerCase().includes(chapter.title.toLowerCase()) ||
+                      new RegExp(`^chapter\\s*${chapter.num}\\b`, 'i').test(text)
+                    ) {
+                      return null;
+                    }
+                    return (
+                      <h1 className="font-title text-lg sm:text-xl md:text-[1.45rem] font-bold tracking-tight text-foreground mt-8 mb-4 pb-2 border-b border-border/60" {...props}>
+                        {children}
+                      </h1>
+                    );
+                  },
+                  h2({ children, ...props }) {
+                    const text = extractNodeText(children).trim();
+                    const id = text.toLowerCase().replace(/[^\w\u4e00-\u9fa5\s-]/g, '').replace(/\s+/g, '-');
+                    return (
+                      <h2 id={id} className="font-title text-base sm:text-lg md:text-[1.2rem] font-semibold text-foreground mt-8 mb-3 pb-1.5 border-b border-border/50 flex items-center justify-between group scroll-mt-20" {...props}>
+                        <span>{children}</span>
+                        <a href={`#${id}`} className="opacity-0 group-hover:opacity-100 transition-opacity text-primary/50 hover:text-primary font-mono text-sm select-none pr-1 cursor-pointer" title="Permalink to this headline">
+                          #
+                        </a>
+                      </h2>
+                    );
+                  },
+                  h3({ children, ...props }) {
+                    const text = extractNodeText(children).trim();
+                    const id = text.toLowerCase().replace(/[^\w\u4e00-\u9fa5\s-]/g, '').replace(/\s+/g, '-');
+                    return (
+                      <h3 id={id} className="font-title text-[13.5px] sm:text-[14.5px] font-semibold text-foreground/95 mt-6 mb-2 flex items-center justify-between group scroll-mt-20" {...props}>
+                        <span>{children}</span>
+                        <a href={`#${id}`} className="opacity-0 group-hover:opacity-100 transition-opacity text-primary/40 hover:text-primary font-mono text-[11px] select-none pr-1 cursor-pointer" title="Permalink to this sub-headline">
+                          ##
+                        </a>
+                      </h3>
+                    );
+                  },
+                  h4({ children, ...props }) {
+                    return (
+                      <h4 className="font-title text-[12.5px] sm:text-[13px] font-semibold text-foreground/90 mt-4.5 mb-1.5" {...props}>
+                        {children}
+                      </h4>
+                    );
+                  },
+                  p({ children, ...props }) {
+                    return (
+                      <p className="my-3.5 leading-[1.68] text-foreground/88 text-[13.5px] sm:text-[14px] font-normal tracking-normal" {...props}>
+                        {children}
+                      </p>
+                    );
+                  },
+                  ul({ children, ...props }) {
+                    return (
+                      <ul className="my-3.5 pl-5 list-disc space-y-1 text-foreground/88 text-[13px] sm:text-[13.5px] leading-[1.65] marker:text-primary/50" {...props}>
+                        {children}
+                      </ul>
+                    );
+                  },
+                  ol({ children, ...props }) {
+                    return (
+                      <ol className="my-3.5 pl-5 list-decimal space-y-1 text-foreground/88 text-[13px] sm:text-[13.5px] leading-[1.65] marker:text-primary/70 font-medium" {...props}>
+                        {children}
+                      </ol>
+                    );
+                  },
+                  li({ children, ...props }) {
+                    return (
+                      <li className="leading-[1.65] pl-0.5 font-normal text-foreground/88" {...props}>
+                        {children}
+                      </li>
+                    );
+                  },
+                  hr({ ...props }) {
+                    return <hr className="my-8 border-border/50" {...props} />;
+                  },
+                  table({ children, ...props }) {
+                    return (
+                      <div className="my-4 overflow-x-auto rounded-lg border border-border/70 bg-card/40 shadow-xs">
+                        <table className="w-full border-collapse text-left text-xs" {...props}>
+                          {children}
+                        </table>
+                      </div>
+                    );
+                  },
+                  thead({ children, ...props }) {
+                    return (
+                      <thead className="bg-muted/70 text-[11px] font-mono font-semibold uppercase tracking-wider text-muted-foreground border-b border-border/70" {...props}>
+                        {children}
+                      </thead>
+                    );
+                  },
+                  tbody({ children, ...props }) {
+                    return <tbody className="divide-y divide-border/40 text-foreground/85" {...props}>{children}</tbody>;
+                  },
+                  tr({ children, ...props }) {
+                    return (
+                      <tr className="hover:bg-muted/30 transition-colors" {...props}>
+                        {children}
+                      </tr>
+                    );
+                  },
+                  th({ children, ...props }) {
+                    return (
+                      <th className="px-3.5 py-2 font-semibold text-foreground font-mono text-[11px]" {...props}>
+                        {children}
+                      </th>
+                    );
+                  },
+                  td({ children, ...props }) {
+                    return (
+                      <td className="px-3.5 py-2 text-[12px] sm:text-[12.5px] leading-relaxed text-foreground/85 font-normal" {...props}>
+                        {children}
+                      </td>
+                    );
+                  },
+                  blockquote({ children }) {
+                    return <AlertBlockquote>{children}</AlertBlockquote>;
+                  },
+                  a({ href, children }) {
+                    return (
+                      <MarkdownLink
+                        href={href}
+                        onNavigateChapter={setCurrentChapterId}
+                        allChapters={allChapters}
+                      >
+                        {children}
+                      </MarkdownLink>
+                    );
+                  },
+                  pre({ children }) {
+                    return <>{children}</>;
+                  },
+                  code({ className, children, ...props }) {
+                    const match = /language-(\w+)/.exec(className || '');
+                    const lang = match ? match[1] : '';
+                    const codeString = String(children || '').replace(/\n$/, '');
+
+                    if (lang === 'mermaid') {
+                      return <MermaidRenderer chart={codeString} />;
+                    }
+
+                    // Inline code
+                    if (!className && !codeString.includes('\n')) {
+                      return (
+                        <code
+                          className="rounded bg-muted/80 border border-border/50 px-1.5 py-0.5 text-cyan-400 dark:text-cyan-300 font-mono text-[11.5px] sm:text-[12px] font-normal"
+                          {...props}
+                        >
+                          {children}
+                        </code>
+                      );
+                    }
+
+                    // Block code
+                    return (
+                      <CodeBlock lang={lang} codeString={codeString} />
+                    );
+                  },
+                }}
+              >
+                {chapter.markdownContent}
+              </ReactMarkdown>
+            ) : chapter.html ? (
+              <div
+                className="space-y-4"
+                dangerouslySetInnerHTML={{ __html: chapter.html }}
+              />
+            ) : (
+              <p className="text-muted-foreground">本章節正在載入詳細論述...</p>
+            )}
+          </article>
+
+          {/* 4. Footer Navigation Buttons */}
+          <div className="flex items-center justify-between border-t border-border pt-6">
+            {prevChapter ? (
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setCurrentChapterId(prevChapter.id)}
+                className="flex items-center gap-2 text-xs cursor-pointer"
+              >
+                <ArrowLeft className="h-3.5 w-3.5" />
+                <span>上一章：{prevChapter.num} {prevChapter.title.split('(')[0].trim()}</span>
+              </Button>
+            ) : (
+              <div />
+            )}
+
+            {nextChapter ? (
+              <Button
+                variant="default"
+                size="sm"
+                onClick={() => setCurrentChapterId(nextChapter.id)}
+                className="flex items-center gap-2 text-xs cursor-pointer"
+              >
+                <span>下一章：{nextChapter.num} {nextChapter.title.split('(')[0].trim()}</span>
+                <ArrowRight className="h-3.5 w-3.5" />
+              </Button>
+            ) : (
+              <div />
+            )}
           </div>
         </div>
 
-        {/* 3. Main Chapter Body (Markdown / HTML) */}
-        <article ref={articleRef} className="prose max-w-none">
-          {chapter.markdownContent ? (
-            <ReactMarkdown
-              remarkPlugins={[remarkMath, remarkGfm]}
-              rehypePlugins={[[rehypeKatex, { output: 'html' }]]}
-              components={{
-                h1({ children, ...props }) {
-                  const text = extractNodeText(children).trim();
-                  // Suppress redundant top-level h1 if it duplicates the chapter header card
-                  if (
-                    text.toLowerCase().includes(chapter.title.toLowerCase()) ||
-                    new RegExp(`^chapter\\s*${chapter.num}\\b`, 'i').test(text)
-                  ) {
-                    return null;
-                  }
-                  return (
-                    <h1 className="font-title text-2xl md:text-3xl font-bold tracking-tight text-foreground mt-8 mb-4" {...props}>
-                      {children}
-                    </h1>
-                  );
-                },
-                h2({ children, ...props }) {
-                  const text = extractNodeText(children).trim();
-                  const id = text.toLowerCase().replace(/[^\w\u4e00-\u9fa5\s-]/g, '').replace(/\s+/g, '-');
-                  return (
-                    <h2 id={id} className="font-title text-xl md:text-2xl font-bold text-foreground mt-10 mb-4 pb-2 border-b border-border flex items-center gap-2 group" {...props}>
-                      <span className="text-primary opacity-60 group-hover:opacity-100">#</span>
-                      <span>{children}</span>
-                    </h2>
-                  );
-                },
-                h3({ children, ...props }) {
-                  const text = extractNodeText(children).trim();
-                  const id = text.toLowerCase().replace(/[^\w\u4e00-\u9fa5\s-]/g, '').replace(/\s+/g, '-');
-                  return (
-                    <h3 id={id} className="font-title text-lg md:text-xl font-semibold text-primary mt-7 mb-3" {...props}>
-                      {children}
-                    </h3>
-                  );
-                },
-                h4({ children, ...props }) {
-                  return (
-                    <h4 className="font-title text-base font-semibold text-foreground mt-5 mb-2" {...props}>
-                      {children}
-                    </h4>
-                  );
-                },
-                p({ children, ...props }) {
-                  return (
-                    <p className="my-3.5 leading-relaxed text-foreground/90 text-[15px]" {...props}>
-                      {children}
-                    </p>
-                  );
-                },
-                ul({ children, ...props }) {
-                  return (
-                    <ul className="my-4 pl-6 list-disc space-y-2 text-foreground/90 marker:text-primary" {...props}>
-                      {children}
-                    </ul>
-                  );
-                },
-                ol({ children, ...props }) {
-                  return (
-                    <ol className="my-4 pl-6 list-decimal space-y-2 text-foreground/90 marker:text-primary font-medium" {...props}>
-                      {children}
-                    </ol>
-                  );
-                },
-                li({ children, ...props }) {
-                  return (
-                    <li className="leading-relaxed text-foreground/90 pl-1" {...props}>
-                      {children}
-                    </li>
-                  );
-                },
-                hr({ ...props }) {
-                  return <hr className="my-8 border-border" {...props} />;
-                },
-                table({ children, ...props }) {
-                  return (
-                    <div className="my-6 overflow-x-auto rounded-xl border border-border bg-card shadow-xl">
-                      <table className="w-full border-collapse text-left text-sm" {...props}>
-                        {children}
-                      </table>
-                    </div>
-                  );
-                },
-                thead({ children, ...props }) {
-                  return (
-                    <thead className="bg-muted/80 text-xs uppercase tracking-wider text-foreground font-semibold border-b border-border" {...props}>
-                      {children}
-                    </thead>
-                  );
-                },
-                tbody({ children, ...props }) {
-                  return <tbody className="divide-y divide-border" {...props}>{children}</tbody>;
-                },
-                tr({ children, ...props }) {
-                  return (
-                    <tr className="hover:bg-muted/30 transition-colors group" {...props}>
-                      {children}
-                    </tr>
-                  );
-                },
-                th({ children, ...props }) {
-                  return (
-                    <th className="px-4 py-3 font-semibold text-foreground font-mono text-xs" {...props}>
-                      {children}
-                    </th>
-                  );
-                },
-                td({ children, ...props }) {
-                  return (
-                    <td className="px-4 py-3 text-foreground/90 text-[13.5px] leading-relaxed" {...props}>
-                      {children}
-                    </td>
-                  );
-                },
-                blockquote({ children }) {
-                  return <AlertBlockquote>{children}</AlertBlockquote>;
-                },
-                a({ href, children }) {
-                  return (
-                    <MarkdownLink
-                      href={href}
-                      onNavigateChapter={setCurrentChapterId}
-                      allChapters={allChapters}
-                    >
-                      {children}
-                    </MarkdownLink>
-                  );
-                },
-                pre({ children }) {
-                  return <>{children}</>;
-                },
-                code({ className, children, ...props }) {
-                  const match = /language-(\w+)/.exec(className || '');
-                  const lang = match ? match[1] : '';
-                  const codeString = String(children || '').replace(/\n$/, '');
-
-                  if (lang === 'mermaid') {
-                    return <MermaidRenderer chart={codeString} />;
-                  }
-
-                  // Inline code (no className and single-line)
-                  if (!className && !codeString.includes('\n')) {
-                    return (
-                      <code
-                        className="rounded-md bg-muted border border-border px-1.5 py-0.5 text-primary font-mono text-[12.5px] font-normal"
-                        {...props}
-                      >
-                        {children}
-                      </code>
-                    );
-                  }
-
-                  // Block code
-                  return (
-                    <CodeBlock lang={lang} codeString={codeString} />
-                  );
-                },
-              }}
-            >
-              {chapter.markdownContent}
-            </ReactMarkdown>
-          ) : chapter.html ? (
-            <div
-              className="space-y-4"
-              dangerouslySetInnerHTML={{ __html: chapter.html }}
-            />
-          ) : (
-            <p className="text-muted-foreground">本章節正在載入詳細論述...</p>
-          )}
-        </article>
-
-
-        {/* 5. Footer Navigation Buttons */}
-        <div className="flex items-center justify-between border-t border-border pt-6">
-          {prevChapter ? (
-            <Button
-              variant="outline"
-              onClick={() => setCurrentChapterId(prevChapter.id)}
-              className="flex items-center gap-2"
-            >
-              <ArrowLeft className="h-4 w-4" />
-              <span>上一章：{prevChapter.num} {prevChapter.title.split('(')[0].trim()}</span>
-            </Button>
-          ) : (
-            <div />
-          )}
-
-          {nextChapter ? (
-            <Button
-              variant="default"
-              onClick={() => setCurrentChapterId(nextChapter.id)}
-              className="flex items-center gap-2"
-            >
-              <span>下一章：{nextChapter.num} {nextChapter.title.split('(')[0].trim()}</span>
-              <ArrowRight className="h-4 w-4" />
-            </Button>
-          ) : (
-            <div />
-          )}
-        </div>
+        {/* Right Sticky Rail: On this page (TOC) - UvA DLC / ReadTheDocs In-Page Outline */}
+        {tocHeadings.length > 0 && (
+          <aside className="hidden xl:block w-60 shrink-0">
+            <div className="sticky top-8 max-h-[calc(100vh-5rem)] overflow-y-auto pl-4 border-l border-border/50 text-xs space-y-3.5 scrollbar-thin">
+              <div className="flex items-center gap-1.5 font-mono text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
+                <List className="h-3.5 w-3.5 text-primary" />
+                <span>On this page · 本頁導航</span>
+              </div>
+              <nav className="space-y-1">
+                {tocHeadings.map((heading) => (
+                  <a
+                    key={heading.id}
+                    href={`#${heading.id}`}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      const el = document.getElementById(heading.id);
+                      if (el) el.scrollIntoView({ behavior: 'smooth' });
+                    }}
+                    className={cn(
+                      "block py-0.5 transition-colors leading-snug cursor-pointer",
+                      heading.level === 3 ? "pl-3 text-[10.5px] text-muted-foreground hover:text-foreground" : "text-[11.5px] font-medium text-foreground/80 hover:text-primary",
+                      activeHeadingId === heading.id && "text-primary font-semibold border-l-2 border-primary -ml-[17px] pl-[15px]"
+                    )}
+                  >
+                    {heading.text}
+                  </a>
+                ))}
+              </nav>
+            </div>
+          </aside>
+        )}
       </div>
     </main>
   );

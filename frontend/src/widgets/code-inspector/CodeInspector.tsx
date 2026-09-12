@@ -57,46 +57,38 @@ export const CodeInspector: React.FC<CodeInspectorProps> = ({ file, lines, activ
           </span>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1.5">
           {/* Wrap / No-wrap Toggle */}
           <button
             type="button"
             onClick={() => setIsWrapped(!isWrapped)}
             className={cn(
-              'inline-flex items-center gap-1.5 rounded-md border px-2 py-1 text-xs transition-colors cursor-pointer',
-              isWrapped
-                ? 'border-cyan-500/40 bg-cyan-950/30 text-cyan-300'
-                : 'border-slate-800 bg-slate-900 text-slate-400 hover:text-slate-200'
+              'rounded p-1 text-slate-400 hover:text-slate-100 hover:bg-slate-800 transition-colors cursor-pointer',
+              isWrapped && 'text-cyan-400 bg-cyan-950/40'
             )}
-            title={isWrapped ? '切換為不換行 (橫向滾動)' : '切換為自動換行 (Code Wrap)'}
+            title={isWrapped ? '切換為不換行 (橫向滾動)' : '切換為自動換行'}
           >
             <WrapText className="h-3.5 w-3.5" />
-            <span className="font-sans text-[11px]">{isWrapped ? '換行中' : '不換行'}</span>
           </button>
 
           {/* Copy Button */}
           <button
             type="button"
             onClick={handleCopy}
-            className="inline-flex items-center gap-1.5 rounded-md border border-slate-700/60 bg-slate-800/80 px-2.5 py-1 text-xs text-slate-300 hover:bg-slate-700 hover:text-white transition-colors cursor-pointer"
+            className="rounded p-1 text-slate-400 hover:text-slate-100 hover:bg-slate-800 transition-colors cursor-pointer"
+            title="複製程式碼"
           >
             {copied ? (
-              <>
-                <Check className="h-3.5 w-3.5 text-emerald-400" />
-                <span className="text-emerald-400 font-sans text-[11px]">已複製</span>
-              </>
+              <Check className="h-3.5 w-3.5 text-emerald-400" />
             ) : (
-              <>
-                <Copy className="h-3.5 w-3.5" />
-                <span className="font-sans text-[11px]">複製原始碼</span>
-              </>
+              <Copy className="h-3.5 w-3.5" />
             )}
           </button>
         </div>
       </div>
 
       {/* ReadTheDocs Simple Code Wrap Body */}
-      <div className="overflow-x-auto max-h-[600px] overflow-y-auto bg-slate-950/60 py-3 text-xs sm:text-[13px] font-mono leading-relaxed">
+      <div className="overflow-x-auto max-h-[600px] overflow-y-auto bg-slate-950/60 py-3 text-[12px] sm:text-[12.5px] font-mono leading-relaxed">
         <pre className="m-0 p-0 font-mono">
           <code>
             {lines.map((item) => {
