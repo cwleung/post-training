@@ -2311,8 +2311,21 @@ export function getMilestoneTutorial(part: {
   jobTarget?: string;
   description?: string;
 }): MilestoneTutorial {
-  if (MILESTONE_TUTORIALS[part.id]) {
-    return MILESTONE_TUTORIALS[part.id];
+  // Alias mapping for Post-Training Track pillars to bespoke Kaggle tutorials
+  const aliasMap: Record<string, string> = {
+    rlvr_pillar1: 'rlvr_stage3', // GRPO + DPO/SimPO Preference Optimization
+    rlvr_pillar2: 'rlvr_stage2', // veRL + vLLM Distributed Systems & LoRA
+    rlvr_pillar3: 'rlvr_stage1', // GSM8K + Deterministic Verifier & PRM Data Flywheel
+    rlvr_pillar4: 'rlvr_stage4', // DPO / SimPO / 64x H100 Triage Playbook
+  };
+
+  const resolvedId = aliasMap[part.id] || part.id;
+  if (MILESTONE_TUTORIALS[resolvedId]) {
+    const base = MILESTONE_TUTORIALS[resolvedId];
+    return {
+      ...base,
+      partId: part.id,
+    };
   }
 
   const cleanLabel = part.label.split('·').pop()?.trim() || part.label;

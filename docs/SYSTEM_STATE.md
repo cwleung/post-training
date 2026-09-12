@@ -4,6 +4,22 @@
 
 This log records every documentation synchronization, bootstrap scan, and file modification event across the repository to guarantee zero documentation drift.
 
+### [2026-09-13] - Kaggle Milestone Practice Guide End-to-End Visibility & Copyability Upgrade
+- **Continuous End-to-End Visibility by Default (`MilestoneTutorialModal.tsx`)**:
+  - Refactored `MilestoneTutorialModal.tsx` tab 1 (`pipeline`) from isolated single-step pagination to a continuous end-to-end view rendering all 4 steps sequentially (Step 1 -> Step 2 -> Step 3 -> Step 4) without requiring users to click through hidden tabs.
+  - Added an integrated **⚡ 端到端一體化完整可執行腳本 (Full End-to-End Pipeline Script)** card immediately following Step 4, displaying the complete concatenated, self-contained Python script directly in the modal.
+  - Added a View Mode Switcher toolbar allowing toggling between `端到端連續全景` (default), `單步聚焦` (single-step focus), and `完整腳本` (unified Python script only).
+  - Added quick-jump anchor pills (`步驟 1`, `步驟 2`, `步驟 3`, `步驟 4`, `⚡ 完整腳本`) with smooth intra-modal scrolling.
+- **Granular Copyability Everywhere**:
+  - Implemented per-step copy buttons (`[📋 複製步驟 X 代碼]` / `[✓ 已複製步驟 X]`) on each step header and inside each step code block header, with isolated `copiedStepIdx` state and animated checkmark feedback.
+  - Implemented one-click master copy buttons on the unified end-to-end script card and modal header (`[📋 一鍵複製端到端完整腳本]` / `[✓ 已複製 4 步驟腳本]`).
+- **Data Layer Alias Mapping (`milestoneTutorials.ts`)**:
+  - Added explicit alias mapping for Post-Training Track pillars (`rlvr_pillar1` -> `rlvr_stage3`, `rlvr_pillar2` -> `rlvr_stage2`, `rlvr_pillar3` -> `rlvr_stage1`, `rlvr_pillar4` -> `rlvr_stage4`) ensuring rich, bespoke Kaggle tutorials resolve seamlessly across all tracks.
+- **Verification & Zero Drift**:
+  - `npm --prefix frontend run typecheck` passed cleanly (exit code 0).
+  - `npm --prefix frontend run build` built successfully in 7.51s, outputting fresh assets into `web/dist`.
+  - Updated `frontend/src/entities/milestone/INDEX.md`.
+
 ### [2026-09-13] - Post-Training Track Complete 18-Chapter Flagship & Progressive Notebook Lab Upgrade
 - **Universal Rollout of the 7-Pillar Pedagogical Standard Across All 18 Chapters (`rlvr/tutorials/`)**:
   - **Full Scope Upgrades (18/18 Chapters Completed)**:

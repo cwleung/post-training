@@ -17,6 +17,8 @@ import {
   Award,
   ShieldCheck,
   CheckCircle2,
+  Layers,
+  ListOrdered,
 } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/shared/ui/Dialog';
 import { Badge } from '@/shared/ui/Badge';
@@ -32,6 +34,7 @@ interface MilestoneTutorialModalProps {
 }
 
 type TabKey = 'pipeline' | 'star' | 'interview' | 'resume';
+type ViewMode = 'all' | 'single' | 'script';
 
 export const MilestoneTutorialModal: React.FC<MilestoneTutorialModalProps> = ({
   part,
@@ -40,8 +43,9 @@ export const MilestoneTutorialModal: React.FC<MilestoneTutorialModalProps> = ({
 }) => {
   const { isUnlocked } = usePrivacyStore();
   const [activeTab, setActiveTab] = useState<TabKey>('pipeline');
+  const [viewMode, setViewMode] = useState<ViewMode>('all');
   const [activeStep, setActiveStep] = useState<number>(0);
-  const [copiedCode, setCopiedCode] = useState<boolean>(false);
+  const [copiedStepIdx, setCopiedStepIdx] = useState<number | null>(null);
   const [copiedAllCode, setCopiedAllCode] = useState<boolean>(false);
   const [copiedBulletIdx, setCopiedBulletIdx] = useState<number | null>(null);
   const [copiedStar, setCopiedStar] = useState<boolean>(false);
@@ -57,15 +61,8 @@ export const MilestoneTutorialModal: React.FC<MilestoneTutorialModalProps> = ({
   const tutorial: MilestoneTutorial = getMilestoneTutorial(part);
   const currentStep = tutorial.steps[activeStep] || tutorial.steps[0];
 
-  const handleCopyCode = (code?: string) => {
-    if (!code) return;
-    navigator.clipboard.writeText(code);
-    setCopiedCode(true);
-    setTimeout(() => setCopiedCode(false), 2000);
-  };
-
-  const handleCopyAllPipelineCode = () => {
-    const fullScript = [
+  const getFullPipelineScript = () => {
+    return [
       `# ==============================================================================`,
       `# ${tutorial.title}`,
       `# Kaggle Notebook Showcase: ${tutorial.kaggleNotebook}`,
@@ -84,10 +81,28 @@ export const MilestoneTutorialModal: React.FC<MilestoneTutorialModalProps> = ({
       `# Milestone achieved: ${part.milestone || tutorial.title}`,
       `# ==============================================================================`
     ].join('\n');
+  };
 
+  const handleCopyCode = (code?: string, idx?: number) => {
+    if (!code) return;
+    navigator.clipboard.writeText(code);
+    const stepIdx = idx !== undefined ? idx : activeStep;
+    setCopiedStepIdx(stepIdx);
+    setTimeout(() => setCopiedStepIdx(null), 2000);
+  };
+
+  const handleCopyAllPipelineCode = () => {
+    const fullScript = getFullPipelineScript();
     navigator.clipboard.writeText(fullScript);
     setCopiedAllCode(true);
     setTimeout(() => setCopiedAllCode(false), 2200);
+  };
+
+  const scrollToAnchor = (id: string) => {
+    const el = document.getElementById(id);
+    if (el) {
+      el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
   };
 
   const handleCopyBullet = (bullet: string, idx: number) => {
@@ -181,7 +196,7 @@ export const MilestoneTutorialModal: React.FC<MilestoneTutorialModalProps> = ({
                 ) : (
                   <>
                     <Copy className="h-3.5 w-3.5" />
-                    <span>一鍵複製全部代碼</span>
+                    <span>一鍵複製端到端腳本</span>
                   </>
                 )}
               </button>
@@ -227,7 +242,7 @@ export const MilestoneTutorialModal: React.FC<MilestoneTutorialModalProps> = ({
             )}
           >
             <Terminal className="h-3.5 w-3.5" />
-            <span>4 步驟實戰代碼</span>
+            <span>4 步驟實戰代碼 (端到端全景)</span>
             <Badge variant="outline" className="ml-1 text-[9px] px-1 py-0 border-current">
               4 Steps
             </Badge>
@@ -283,146 +298,550 @@ export const MilestoneTutorialModal: React.FC<MilestoneTutorialModalProps> = ({
           )}
         </div>
 
-        {/* Tab 1: 4-Step Pipeline Code */}
+        {/* Tab 1: 4-Step Pipeline Code (End-to-End Visible & Copyable) */}
         {activeTab === 'pipeline' && (
           <div className="space-y-4 pt-3">
-            {/* Step Selection Pills */}
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
-              {tutorial.steps.map((step, idx) => (
+            {/* View Mode Switcher & Quick Navigation Bar */}
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 p-2.5 rounded-xl border border-border bg-card/70 backdrop-blur-xs">
+              {/* View Mode Switcher */}
+              <div className="flex items-center gap-1 bg-muted/60 p-1 rounded-lg shrink-0">
                 <button
-                  key={step.stepNumber}
                   type="button"
-                  onClick={() => setActiveStep(idx)}
+                  onClick={() => setViewMode('all')}
                   className={cn(
-                    'flex items-center gap-2 p-2.5 rounded-xl border text-left transition-all cursor-pointer',
-                    activeStep === idx
-                      ? 'border-amber-500/60 bg-amber-500/12 text-amber-500 dark:text-amber-300 shadow-sm'
-                      : 'border-border bg-muted/60 text-muted-foreground hover:text-foreground hover:bg-muted'
+                    'flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-semibold transition-all cursor-pointer',
+                    viewMode === 'all'
+                      ? 'bg-amber-500 text-slate-950 shadow-xs font-bold'
+                      : 'text-muted-foreground hover:text-foreground hover:bg-muted'
                   )}
+                  title="連續展示全部 4 步驟實戰代碼與完整端到端腳本"
                 >
-                  <div
-                    className={cn(
-                      'flex h-6 w-6 shrink-0 items-center justify-center rounded-lg font-mono text-xs font-bold',
-                      activeStep === idx
-                        ? 'bg-amber-500 text-slate-950'
-                        : 'bg-muted text-muted-foreground'
-                    )}
-                  >
-                    {step.stepNumber}
-                  </div>
-                  <div className="truncate">
-                    <span className="block text-[11px] font-semibold truncate leading-tight">
-                      {step.badge}
-                    </span>
-                    <span className="block text-[9.5px] opacity-70 truncate">
-                      步驟 {step.stepNumber}
-                    </span>
-                  </div>
+                  <Layers className="h-3.5 w-3.5" />
+                  <span>端到端連續全景</span>
                 </button>
-              ))}
+                <button
+                  type="button"
+                  onClick={() => setViewMode('single')}
+                  className={cn(
+                    'flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-semibold transition-all cursor-pointer',
+                    viewMode === 'single'
+                      ? 'bg-amber-500 text-slate-950 shadow-xs font-bold'
+                      : 'text-muted-foreground hover:text-foreground hover:bg-muted'
+                  )}
+                  title="以單一步驟分頁聚焦"
+                >
+                  <ListOrdered className="h-3.5 w-3.5" />
+                  <span>單步聚焦</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setViewMode('script')}
+                  className={cn(
+                    'flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-semibold transition-all cursor-pointer',
+                    viewMode === 'script'
+                      ? 'bg-amber-500 text-slate-950 shadow-xs font-bold'
+                      : 'text-muted-foreground hover:text-foreground hover:bg-muted'
+                  )}
+                  title="僅展示完整 Python 腳本"
+                >
+                  <FileCode className="h-3.5 w-3.5" />
+                  <span>完整腳本</span>
+                </button>
+              </div>
+
+              {/* Quick Jump Anchors (Shown in 'all' view mode) */}
+              {viewMode === 'all' && (
+                <div className="flex items-center gap-1.5 overflow-x-auto scrollbar-none text-xs">
+                  <span className="text-[11px] text-muted-foreground shrink-0 font-mono hidden sm:inline">
+                    快速導航：
+                  </span>
+                  {tutorial.steps.map((s) => (
+                    <button
+                      key={s.stepNumber}
+                      type="button"
+                      onClick={() => scrollToAnchor(`step-anchor-${s.stepNumber}`)}
+                      className="px-2 py-0.5 rounded-md border border-border/70 bg-muted/40 hover:bg-muted text-[11px] text-muted-foreground hover:text-foreground font-mono transition-colors shrink-0 cursor-pointer"
+                    >
+                      步驟 {s.stepNumber}
+                    </button>
+                  ))}
+                  <button
+                    type="button"
+                    onClick={() => scrollToAnchor('full-pipeline-anchor')}
+                    className="px-2 py-0.5 rounded-md border border-amber-500/40 bg-amber-500/10 hover:bg-amber-500/20 text-[11px] text-amber-500 dark:text-amber-300 font-semibold transition-colors shrink-0 cursor-pointer flex items-center gap-1"
+                  >
+                    <Terminal className="h-3 w-3" />
+                    <span>完整腳本</span>
+                  </button>
+                </div>
+              )}
             </div>
 
-            {/* Active Step Content */}
-            <div className="rounded-xl border border-border bg-card/60 p-4 space-y-3.5">
-              <div className="flex items-center justify-between">
-                <h4 className="text-sm font-bold text-foreground flex items-center gap-2">
-                  <span className="flex h-5 w-5 items-center justify-center rounded-full bg-amber-500/20 text-amber-500 dark:text-amber-400 font-mono text-xs font-bold">
-                    {currentStep.stepNumber}
-                  </span>
-                  {currentStep.title}
-                </h4>
-                <Badge variant="outline" className="text-[10px] font-mono">
-                  {currentStep.badge}
-                </Badge>
-              </div>
+            {/* MODE 1: ALL STEPS CONTINUOUS (DEFAULT - All steps visible and copyable) */}
+            {viewMode === 'all' && (
+              <div className="space-y-6">
+                {tutorial.steps.map((step, idx) => (
+                  <div
+                    key={step.stepNumber}
+                    id={`step-anchor-${step.stepNumber}`}
+                    className="scroll-mt-4 rounded-xl border border-border bg-card/60 p-4 space-y-3.5 relative transition-all shadow-xs"
+                  >
+                    {/* Step Header */}
+                    <div className="flex flex-wrap items-center justify-between gap-2 border-b border-border/60 pb-2.5">
+                      <div className="flex items-center gap-2">
+                        <span className="flex h-6 w-6 items-center justify-center rounded-lg bg-amber-500 text-slate-950 font-mono text-xs font-bold shadow-xs">
+                          {step.stepNumber}
+                        </span>
+                        <div>
+                          <h4 className="text-sm font-bold text-foreground flex items-center gap-2">
+                            <span>步驟 {step.stepNumber} · {step.title}</span>
+                          </h4>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <Badge variant="outline" className="text-[10px] font-mono">
+                          {step.badge}
+                        </Badge>
+                        <button
+                          type="button"
+                          onClick={() => handleCopyCode(step.codeSnippet, idx)}
+                          className="flex items-center gap-1.5 text-xs text-amber-500 dark:text-amber-300 hover:text-amber-400 bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/30 px-2.5 py-1 rounded-lg transition-all cursor-pointer font-medium"
+                          title={`複製步驟 ${step.stepNumber} 代碼`}
+                        >
+                          {copiedStepIdx === idx ? (
+                            <>
+                              <Check className="h-3.5 w-3.5 text-emerald-400" />
+                              <span className="text-emerald-400 font-semibold">已複製步驟 {step.stepNumber}</span>
+                            </>
+                          ) : (
+                            <>
+                              <Copy className="h-3.5 w-3.5" />
+                              <span>複製步驟 {step.stepNumber} 代碼</span>
+                            </>
+                          )}
+                        </button>
+                      </div>
+                    </div>
 
-              {/* Objective Banner */}
-              <div className="rounded-lg border border-amber-500/25 bg-amber-500/10 px-3 py-2 text-xs text-amber-600 dark:text-amber-200/90 flex items-start gap-2">
-                <Target className="h-4 w-4 text-amber-500 dark:text-amber-400 shrink-0 mt-0.5" />
-                <div>
-                  <strong className="text-amber-600 dark:text-amber-300 font-bold">實戰目標：</strong>{' '}
-                  {currentStep.objective}
-                </div>
-              </div>
+                    {/* Objective Banner */}
+                    <div className="rounded-lg border border-amber-500/25 bg-amber-500/10 px-3 py-2 text-xs text-amber-600 dark:text-amber-200/90 flex items-start gap-2">
+                      <Target className="h-4 w-4 text-amber-500 dark:text-amber-400 shrink-0 mt-0.5" />
+                      <div>
+                        <strong className="text-amber-600 dark:text-amber-300 font-bold">實戰目標：</strong>{' '}
+                        {step.objective}
+                      </div>
+                    </div>
 
-              {/* Code Snippet Box */}
-              {currentStep.codeSnippet && (
-                <div className="rounded-xl border border-border bg-[#090d16] overflow-hidden shadow-inner">
-                  <div className="flex items-center justify-between border-b border-border/80 bg-[#0f1422] px-3 py-1.5 text-xs text-muted-foreground">
-                    <span className="flex items-center gap-1.5 font-mono text-[11px] text-cyan-400">
-                      <Terminal className="h-3.5 w-3.5" />
-                      Kaggle Python 實戰代碼 ({currentStep.codeLanguage || 'python'})
-                    </span>
+                    {/* Code Snippet Box */}
+                    {step.codeSnippet && (
+                      <div className="rounded-xl border border-border bg-[#090d16] overflow-hidden shadow-inner">
+                        <div className="flex items-center justify-between border-b border-border/80 bg-[#0f1422] px-3 py-1.5 text-xs text-muted-foreground">
+                          <span className="flex items-center gap-1.5 font-mono text-[11px] text-cyan-400">
+                            <Terminal className="h-3.5 w-3.5" />
+                            Kaggle Python 實戰代碼 · 步驟 {step.stepNumber} ({step.codeLanguage || 'python'})
+                          </span>
+                          <button
+                            type="button"
+                            onClick={() => handleCopyCode(step.codeSnippet, idx)}
+                            className="flex items-center gap-1 text-[11px] text-slate-300 hover:text-white cursor-pointer px-2 py-0.5 rounded bg-slate-800/60 hover:bg-slate-800 transition-colors"
+                          >
+                            {copiedStepIdx === idx ? (
+                              <>
+                                <Check className="h-3 w-3 text-emerald-400" />
+                                <span className="text-emerald-400 font-semibold">已複製</span>
+                              </>
+                            ) : (
+                              <>
+                                <Copy className="h-3 w-3" />
+                                <span>複製代碼</span>
+                              </>
+                            )}
+                          </button>
+                        </div>
+                        <div className="p-3.5 overflow-x-auto bg-[#090d16]/95 max-h-[380px]">
+                          <pre className="font-mono text-xs text-slate-100 leading-relaxed m-0 whitespace-pre">
+                            <code>{step.codeSnippet}</code>
+                          </pre>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Engineering Takeaways */}
+                    <div className="rounded-lg border border-border bg-muted/40 p-3 space-y-1.5">
+                      <h5 className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider flex items-center gap-1.5">
+                        <Sparkles className="h-3.5 w-3.5 text-amber-500 dark:text-amber-400" />
+                        <span>工程要點與 Kaggle 實踐建議</span>
+                      </h5>
+                      <ul className="space-y-1 text-xs text-foreground/90 list-disc pl-4">
+                        {step.takeaways.map((item, i) => (
+                          <li key={i}>{item}</li>
+                        ))}
+                      </ul>
+                    </div>
+                  </div>
+                ))}
+
+                {/* END-TO-END CONSOLIDATED PYTHON SCRIPT CARD */}
+                <div
+                  id="full-pipeline-anchor"
+                  className="scroll-mt-4 rounded-2xl border-2 border-amber-500/40 bg-gradient-to-b from-amber-500/5 to-card p-4 sm:p-5 space-y-4 shadow-lg"
+                >
+                  <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border/80 pb-3">
+                    <div className="space-y-1">
+                      <div className="flex items-center gap-2">
+                        <span className="flex h-7 w-7 items-center justify-center rounded-xl bg-gradient-to-tr from-amber-500 to-orange-500 text-slate-950 font-bold shadow-md shadow-amber-500/20">
+                          <Terminal className="h-4 w-4" />
+                        </span>
+                        <h4 className="text-sm sm:text-base font-bold text-foreground">
+                          ⚡ 端到端一體化完整可執行腳本 (Full End-to-End Pipeline)
+                        </h4>
+                      </div>
+                      <p className="text-xs text-muted-foreground pl-9">
+                        已將步驟 1 至 4 串聯為自包含、可直接貼入 Kaggle / Colab 單元格直接運行的完整腳本。
+                      </p>
+                    </div>
+
                     <button
                       type="button"
-                      onClick={() => handleCopyCode(currentStep.codeSnippet)}
-                      className="flex items-center gap-1 text-[11px] text-slate-300 hover:text-white cursor-pointer px-2 py-0.5 rounded bg-slate-800/60 hover:bg-slate-800 transition-colors"
+                      onClick={handleCopyAllPipelineCode}
+                      className="flex items-center gap-2 rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 text-slate-950 font-bold px-3.5 py-2 text-xs shadow-md shadow-amber-500/25 hover:opacity-90 transition-all cursor-pointer"
                     >
-                      {copiedCode ? (
+                      {copiedAllCode ? (
                         <>
-                          <Check className="h-3 w-3 text-emerald-400" />
-                          <span className="text-emerald-400 font-semibold">已複製步驟代碼</span>
+                          <Check className="h-4 w-4 text-slate-950" />
+                          <span>已複製端到端完整腳本！</span>
                         </>
                       ) : (
                         <>
-                          <Copy className="h-3 w-3" />
-                          <span>複製此步驟代碼</span>
+                          <Copy className="h-4 w-4" />
+                          <span>一鍵複製端到端完整腳本</span>
                         </>
                       )}
                     </button>
                   </div>
-                  <div className="p-3.5 overflow-x-auto bg-[#090d16]/95 max-h-[380px]">
-                    <pre className="font-mono text-xs text-slate-100 leading-relaxed m-0 whitespace-pre">
-                      <code>{currentStep.codeSnippet}</code>
-                    </pre>
+
+                  {/* Complete Script Box */}
+                  <div className="rounded-xl border border-border bg-[#090d16] overflow-hidden shadow-inner">
+                    <div className="flex items-center justify-between border-b border-border/80 bg-[#0f1422] px-3.5 py-2 text-xs text-muted-foreground">
+                      <div className="flex items-center gap-2">
+                        <span className="h-2.5 w-2.5 rounded-full bg-rose-500/80"></span>
+                        <span className="h-2.5 w-2.5 rounded-full bg-amber-500/80"></span>
+                        <span className="h-2.5 w-2.5 rounded-full bg-emerald-500/80"></span>
+                        <span className="font-mono text-[11px] text-cyan-400 font-semibold ml-1">
+                          {tutorial.kaggleNotebook}.py (完整流水線)
+                        </span>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={handleCopyAllPipelineCode}
+                        className="flex items-center gap-1 text-[11px] text-slate-300 hover:text-white cursor-pointer px-2 py-0.5 rounded bg-slate-800/60 hover:bg-slate-800 transition-colors"
+                      >
+                        {copiedAllCode ? (
+                          <>
+                            <Check className="h-3 w-3 text-emerald-400" />
+                            <span className="text-emerald-400 font-semibold">已複製</span>
+                          </>
+                        ) : (
+                          <>
+                            <Copy className="h-3 w-3" />
+                            <span>複製腳本</span>
+                          </>
+                        )}
+                      </button>
+                    </div>
+                    <div className="p-4 overflow-x-auto bg-[#090d16]/95 max-h-[480px]">
+                      <pre className="font-mono text-xs text-slate-100 leading-relaxed m-0 whitespace-pre">
+                        <code>{getFullPipelineScript()}</code>
+                      </pre>
+                    </div>
                   </div>
                 </div>
-              )}
-
-              {/* Engineering Takeaways */}
-              <div className="rounded-lg border border-border bg-muted/40 p-3 space-y-1.5">
-                <h5 className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider flex items-center gap-1.5">
-                  <Sparkles className="h-3.5 w-3.5 text-amber-500 dark:text-amber-400" />
-                  <span>工程要點與 Kaggle 實踐建議</span>
-                </h5>
-                <ul className="space-y-1 text-xs text-foreground/90 list-disc pl-4">
-                  {currentStep.takeaways.map((item, i) => (
-                    <li key={i}>{item}</li>
-                  ))}
-                </ul>
               </div>
-            </div>
+            )}
 
-            {/* Bottom Step Navigation Controls */}
-            <div className="flex flex-wrap items-center justify-between gap-3 pt-2 text-xs text-muted-foreground border-t border-border">
+            {/* MODE 2: SINGLE STEP FOCUS (Step by step navigation) */}
+            {viewMode === 'single' && (
+              <div className="space-y-4">
+                {/* Step Selection Pills */}
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                  {tutorial.steps.map((step, idx) => (
+                    <button
+                      key={step.stepNumber}
+                      type="button"
+                      onClick={() => setActiveStep(idx)}
+                      className={cn(
+                        'flex items-center gap-2 p-2.5 rounded-xl border text-left transition-all cursor-pointer',
+                        activeStep === idx
+                          ? 'border-amber-500/60 bg-amber-500/12 text-amber-500 dark:text-amber-300 shadow-sm'
+                          : 'border-border bg-muted/60 text-muted-foreground hover:text-foreground hover:bg-muted'
+                      )}
+                    >
+                      <div
+                        className={cn(
+                          'flex h-6 w-6 shrink-0 items-center justify-center rounded-lg font-mono text-xs font-bold',
+                          activeStep === idx
+                            ? 'bg-amber-500 text-slate-950'
+                            : 'bg-muted text-muted-foreground'
+                        )}
+                      >
+                        {step.stepNumber}
+                      </div>
+                      <div className="truncate">
+                        <span className="block text-[11px] font-semibold truncate leading-tight">
+                          {step.badge}
+                        </span>
+                        <span className="block text-[9.5px] opacity-70 truncate">
+                          步驟 {step.stepNumber}
+                        </span>
+                      </div>
+                    </button>
+                  ))}
+                </div>
+
+                {/* Active Step Content */}
+                <div className="rounded-xl border border-border bg-card/60 p-4 space-y-3.5">
+                  <div className="flex items-center justify-between">
+                    <h4 className="text-sm font-bold text-foreground flex items-center gap-2">
+                      <span className="flex h-5 w-5 items-center justify-center rounded-full bg-amber-500/20 text-amber-500 dark:text-amber-400 font-mono text-xs font-bold">
+                        {currentStep.stepNumber}
+                      </span>
+                      {currentStep.title}
+                    </h4>
+                    <div className="flex items-center gap-2">
+                      <Badge variant="outline" className="text-[10px] font-mono">
+                        {currentStep.badge}
+                      </Badge>
+                      <button
+                        type="button"
+                        onClick={() => handleCopyCode(currentStep.codeSnippet, activeStep)}
+                        className="flex items-center gap-1.5 text-xs text-amber-500 dark:text-amber-300 hover:text-amber-400 bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/30 px-2.5 py-1 rounded-lg transition-all cursor-pointer font-medium"
+                      >
+                        {copiedStepIdx === activeStep ? (
+                          <>
+                            <Check className="h-3.5 w-3.5 text-emerald-400" />
+                            <span className="text-emerald-400 font-semibold">已複製步驟 {currentStep.stepNumber}</span>
+                          </>
+                        ) : (
+                          <>
+                            <Copy className="h-3.5 w-3.5" />
+                            <span>複製此步驟代碼</span>
+                          </>
+                        )}
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Objective Banner */}
+                  <div className="rounded-lg border border-amber-500/25 bg-amber-500/10 px-3 py-2 text-xs text-amber-600 dark:text-amber-200/90 flex items-start gap-2">
+                    <Target className="h-4 w-4 text-amber-500 dark:text-amber-400 shrink-0 mt-0.5" />
+                    <div>
+                      <strong className="text-amber-600 dark:text-amber-300 font-bold">實戰目標：</strong>{' '}
+                      {currentStep.objective}
+                    </div>
+                  </div>
+
+                  {/* Code Snippet Box */}
+                  {currentStep.codeSnippet && (
+                    <div className="rounded-xl border border-border bg-[#090d16] overflow-hidden shadow-inner">
+                      <div className="flex items-center justify-between border-b border-border/80 bg-[#0f1422] px-3 py-1.5 text-xs text-muted-foreground">
+                        <span className="flex items-center gap-1.5 font-mono text-[11px] text-cyan-400">
+                          <Terminal className="h-3.5 w-3.5" />
+                          Kaggle Python 實戰代碼 ({currentStep.codeLanguage || 'python'})
+                        </span>
+                        <button
+                          type="button"
+                          onClick={() => handleCopyCode(currentStep.codeSnippet, activeStep)}
+                          className="flex items-center gap-1 text-[11px] text-slate-300 hover:text-white cursor-pointer px-2 py-0.5 rounded bg-slate-800/60 hover:bg-slate-800 transition-colors"
+                        >
+                          {copiedStepIdx === activeStep ? (
+                            <>
+                              <Check className="h-3 w-3 text-emerald-400" />
+                              <span className="text-emerald-400 font-semibold">已複製步驟代碼</span>
+                            </>
+                          ) : (
+                            <>
+                              <Copy className="h-3 w-3" />
+                              <span>複製代碼</span>
+                            </>
+                          )}
+                        </button>
+                      </div>
+                      <div className="p-3.5 overflow-x-auto bg-[#090d16]/95 max-h-[380px]">
+                        <pre className="font-mono text-xs text-slate-100 leading-relaxed m-0 whitespace-pre">
+                          <code>{currentStep.codeSnippet}</code>
+                        </pre>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Engineering Takeaways */}
+                  <div className="rounded-lg border border-border bg-muted/40 p-3 space-y-1.5">
+                    <h5 className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider flex items-center gap-1.5">
+                      <Sparkles className="h-3.5 w-3.5 text-amber-500 dark:text-amber-400" />
+                      <span>工程要點與 Kaggle 實踐建議</span>
+                    </h5>
+                    <ul className="space-y-1 text-xs text-foreground/90 list-disc pl-4">
+                      {currentStep.takeaways.map((item, i) => (
+                        <li key={i}>{item}</li>
+                      ))}
+                    </ul>
+                  </div>
+                </div>
+
+                {/* Bottom Navigation Controls for Single Mode */}
+                <div className="flex flex-wrap items-center justify-between gap-3 pt-2 text-xs text-muted-foreground border-t border-border">
+                  <div className="flex items-center gap-1.5 font-mono text-[11px]">
+                    <FileCode className="h-3.5 w-3.5 text-amber-500 dark:text-amber-400" />
+                    <span>Showcase：{tutorial.kaggleNotebook}</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    {activeStep > 0 && (
+                      <button
+                        type="button"
+                        onClick={() => setActiveStep((prev) => prev - 1)}
+                        className="px-3 py-1 rounded-lg border border-border hover:bg-muted text-foreground text-xs cursor-pointer transition-colors"
+                      >
+                        上一則步驟
+                      </button>
+                    )}
+                    {activeStep < tutorial.steps.length - 1 ? (
+                      <button
+                        type="button"
+                        onClick={() => setActiveStep((prev) => prev + 1)}
+                        className="px-3 py-1 rounded-lg bg-amber-500 text-slate-950 font-bold text-xs hover:bg-amber-400 transition-colors cursor-pointer flex items-center gap-1"
+                      >
+                        <span>下一步驟</span>
+                        <ChevronRight className="h-3 w-3" />
+                      </button>
+                    ) : isUnlocked ? (
+                      <button
+                        type="button"
+                        onClick={() => setActiveTab('star')}
+                        className="px-3 py-1 rounded-lg bg-emerald-500 text-slate-950 font-bold text-xs hover:bg-emerald-400 transition-colors cursor-pointer flex items-center gap-1"
+                      >
+                        <CheckCircle2 className="h-3.5 w-3.5" />
+                        <span>查看 STAR 答辯稿</span>
+                      </button>
+                    ) : (
+                      <button
+                        type="button"
+                        onClick={onClose}
+                        className="px-3 py-1 rounded-lg bg-primary text-primary-foreground font-semibold text-xs hover:opacity-90 transition-opacity cursor-pointer flex items-center gap-1"
+                      >
+                        <CheckCircle2 className="h-3.5 w-3.5" />
+                        <span>完成導讀</span>
+                      </button>
+                    )}
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* MODE 3: FULL SCRIPT ONLY */}
+            {viewMode === 'script' && (
+              <div className="space-y-4">
+                <div className="rounded-2xl border-2 border-amber-500/40 bg-gradient-to-b from-amber-500/5 to-card p-4 sm:p-5 space-y-4 shadow-lg">
+                  <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border/80 pb-3">
+                    <div className="space-y-1">
+                      <div className="flex items-center gap-2">
+                        <span className="flex h-7 w-7 items-center justify-center rounded-xl bg-gradient-to-tr from-amber-500 to-orange-500 text-slate-950 font-bold shadow-md shadow-amber-500/20">
+                          <Terminal className="h-4 w-4" />
+                        </span>
+                        <h4 className="text-sm sm:text-base font-bold text-foreground">
+                          ⚡ 端到端一體化完整可執行腳本 (Full End-to-End Pipeline)
+                        </h4>
+                      </div>
+                      <p className="text-xs text-muted-foreground pl-9">
+                        已將步驟 1 至 4 串聯為自包含、可直接貼入 Kaggle / Colab 單元格直接運行的完整腳本。
+                      </p>
+                    </div>
+
+                    <button
+                      type="button"
+                      onClick={handleCopyAllPipelineCode}
+                      className="flex items-center gap-2 rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 text-slate-950 font-bold px-3.5 py-2 text-xs shadow-md shadow-amber-500/25 hover:opacity-90 transition-all cursor-pointer"
+                    >
+                      {copiedAllCode ? (
+                        <>
+                          <Check className="h-4 w-4 text-slate-950" />
+                          <span>已複製端到端完整腳本！</span>
+                        </>
+                      ) : (
+                        <>
+                          <Copy className="h-4 w-4" />
+                          <span>一鍵複製端到端完整腳本</span>
+                        </>
+                      )}
+                    </button>
+                  </div>
+
+                  <div className="rounded-xl border border-border bg-[#090d16] overflow-hidden shadow-inner">
+                    <div className="flex items-center justify-between border-b border-border/80 bg-[#0f1422] px-3.5 py-2 text-xs text-muted-foreground">
+                      <div className="flex items-center gap-2">
+                        <span className="h-2.5 w-2.5 rounded-full bg-rose-500/80"></span>
+                        <span className="h-2.5 w-2.5 rounded-full bg-amber-500/80"></span>
+                        <span className="h-2.5 w-2.5 rounded-full bg-emerald-500/80"></span>
+                        <span className="font-mono text-[11px] text-cyan-400 font-semibold ml-1">
+                          {tutorial.kaggleNotebook}.py
+                        </span>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={handleCopyAllPipelineCode}
+                        className="flex items-center gap-1 text-[11px] text-slate-300 hover:text-white cursor-pointer px-2 py-0.5 rounded bg-slate-800/60 hover:bg-slate-800 transition-colors"
+                      >
+                        {copiedAllCode ? (
+                          <>
+                            <Check className="h-3 w-3 text-emerald-400" />
+                            <span className="text-emerald-400 font-semibold">已複製</span>
+                          </>
+                        ) : (
+                          <>
+                            <Copy className="h-3 w-3" />
+                            <span>複製腳本</span>
+                          </>
+                        )}
+                      </button>
+                    </div>
+                    <div className="p-4 overflow-x-auto bg-[#090d16]/95 max-h-[560px]">
+                      <pre className="font-mono text-xs text-slate-100 leading-relaxed m-0 whitespace-pre">
+                        <code>{getFullPipelineScript()}</code>
+                      </pre>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Bottom Step Navigation / Actions Footer */}
+            <div className="flex flex-wrap items-center justify-between gap-3 pt-3 text-xs text-muted-foreground border-t border-border">
               <div className="flex items-center gap-1.5 font-mono text-[11px]">
                 <FileCode className="h-3.5 w-3.5 text-amber-500 dark:text-amber-400" />
                 <span>Showcase：{tutorial.kaggleNotebook}</span>
               </div>
               <div className="flex items-center gap-2">
-                {activeStep > 0 && (
-                  <button
-                    type="button"
-                    onClick={() => setActiveStep((prev) => prev - 1)}
-                    className="px-3 py-1 rounded-lg border border-border hover:bg-muted text-foreground text-xs cursor-pointer transition-colors"
-                  >
-                    上一則步驟
-                  </button>
-                )}
-                {activeStep < tutorial.steps.length - 1 ? (
-                  <button
-                    type="button"
-                    onClick={() => setActiveStep((prev) => prev + 1)}
-                    className="px-3 py-1 rounded-lg bg-amber-500 text-slate-950 font-bold text-xs hover:bg-amber-400 transition-colors cursor-pointer flex items-center gap-1"
-                  >
-                    <span>下一步驟</span>
-                    <ChevronRight className="h-3 w-3" />
-                  </button>
-                ) : isUnlocked ? (
+                <button
+                  type="button"
+                  onClick={handleCopyAllPipelineCode}
+                  className="px-3 py-1.5 rounded-lg border border-amber-500/40 bg-amber-500/10 hover:bg-amber-500/20 text-amber-500 dark:text-amber-300 font-semibold text-xs transition-colors cursor-pointer flex items-center gap-1.5"
+                >
+                  {copiedAllCode ? (
+                    <>
+                      <Check className="h-3.5 w-3.5 text-emerald-500" />
+                      <span className="text-emerald-500 font-bold">已複製 4 步腳本</span>
+                    </>
+                  ) : (
+                    <>
+                      <Copy className="h-3.5 w-3.5" />
+                      <span>複製完整 4 步驟腳本</span>
+                    </>
+                  )}
+                </button>
+                {isUnlocked ? (
                   <button
                     type="button"
                     onClick={() => setActiveTab('star')}
-                    className="px-3 py-1 rounded-lg bg-emerald-500 text-slate-950 font-bold text-xs hover:bg-emerald-400 transition-colors cursor-pointer flex items-center gap-1"
+                    className="px-3 py-1.5 rounded-lg bg-emerald-500 text-slate-950 font-bold text-xs hover:bg-emerald-400 transition-colors cursor-pointer flex items-center gap-1.5 shadow-xs"
                   >
                     <CheckCircle2 className="h-3.5 w-3.5" />
                     <span>查看 STAR 答辯稿</span>
@@ -431,7 +850,7 @@ export const MilestoneTutorialModal: React.FC<MilestoneTutorialModalProps> = ({
                   <button
                     type="button"
                     onClick={onClose}
-                    className="px-3 py-1 rounded-lg bg-primary text-primary-foreground font-semibold text-xs hover:opacity-90 transition-opacity cursor-pointer flex items-center gap-1"
+                    className="px-3 py-1.5 rounded-lg bg-primary text-primary-foreground font-semibold text-xs hover:opacity-90 transition-opacity cursor-pointer flex items-center gap-1.5 shadow-xs"
                   >
                     <CheckCircle2 className="h-3.5 w-3.5" />
                     <span>完成導讀</span>
