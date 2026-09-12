@@ -752,3 +752,18 @@ This log records every documentation synchronization, bootstrap scan, and file m
   - `npm --prefix frontend run build`: Compiled production bundle in 7.52s with 0 errors.
   - Confirmed 0 mentions of restricted keywords across the entire codebase.
 
+---
+
+### [2026-09-13] - Decommission Obsolete CodeInspector Widget & Legacy Un-namespaced API Routes
+- **Removed Dead CodeInspector Widget (`frontend/src/widgets/code-inspector/`)**:
+  - Deleted legacy unreferenced `CodeInspector.tsx` and its local `INDEX.md`. The reader experience fully relies on in-canvas ReadTheDocs/Jupyter syntax-highlighted code blocks (`CodeBlock.tsx` and `OutputBlock.tsx`).
+  - Synchronized `frontend/src/widgets/INDEX.md` to reflect active widgets (`reader-canvas`, `sidebar-nav`, `privacy`).
+- **Removed Obsolete Un-namespaced Backend Routes (`web/app.py`)**:
+  - Stripped duplicate legacy un-prefixed APIRouter mounts (`/api/toy`, `/api/llm`, `/api/offline`, `/api/policy`, `/api/tutorial`, `/api/wiki`).
+  - All backend endpoints are strictly structured under modular domain prefixes (`/api/rl/*`, `/api/rlvr/*`, `/api/deepagents/*`, `/api/eval/*`).
+- **Verification & Integrity**:
+  - Verified `web/app.py` compiles cleanly (`python3 -m py_compile web/app.py`).
+  - Verified TypeScript typing with `npm --prefix frontend run typecheck` (exit code 0).
+  - Built fresh production web bundle with `npm --prefix frontend run build` in 8.16s (exit code 0).
+  - Zero documentation drift and zero mentions of restricted terms.
+

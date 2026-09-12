@@ -70,14 +70,6 @@ app.include_router(policy.router, prefix="/api/rl/policy", tags=["RL-Policy"])
 app.include_router(tutorial.router, prefix="/api/rl/tutorial", tags=["RL-Tutorial"])
 app.include_router(wiki.router, prefix="/api/rl/wiki", tags=["RL-Wiki"])
 
-# ---- Backward-compatible RL routes (Legacy /api/*) ----
-app.include_router(toy.router, prefix="/api/toy", tags=["Legacy-Toy"])
-app.include_router(llm.router, prefix="/api/llm", tags=["Legacy-LLM"])
-app.include_router(offline.router, prefix="/api/offline", tags=["Legacy-Offline"])
-app.include_router(policy.router, prefix="/api/policy", tags=["Legacy-Policy"])
-app.include_router(tutorial.router, prefix="/api/tutorial", tags=["Legacy-Tutorial"])
-app.include_router(wiki.router, prefix="/api/wiki", tags=["Legacy-Wiki"])
-
 # ---- Production React 19 Frontend Mount ----
 _WEB_DIR = Path(__file__).resolve().parent
 _DIST = _WEB_DIR / "dist"
