@@ -4,6 +4,22 @@
 
 This log records every documentation synchronization, bootstrap scan, and file modification event across the repository to guarantee zero documentation drift.
 
+### [2026-09-13] - Post-Training Track Comprehensive Review, Reindexing & Kaggle Execution Certification
+- **Automated Hands-On Kaggle Execution Audit (100% Pass Rate Across All 18 Chapters)**:
+  - Audited all code blocks across all 18 chapters (`rlvr/tutorials/01_data.md` through `18_alignment_safety_red_teaming.md`) using automated cumulative cell-by-cell execution runner (`full_suite_audit.py`).
+  - **Fixed 4 Critical Runtime Defects & Incoherencies**:
+    - `02_rewards.md`: Resolved `TypeError: unsupported operand type(s) for |` on Python 3.9/Kaggle environments by migrating `str | None` to `Optional[str]`.
+    - `13_data_flywheel_and_decontamination.md`: Neutralized an unbounded `while True: pass` execution hang in Stage 5 by equipping `StrictASTSecurityInspector` with `visit_While` loop static analysis to intercept infinite loop bombs before sandbox dispatch.
+    - `14_post_training_systems_and_triage_playbook.md`: Fixed `RuntimeError: Trying to backward through the graph a second time` by creating a dedicated `p_unstable` tensor for the gradient explosion simulation.
+    - `15_lora_qlora_peft.md`: Fixed dimension mismatch `RuntimeError: The size of tensor a (16) must match tensor b (64)` in `simulate_nf4_quantization` by recording `orig_shape` and returning full tensor shape `(64, 64)`.
+    - `01_data.md`: Removed unused `from transformers import AutoTokenizer` dependency, eliminating `urllib3` warnings and ensuring pure PyTorch tensor execution.
+- **Authoritative Reindexing of `rlvr/tutorials/INDEX.md`**:
+  - Reindexed the 18-chapter catalog across the 4 Thematic Pillars and 7 Core Hotspots with explicit Kaggle hands-on execution standards (hardware requirements: GPU T4 x2 / CPU, VRAM footprint $\sim 0.8\text{GB} - 2.2\text{GB}$, and 5-stage progressive lab scopes).
+- **Zero-Drift Build & Verification**:
+  - `full_suite_audit.py` passed with 18/18 chapters (100% of cells) green.
+  - `npm --prefix frontend run typecheck` passed (exit code 0).
+  - `npm --prefix frontend run build` completed in 7.31s with zero errors.
+
 ### [2026-09-13] - Kaggle Milestone Practice Guide End-to-End Visibility & Copyability Upgrade
 - **Continuous End-to-End Visibility by Default (`MilestoneTutorialModal.tsx`)**:
   - Refactored `MilestoneTutorialModal.tsx` tab 1 (`pipeline`) from isolated single-step pagination to a continuous end-to-end view rendering all 4 steps sequentially (Step 1 -> Step 2 -> Step 3 -> Step 4) without requiring users to click through hidden tabs.

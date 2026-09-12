@@ -127,13 +127,12 @@ graph TD
 ```python
 import re
 import torch
-from transformers import AutoTokenizer
 
 def set_seed(seed: int = 42):
     torch.manual_seed(seed)
 
 set_seed(42)
-print("🖥️ [Environment] PyTorch & HuggingFace pipeline ready.")
+print("🖥️ [Environment] PyTorch Tensor Computing ready.")
 
 # 模擬原始 GSM8K 數據結構
 raw_dataset = [

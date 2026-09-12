@@ -191,7 +191,9 @@ for idx, s in enumerate(batch):
 > 同時，針對標籤轟炸，模組嚴格斷言：**「一場考試只能有一個最終答案，出現多個標籤直接紅牌罰下！」**
 
 ```python
-def normalize_scalar_answer(text: str | None) -> str | None:
+from typing import Optional
+
+def normalize_scalar_answer(text: Optional[str]) -> Optional[str]:
     """數值標準化：清洗貨幣、千分位逗號、多餘小數點 (如 $90.00 -> 90)"""
     if text is None:
         return None
@@ -204,7 +206,7 @@ def normalize_scalar_answer(text: str | None) -> str | None:
     except ValueError:
         return cleaned.lower()
 
-def safe_extract_answer(text: str, strict_single_tag: bool = True) -> str | None:
+def safe_extract_answer(text: str, strict_single_tag: bool = True) -> Optional[str]:
     """
     自回歸文本 XML 答案提取
     若啟用 strict_single_tag，檢測到多個 <answer> 標籤時拒絕給分 (防止窮舉攻擊)

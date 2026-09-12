@@ -279,6 +279,15 @@ class StrictASTSecurityInspector(ast.NodeVisitor):
             self.violations.append(f"Forbidden builtin call '{node.func.id}'")
         self.generic_visit(node)
 
+    def visit_While(self, node: ast.While):
+        # 檢測無界無限循環炸彈 (e.g., while True: pass)
+        is_const_true = (isinstance(node.test, ast.Constant) and bool(node.test.value) is True)
+        if is_const_true:
+            has_break = any(isinstance(n, ast.Break) for n in ast.walk(node))
+            if not has_break:
+                self.violations.append("Forbidden unbounded 'while True' loop")
+        self.generic_visit(node)
+
 def inspect_code_safety(code_str: str) -> Tuple[bool, List[str]]:
     try:
         tree = ast.parse(code_str)
@@ -299,7 +308,7 @@ for c in candidate_samples:
     print(f"{c['id']:<22} | {status_str:<18} | {reason_str}")
 
 print("-" * 80)
-print("✅ [AST Verified]: 成功在微秒級靜態攔截 os.system 破壞性注入指令！")
+print("✅ [AST Verified]: 成功在微秒級靜態攔截 os.system 破壞性注入指令與死循環炸彈！")
 ```
 
 ```text
@@ -312,9 +321,9 @@ Sample ID              | AST Safety Status  | Security Diagnostic
 Cand-001 (Clean)       | ✅ SAFE            | Clean code AST
 Cand-002 (Leaked!)     | ✅ SAFE            | Clean code AST
 Cand-003 (Malicious)   | 🚨 BLOCKED         | Forbidden import 'os'
-Cand-004 (Infinite Loop)| ✅ SAFE            | Clean code AST
+Cand-004 (Infinite Loop)| 🚨 BLOCKED         | Forbidden unbounded 'while True' loop
 --------------------------------------------------------------------------------
-✅ [AST Verified]: 成功在微秒級靜態攔截 os.system 破壞性注入指令！
+✅ [AST Verified]: 成功在微秒級靜態攔截 os.system 破壞性注入指令與死循環炸彈！
 ```
 
 ---
@@ -447,7 +456,7 @@ Sample ID              | Sanitizer Verdict | Reason
 Cand-001 (Clean)       | ✅ INGESTED       | ADMITTED: 100% verified clean & safe
 Cand-002 (Leaked!)     | 🛡️ PURGED        | PURGED: 13-Gram benchmark collision ('janet sells 16 duck eggs a day for two dollars each at the farmers')
 Cand-003 (Malicious)   | 🛡️ PURGED        | BLOCKED: Security violation (Forbidden import 'os')
-Cand-004 (Infinite Loop)| 🛡️ PURGED        | RUNTIME_ERROR: name 'while' is not defined (or timeout)
+Cand-004 (Infinite Loop)| 🛡️ PURGED        | BLOCKED: Security violation (Forbidden unbounded 'while True' loop)
 --------------------------------------------------------------------------------
 ✅ [Remediation Verification]: 成功達成 0 測試集洩漏、0 惡意代碼注入的純淨數據飛輪！
 ```

@@ -361,9 +361,10 @@ print(f"   Collapsed State Entropy: {h_collapsed:.4f} (Dead Lock / Mode Collapse
 print("   -> 災難診斷：熵跌破 0.15，模型退化為只會輸出單一重複 Token 的鸚鵡！\n")
 
 # 病理 2: 梯度爆炸 (Gradient Blowup)
-fake_loss = loss_val * 1000.0  # 模擬巨大異常 loss
-fake_loss.backward()
-grad_norm = p_chosen.grad.norm().item()
+p_unstable = torch.tensor([-25.0, -32.0, -18.0, -45.0], requires_grad=True)
+fake_loss, _ = compute_simpo_loss(p_unstable, p_rejected.detach(), lens_w, lens_l, beta=2.5, gamma=0.5)
+(fake_loss * 1000.0).backward()
+grad_norm = p_unstable.grad.norm().item()
 print("🚨 [Stress Test 4.2: Gradient Norm Explosion]")
 print(f"   Unclipped Gradient Norm: {grad_norm:.2f}")
 print("   -> 災難診斷：若無 max_grad_norm=1.0 裁剪，下一步更新將徹底摧毀模型權重！")

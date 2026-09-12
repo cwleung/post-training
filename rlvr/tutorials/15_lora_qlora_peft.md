@@ -169,6 +169,7 @@ def simulate_nf4_quantization(weights: torch.Tensor, block_size: int = 64) -> tu
     """
     模擬分塊 NF4 量化與縮放係數提取
     """
+    orig_shape = weights.shape
     flat = weights.flatten()
     n_blocks = flat.numel() // block_size
     reshaped = flat[:n_blocks * block_size].reshape(n_blocks, block_size)
@@ -185,12 +186,12 @@ def simulate_nf4_quantization(weights: torch.Tensor, block_size: int = 64) -> tu
     dequant_norm = NF4_QUANTILE_TABLE[quant_indices]
     reconstructed = dequant_norm * absmax
     
-    return quant_indices, reconstructed.reshape_as(reshaped)
+    return quant_indices, reconstructed.reshape(orig_shape)
 
 # 測試高斯權重張量
 orig_w = torch.randn(128, 128) * 0.02
 q_idx, recon_w = simulate_nf4_quantization(orig_w, block_size=64)
-quant_err = (orig_w.flatten()[:recon_w.numel()] - recon_w.flatten()).abs().mean()
+quant_err = (orig_w - recon_w).abs().mean()
 
 print(f"✓ NF4 Quantization Pipeline Diagnostics:")
 print(f"  Original Weight Norm : {orig_w.norm().item():.4f}")
