@@ -126,12 +126,12 @@ export const MermaidRenderer: React.FC<MermaidRendererProps> = ({ chart, classNa
 
   return (
     <div className={`group relative my-6 overflow-hidden rounded-xl border border-border bg-card/80 p-4 shadow-sm backdrop-blur ${className}`}>
-      {/* Zoom / Pan Controls Toolbar */}
-      <div className="absolute right-3 top-3 z-10 flex items-center gap-1 rounded-lg border border-border/80 bg-background/90 p-1 opacity-0 backdrop-blur transition-opacity group-hover:opacity-100 shadow-sm">
+      {/* Zoom / Pan Controls Toolbar (accessible by default on touch screens) */}
+      <div className="absolute right-3 top-3 z-10 flex items-center gap-1 rounded-lg border border-border/80 bg-background/90 p-1 opacity-80 sm:opacity-0 sm:group-hover:opacity-100 backdrop-blur transition-opacity shadow-sm">
         <button
           type="button"
           onClick={handleZoomIn}
-          className="rounded p-1 text-muted-foreground hover:bg-muted hover:text-foreground transition-colors"
+          className="rounded p-1 text-muted-foreground hover:bg-muted hover:text-foreground transition-colors cursor-pointer"
           title="Zoom In"
         >
           <ZoomIn className="h-3.5 w-3.5" />
@@ -139,7 +139,7 @@ export const MermaidRenderer: React.FC<MermaidRendererProps> = ({ chart, classNa
         <button
           type="button"
           onClick={handleZoomOut}
-          className="rounded p-1 text-muted-foreground hover:bg-muted hover:text-foreground transition-colors"
+          className="rounded p-1 text-muted-foreground hover:bg-muted hover:text-foreground transition-colors cursor-pointer"
           title="Zoom Out"
         >
           <ZoomOut className="h-3.5 w-3.5" />
@@ -147,7 +147,7 @@ export const MermaidRenderer: React.FC<MermaidRendererProps> = ({ chart, classNa
         <button
           type="button"
           onClick={handleReset}
-          className="rounded p-1 text-muted-foreground hover:bg-muted hover:text-foreground transition-colors"
+          className="rounded p-1 text-muted-foreground hover:bg-muted hover:text-foreground transition-colors cursor-pointer"
           title="Reset Zoom"
         >
           <RotateCcw className="h-3.5 w-3.5" />
@@ -156,7 +156,7 @@ export const MermaidRenderer: React.FC<MermaidRendererProps> = ({ chart, classNa
 
       <div
         ref={containerRef}
-        className="flex items-center justify-center overflow-x-auto py-2 transition-transform duration-150"
+        className="flex items-center justify-start sm:justify-center overflow-x-auto py-2 transition-transform duration-150 max-w-full"
         style={{ transform: `scale(${scale})`, transformOrigin: 'top center' }}
         dangerouslySetInnerHTML={{ __html: svg }}
       />

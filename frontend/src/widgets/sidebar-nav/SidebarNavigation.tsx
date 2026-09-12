@@ -32,10 +32,17 @@ export const SidebarNavigation: React.FC<SidebarNavigationProps> = ({ className 
     setCurrentChapterId,
     sidebarOpen,
     toggleSidebar,
+    setSidebarOpen,
     theme,
     setTheme,
     openMilestoneTutorial,
   } = useChapterStore();
+
+  const closeSidebarIfMobile = () => {
+    if (typeof window !== 'undefined' && window.innerWidth < 768) {
+      setSidebarOpen(false);
+    }
+  };
 
   const { isUnlocked, openUnlockModal } = usePrivacyStore();
 
@@ -168,8 +175,10 @@ export const SidebarNavigation: React.FC<SidebarNavigationProps> = ({ className 
   return (
     <aside
       className={cn(
-        'relative flex h-full w-[300px] min-w-[300px] max-w-[300px] flex-col border-r border-sidebar-border bg-sidebar text-sidebar-foreground backdrop-blur-md transition-all duration-300 select-none z-30',
-        sidebarOpen ? 'translate-x-0' : '-translate-x-full md:w-0 md:min-w-0 md:max-w-0 md:overflow-hidden md:border-r-0',
+        'fixed inset-y-0 left-0 z-50 flex h-full w-[285px] sm:w-[300px] max-w-[85vw] flex-col border-r border-sidebar-border bg-sidebar text-sidebar-foreground backdrop-blur-md transition-all duration-300 select-none shadow-2xl md:shadow-none md:relative md:z-30 md:max-w-none',
+        sidebarOpen
+          ? 'translate-x-0 md:w-[300px] md:min-w-[300px] md:max-w-[300px]'
+          : '-translate-x-full pointer-events-none md:pointer-events-auto md:w-0 md:min-w-0 md:max-w-0 md:overflow-hidden md:border-r-0 md:translate-x-0',
         className
       )}
     >
@@ -417,7 +426,10 @@ export const SidebarNavigation: React.FC<SidebarNavigationProps> = ({ className 
                     {part.milestone && (
                       <button
                         type="button"
-                        onClick={() => openMilestoneTutorial(part.id)}
+                        onClick={() => {
+                          openMilestoneTutorial(part.id);
+                          closeSidebarIfMobile();
+                        }}
                         className="mb-1.5 mt-0.5 flex w-full items-center justify-between gap-1.5 rounded-lg border border-amber-500/30 bg-amber-500/10 px-2.5 py-1.5 text-left text-amber-300 hover:bg-amber-500/20 hover:border-amber-500/60 transition-all cursor-pointer group shadow-xs"
                         title="開啟 Kaggle 實戰里程碑步驟教程 (Step-by-Step)"
                       >
@@ -448,13 +460,17 @@ export const SidebarNavigation: React.FC<SidebarNavigationProps> = ({ className 
                               ? cn(trackTheme.activeItem, 'shadow-xs')
                               : 'text-muted-foreground hover:bg-muted/60 hover:text-foreground'
                           )}
-                          onClick={() => setCurrentChapterId(ch.id)}
+                          onClick={() => {
+                            setCurrentChapterId(ch.id);
+                            closeSidebarIfMobile();
+                          }}
                           role="button"
                           tabIndex={0}
                           onKeyDown={(e) => {
                             if (e.key === 'Enter' || e.key === ' ') {
                               e.preventDefault();
                               setCurrentChapterId(ch.id);
+                              closeSidebarIfMobile();
                             }
                           }}
                         >

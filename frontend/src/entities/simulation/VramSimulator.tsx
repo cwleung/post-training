@@ -170,12 +170,12 @@ export const VramSimulator: React.FC = () => {
         {/* Breakdown & GPU Viability */}
         <Card className="lg:col-span-2 p-5 bg-card/60 backdrop-blur-sm border-border flex flex-col justify-between">
           <div>
-            <div className="flex items-center justify-between mb-4">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1.5 sm:gap-2 mb-4">
               <div className="flex items-center gap-2">
                 <HardDrive className="w-4 h-4 text-primary" />
                 <span className="text-sm font-semibold">顯存組成預算分析 (VRAM Breakdown)</span>
               </div>
-              <div className="font-mono text-base font-bold text-primary">
+              <div className="font-mono text-sm sm:text-base font-bold text-primary">
                 總預計需求: {totalVramGB.toFixed(2)} GB
               </div>
             </div>

@@ -125,7 +125,7 @@ export const MilestoneTutorialModal: React.FC<MilestoneTutorialModalProps> = ({
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="max-w-4xl max-h-[92vh] overflow-y-auto p-5 sm:p-6 bg-card/95 backdrop-blur-md border border-border shadow-2xl rounded-2xl text-foreground">
+      <DialogContent className="w-[calc(100vw-1rem)] sm:w-full max-w-4xl max-h-[92vh] overflow-y-auto p-3.5 sm:p-6 bg-card/95 backdrop-blur-md border border-border shadow-2xl rounded-2xl text-foreground">
         {/* Modal Header */}
         <DialogHeader className="pb-4 border-b border-border">
           <div className="flex flex-wrap items-start justify-between gap-3">

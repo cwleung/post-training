@@ -130,7 +130,7 @@ export const GenericInteractiveLab: React.FC<GenericInteractiveLabProps> = ({ la
         {/* Visual Panel */}
         <Card className="lg:col-span-2 p-5 bg-card/60 backdrop-blur-sm border-border flex flex-col justify-between">
           <div>
-            <div className="flex items-center justify-between mb-3">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1.5 sm:gap-2 mb-3">
               <div className="flex items-center gap-2">
                 <Activity className="w-4 h-4 text-emerald-400" />
                 <span className="text-sm font-semibold">理論收斂曲線與動態響應</span>

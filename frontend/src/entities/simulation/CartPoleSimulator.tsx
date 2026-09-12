@@ -234,32 +234,32 @@ export const CartPoleSimulator: React.FC = () => {
         />
 
         {/* Live HUD Overlay */}
-        <div className="absolute top-3 left-3 flex flex-wrap items-center gap-2 text-xs">
-          <Badge variant={metrics.status.startsWith('Fallen') ? 'destructive' : 'default'}>
+        <div className="absolute top-2 left-2 sm:top-3 sm:left-3 flex flex-wrap items-center gap-1.5 sm:gap-2 text-[10.5px] sm:text-xs">
+          <Badge variant={metrics.status.startsWith('Fallen') ? 'destructive' : 'default'} className="text-[10px] sm:text-xs py-0 sm:py-0.5">
             {metrics.status}
           </Badge>
-          <Badge variant="secondary" className="font-mono">
+          <Badge variant="secondary" className="font-mono text-[10px] sm:text-xs py-0 sm:py-0.5">
             x: {metrics.x} m
           </Badge>
-          <Badge variant="secondary" className="font-mono">
+          <Badge variant="secondary" className="font-mono text-[10px] sm:text-xs py-0 sm:py-0.5">
             θ: {metrics.thetaDeg}°
           </Badge>
-          <Badge variant="secondary" className="font-mono">
+          <Badge variant="secondary" className="font-mono text-[10px] sm:text-xs py-0 sm:py-0.5">
             Steps: {metrics.steps}
           </Badge>
         </div>
 
         {/* Manual force push buttons */}
-        <div className="absolute bottom-3 right-3 flex items-center gap-2">
+        <div className="absolute bottom-2 right-2 sm:bottom-3 sm:right-3 flex items-center gap-1.5 sm:gap-2">
           <button
             type="button"
             onClick={() => {
               stateRef.current.force = -forceMag;
               stateRef.current.xDot -= 0.5;
             }}
-            className="rounded-md bg-slate-900/90 backdrop-blur px-2.5 py-1 text-xs text-slate-200 hover:bg-slate-800 hover:text-white border border-slate-700/60 shadow-xs cursor-pointer transition-colors"
+            className="rounded-md bg-slate-900/90 backdrop-blur px-2 py-0.5 sm:px-2.5 sm:py-1 text-[10px] sm:text-xs text-slate-200 hover:bg-slate-800 hover:text-white border border-slate-700/60 shadow-xs cursor-pointer transition-colors"
           >
-            ← 向左推 (-F)
+            ← 向左 (-F)
           </button>
           <button
             type="button"
@@ -267,26 +267,27 @@ export const CartPoleSimulator: React.FC = () => {
               stateRef.current.force = forceMag;
               stateRef.current.xDot += 0.5;
             }}
-            className="rounded-md bg-slate-900/90 backdrop-blur px-2.5 py-1 text-xs text-slate-200 hover:bg-slate-800 hover:text-white border border-slate-700/60 shadow-xs cursor-pointer transition-colors"
+            className="rounded-md bg-slate-900/90 backdrop-blur px-2 py-0.5 sm:px-2.5 sm:py-1 text-[10px] sm:text-xs text-slate-200 hover:bg-slate-800 hover:text-white border border-slate-700/60 shadow-xs cursor-pointer transition-colors"
           >
-            向右推 (+F) →
+            向右 (+F) →
           </button>
         </div>
       </div>
 
       {/* Control Buttons Toolbar */}
-      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border pb-4">
-        <div className="flex items-center gap-2">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 sm:gap-3 border-b border-border pb-4">
+        <div className="flex flex-wrap items-center gap-2">
           <Button
             size="sm"
             onClick={() => setRunning(!running)}
             variant={running ? 'secondary' : 'default'}
+            className="text-xs"
           >
             {running ? <Pause className="h-3.5 w-3.5" /> : <Play className="h-3.5 w-3.5" />}
             <span>{running ? '暫停物理引擎' : '開始連續模擬'}</span>
           </Button>
 
-          <Button size="sm" variant="outline" onClick={resetSimulation}>
+          <Button size="sm" variant="outline" onClick={resetSimulation} className="text-xs">
             <RotateCcw className="h-3.5 w-3.5" />
             <span>重置狀態</span>
           </Button>

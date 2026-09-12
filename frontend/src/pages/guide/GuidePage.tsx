@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { PanelLeft } from 'lucide-react';
 import { SidebarNavigation } from '@/widgets/sidebar-nav/SidebarNavigation';
 import { ReaderCanvas } from '@/widgets/reader-canvas/ReaderCanvas';
@@ -12,11 +12,19 @@ export const GuidePage: React.FC = () => {
     setChapter,
     sidebarOpen,
     toggleSidebar,
+    setSidebarOpen,
     activeSite,
     activeMilestonePartId,
     closeMilestoneTutorial,
   } = useChapterStore();
   const [activeLabId, setActiveLabId] = useState<string | null>(null);
+
+  // Auto-close sidebar on mobile devices on mount
+  useEffect(() => {
+    if (typeof window !== 'undefined' && window.innerWidth < 768) {
+      setSidebarOpen(false);
+    }
+  }, [setSidebarOpen]);
 
   const handleOpenLab = (labId: string) => {
     setActiveLabId(labId);
@@ -27,8 +35,17 @@ export const GuidePage: React.FC = () => {
     manifest.parts.find((p) => p.id === activeMilestonePartId) || null;
 
   return (
-    <div className="flex w-full h-screen overflow-hidden bg-background">
-      {/* Sleek Left Sidebar */}
+    <div className="relative flex w-full h-screen overflow-hidden bg-background">
+      {/* Mobile Drawer Dimmed Backdrop */}
+      {sidebarOpen && (
+        <div
+          onClick={() => setSidebarOpen(false)}
+          className="fixed inset-0 z-40 bg-black/65 backdrop-blur-xs md:hidden transition-opacity duration-200"
+          aria-hidden="true"
+        />
+      )}
+
+      {/* Sleek Left Sidebar (Drawer on mobile, split pane on desktop) */}
       <SidebarNavigation />
 
       {/* Center Dynamic Reading Canvas */}
@@ -37,11 +54,11 @@ export const GuidePage: React.FC = () => {
           <button
             type="button"
             onClick={toggleSidebar}
-            className="fixed top-4 left-4 z-40 flex items-center gap-1.5 rounded-xl border border-border bg-card/90 px-3 py-1.5 text-xs font-semibold text-foreground shadow-xl backdrop-blur-md hover:border-primary/50 hover:text-primary transition-all cursor-pointer group"
+            className="fixed top-3.5 left-3.5 sm:top-4 sm:left-4 z-40 flex items-center gap-1.5 rounded-xl border border-border bg-card/90 px-2.5 py-1.5 sm:px-3 text-xs font-semibold text-foreground shadow-xl backdrop-blur-md hover:border-primary/50 hover:text-primary transition-all cursor-pointer group"
             title="展開章節導航 (Sidebar)"
           >
             <PanelLeft className="h-4 w-4 text-primary group-hover:scale-110 transition-transform" />
-            <span className="tracking-tight">目錄導航</span>
+            <span className="tracking-tight text-[11.5px] sm:text-xs">目錄導航</span>
           </button>
         )}
         <ReaderCanvas onOpenLab={handleOpenLab} />

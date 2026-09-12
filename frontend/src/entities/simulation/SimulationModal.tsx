@@ -50,16 +50,16 @@ export const SimulationModal: React.FC<SimulationModalProps> = ({
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="max-w-4xl max-h-[92vh] overflow-y-auto p-6 bg-background/95 backdrop-blur-md border border-border shadow-2xl">
+      <DialogContent className="w-[calc(100vw-1rem)] sm:w-full max-w-4xl max-h-[92vh] overflow-y-auto p-3.5 sm:p-6 bg-background/95 backdrop-blur-md border border-border shadow-2xl">
         <DialogHeader className="pb-4 border-b border-border">
-          <div className="flex items-center justify-between gap-4">
-            <div className="flex items-center gap-3">
-              <span className="text-2xl p-2 rounded-xl bg-secondary/80 border border-border">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div className="flex items-start sm:items-center gap-3">
+              <span className="text-2xl p-2 rounded-xl bg-secondary/80 border border-border shrink-0">
                 {lab.icon}
               </span>
               <div>
-                <div className="flex items-center gap-2">
-                  <DialogTitle className="text-lg font-bold">{lab.title}</DialogTitle>
+                <div className="flex flex-wrap items-center gap-2">
+                  <DialogTitle className="text-base sm:text-lg font-bold">{lab.title}</DialogTitle>
                   <Badge variant="outline" className="text-xs capitalize font-mono">
                     {lab.category}
                   </Badge>
@@ -76,7 +76,7 @@ export const SimulationModal: React.FC<SimulationModalProps> = ({
                   onSelectChapter(lab.chapterId);
                   onClose();
                 }}
-                className="text-xs font-mono text-primary hover:underline flex items-center gap-1 shrink-0 px-3 py-1.5 rounded-md bg-primary/10 border border-primary/20"
+                className="text-xs font-mono text-primary hover:underline flex items-center gap-1 shrink-0 self-start sm:self-auto px-3 py-1.5 rounded-md bg-primary/10 border border-primary/20"
               >
                 前往對應章節 ({lab.chapterId}) →
               </button>

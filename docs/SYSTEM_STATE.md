@@ -646,3 +646,34 @@ This log records every documentation synchronization, bootstrap scan, and file m
   - Updated `frontend/src/widgets/reader-canvas/INDEX.md` and `frontend/src/app/styles/INDEX.md`.
   - Verified `npm --prefix frontend run typecheck` passed (exit code 0).
   - Verified `npm --prefix frontend run build` compiled clean production assets in 8.30s (exit code 0).
+
+---
+
+### [2026-09-13] - Platform-Wide Mobile Compatibility & Responsive Touch Architecture
+- **Responsive Navigation Drawer (`frontend/src/widgets/sidebar-nav/SidebarNavigation.tsx`, `frontend/src/pages/guide/GuidePage.tsx`)**:
+  - Converted sidebar navigation on mobile viewports (`< md`) from an in-flow flex column to an off-canvas overlay drawer (`fixed inset-y-0 left-0 z-50 w-[285px] sm:w-[300px] max-w-[85vw]`).
+  - Added dimmed backdrop overlay (`fixed inset-0 z-40 bg-black/65 backdrop-blur-xs md:hidden`) to dismiss the drawer when tapping outside.
+  - Implemented auto-closing of the sidebar on mobile device initial page load (`window.innerWidth < 768`) and on chapter/milestone navigation clicks.
+  - Positioned floating "目錄導航" button with responsive padding (`top-3.5 left-3.5 sm:top-4 sm:left-4`) preventing layout overlaps.
+- **Reading Canvas Mobile Ergonomics (`frontend/src/widgets/reader-canvas/ReaderCanvas.tsx`)**:
+  - Adjusted main reading container padding to `px-3.5 pt-14 pb-8 sm:px-8 sm:py-8` to maximize screen real estate on 360px–430px devices while ensuring safe top clearance beneath floating controls.
+  - Added responsive breadcrumb navigation with text truncation and wrapping (`truncate max-w-[100px] sm:max-w-none`).
+  - Chapter title protected with `break-words` and responsive typography scaling (`text-lg sm:text-2xl md:text-[1.65rem]`).
+  - Introduced mobile in-page table of contents (`<details className="xl:hidden">`) allowing mobile readers to quickly jump across multi-stage lab sections without horizontal crowding.
+  - Converted CodeBlock and OutputBlock floating hover actions to accessible touch controls (`opacity-80 sm:opacity-0 sm:group-hover:opacity-100`).
+  - Stacked footer navigation buttons responsively (`flex-col sm:flex-row items-stretch sm:items-center`) with full-width tap targets for mobile thumbs.
+- **Data Tables, Math & Diagrams Responsive Containment (`frontend/src/app/styles/index.css`, `frontend/src/shared/lib/MermaidRenderer.tsx`)**:
+  - Constrained `.katex-display` with `max-width: 100% !important`, `overflow-x: auto !important`, and `-webkit-overflow-scrolling: touch`.
+  - Added `-webkit-overflow-scrolling: touch` to `pre`, `code`, and `table` elements.
+  - Set table wrapper min-width (`min-w-[480px]`) and `max-w-full overflow-x-auto` to preserve multi-column comparison readability without squishing columns.
+  - Made Mermaid zoom controls permanently accessible on touch devices (`opacity-80 sm:opacity-0 sm:group-hover:opacity-100`) and added smooth horizontal pan scrolling.
+- **Dialog & Modal Responsive Adaptation (`frontend/src/shared/ui/Dialog.tsx`, `frontend/src/entities/simulation/`, `frontend/src/entities/milestone/`)**:
+  - Updated `DialogContent` default bounds to `w-[calc(100vw-1.5rem)] sm:w-full max-w-lg max-h-[92vh] p-4 sm:p-6`.
+  - Upgraded `SimulationModal.tsx` and `MilestoneTutorialModal.tsx` dialog widths to `w-[calc(100vw-1rem)] sm:w-full max-w-4xl p-3.5 sm:p-6`.
+  - Refactored simulation modal headers to wrap vertically on mobile (`flex-col sm:flex-row sm:items-center`).
+  - Made HUD elements and manual control buttons in `CartPoleSimulator.tsx`, `PpoSimulator.tsx`, `VramSimulator.tsx`, and `GenericInteractiveLab.tsx` responsive to narrow mobile widths.
+- **Verification**:
+  - `npm --prefix frontend run typecheck`: Passed with 0 errors (exit code 0).
+  - `npm --prefix frontend run build`: Compiled production bundle in 7.52s with 0 errors.
+  - Confirmed 0 mentions of restricted keywords across the entire codebase.
+

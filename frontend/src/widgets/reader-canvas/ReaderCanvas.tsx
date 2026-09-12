@@ -199,8 +199,8 @@ const CodeBlock: React.FC<{ lang: string; codeString: string }> = ({ lang, codeS
 
     return (
       <div className="group relative -mt-2 mb-4 overflow-hidden rounded-lg border border-border/50 bg-[#060910] shadow-xs transition-all hover:border-emerald-500/30">
-        {/* Floating Controls on Hover */}
-        <div className="absolute top-2 right-2 z-10 flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity duration-150 bg-[#0e1422]/90 backdrop-blur-md rounded-md p-0.5 border border-border/50">
+        {/* Floating Controls on Hover (or visible by default on touch) */}
+        <div className="absolute top-2 right-2 z-10 flex items-center gap-1 opacity-80 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity duration-150 bg-[#0e1422]/90 backdrop-blur-md rounded-md p-0.5 border border-border/50">
           <button
             type="button"
             onClick={() => setIsWrapped(!isWrapped)}
@@ -246,8 +246,8 @@ const CodeBlock: React.FC<{ lang: string; codeString: string }> = ({ lang, codeS
   // Regular Source Code Block (Python, TS, Bash, etc. - Interactive Notebook In: flow)
   return (
     <div className="group relative my-3.5 overflow-hidden rounded-lg border border-border/70 bg-[#0d1117] shadow-xs transition-all hover:border-border">
-      {/* Floating Hover Controls in Top-Right Corner */}
-      <div className="absolute top-2 right-2 z-10 flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity duration-150 bg-[#161b22]/95 backdrop-blur-md rounded-md p-0.5 border border-border/60 shadow-md">
+      {/* Floating Hover Controls in Top-Right Corner (or visible by default on touch) */}
+      <div className="absolute top-2 right-2 z-10 flex items-center gap-1 opacity-80 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity duration-150 bg-[#161b22]/95 backdrop-blur-md rounded-md p-0.5 border border-border/60 shadow-md">
         <span className="px-1.5 font-mono text-[9px] text-muted-foreground uppercase select-none">
           {lang || 'python'}
         </span>
@@ -512,18 +512,18 @@ export const ReaderCanvas: React.FC<ReaderCanvasProps> = ({ onOpenLab }) => {
   }
 
   return (
-    <main className="h-full w-full overflow-y-auto overflow-x-hidden bg-background px-4 py-8 sm:px-8 md:px-10 lg:px-12 text-foreground transition-colors duration-200 selection:bg-cyan-500/20 selection:text-cyan-200">
+    <main className="h-full w-full overflow-y-auto overflow-x-hidden bg-background px-3.5 pt-14 pb-8 sm:px-8 sm:py-8 md:px-10 lg:px-12 text-foreground transition-colors duration-200 selection:bg-cyan-500/20 selection:text-cyan-200">
       <div className="mx-auto max-w-7xl xl:flex xl:gap-12 xl:justify-center">
         {/* Main Reading Column */}
         <div className="w-full max-w-3xl lg:max-w-4xl min-w-0 space-y-7">
           {/* 1. Sleek Breadcrumbs (Sphinx RTD Style) */}
-          <nav className="flex items-center gap-2 text-xs text-muted-foreground/80 font-medium">
+          <nav className="flex flex-wrap items-center gap-1.5 sm:gap-2 text-[11px] sm:text-xs text-muted-foreground/80 font-medium">
             <span>Docs</span>
             <span>/</span>
-            <span className="text-foreground/80">{manifest.shortName}</span>
+            <span className="text-foreground/80 truncate max-w-[100px] sm:max-w-none">{manifest.shortName}</span>
             <span>/</span>
-            <span className="text-primary">{currentPart.label.split('·')[0].trim()}</span>
-            <span className="ml-auto font-mono text-[11px] text-muted-foreground">
+            <span className="text-primary truncate max-w-[130px] sm:max-w-none">{currentPart.label.split('·')[0].trim()}</span>
+            <span className="ml-auto font-mono text-[10.5px] sm:text-[11px] text-muted-foreground">
               {chapter.readTime || '15 min'}
             </span>
           </nav>
@@ -534,28 +534,28 @@ export const ReaderCanvas: React.FC<ReaderCanvasProps> = ({ onOpenLab }) => {
               <span>{currentPart.label}</span>
             </div>
 
-            <h1 className="font-title text-xl sm:text-2xl md:text-[1.65rem] font-bold tracking-tight text-foreground leading-snug">
+            <h1 className="font-title text-lg sm:text-2xl md:text-[1.65rem] font-bold tracking-tight text-foreground leading-snug break-words">
               {chapter.num} · {chapter.title}
             </h1>
 
             {chapter.summary && (
-              <p className="text-[13.5px] sm:text-[14px] text-muted-foreground leading-relaxed font-normal">
+              <p className="text-[13px] sm:text-[14px] text-muted-foreground leading-relaxed font-normal">
                 {chapter.summary}
               </p>
             )}
 
             {/* Sleek Resource & Action Strip (ReadTheDocs Badges Style) */}
-            <div className="flex flex-wrap items-center gap-2.5 pt-1 text-xs">
+            <div className="flex flex-wrap items-center gap-2 pt-1 text-xs">
               {/* Kaggle Milestone Playbook Pill */}
               {currentPart.milestone && (
                 <button
                   type="button"
                   onClick={() => openMilestoneTutorial(currentPart.id)}
-                  className="inline-flex items-center gap-1.5 rounded-full border border-amber-500/35 bg-amber-500/10 px-3 py-1 font-semibold text-amber-300 hover:bg-amber-500/20 hover:border-amber-500/60 transition-all cursor-pointer shadow-xs"
+                  className="inline-flex items-center gap-1.5 rounded-full border border-amber-500/35 bg-amber-500/10 px-2.5 sm:px-3 py-1 text-[11px] sm:text-xs font-semibold text-amber-300 hover:bg-amber-500/20 hover:border-amber-500/60 transition-all cursor-pointer shadow-xs"
                   title="開啟 Kaggle 實戰里程碑步驟教程 (STAR 答辯 & 履歷亮點)"
                 >
                   <Trophy className="h-3.5 w-3.5 text-amber-400 shrink-0" />
-                  <span>Kaggle 實戰：{currentPart.milestone.split('(')[0].trim()}</span>
+                  <span className="truncate">Kaggle 實戰：{currentPart.milestone.split('(')[0].trim()}</span>
                 </button>
               )}
 
@@ -564,7 +564,7 @@ export const ReaderCanvas: React.FC<ReaderCanvasProps> = ({ onOpenLab }) => {
                 <button
                   type="button"
                   onClick={() => onOpenLab?.(chapter.hasVisualizer!)}
-                  className="inline-flex items-center gap-1.5 rounded-full border border-purple-500/35 bg-purple-500/10 px-3 py-1 font-semibold text-purple-300 hover:bg-purple-500/20 hover:border-purple-500/60 transition-all cursor-pointer shadow-xs"
+                  className="inline-flex items-center gap-1.5 rounded-full border border-purple-500/35 bg-purple-500/10 px-2.5 sm:px-3 py-1 text-[11px] sm:text-xs font-semibold text-purple-300 hover:bg-purple-500/20 hover:border-purple-500/60 transition-all cursor-pointer shadow-xs"
                   title={`開啟仿真實驗室: ${chapter.hasVisualizer}`}
                 >
                   <FlaskConical className="h-3.5 w-3.5 text-purple-400 shrink-0" />
@@ -573,25 +573,25 @@ export const ReaderCanvas: React.FC<ReaderCanvasProps> = ({ onOpenLab }) => {
               )}
 
               {/* Read Time Pill */}
-              <span className="inline-flex items-center gap-1 rounded-full border border-border/60 bg-muted/40 px-2.5 py-1 font-mono text-[11px] text-muted-foreground">
+              <span className="inline-flex items-center gap-1 rounded-full border border-border/60 bg-muted/40 px-2.5 py-1 font-mono text-[10.5px] sm:text-[11px] text-muted-foreground">
                 <Clock className="h-3 w-3 text-primary" />
                 <span>{chapter.readTime || '15 min'}</span>
               </span>
 
               {/* Competency Badges */}
               {chapter.competencies && chapter.competencies.map((comp) => (
-                <Badge key={comp} variant="secondary" className="text-[11px] py-0.5">
+                <Badge key={comp} variant="secondary" className="text-[10.5px] sm:text-[11px] py-0.5">
                   {comp}
                 </Badge>
               ))}
 
               {/* Mark Completed Button */}
-              <div className="ml-auto">
+              <div className="w-full sm:w-auto sm:ml-auto pt-1 sm:pt-0">
                 <Button
                   variant={isDone ? 'secondary' : 'default'}
                   size="sm"
                   onClick={() => toggleChapterDone(chapter.id)}
-                  className="cursor-pointer text-xs h-7 px-3"
+                  className="w-full sm:w-auto cursor-pointer text-xs h-7 px-3 justify-center"
                 >
                   {isDone ? (
                     <>
@@ -608,6 +608,39 @@ export const ReaderCanvas: React.FC<ReaderCanvasProps> = ({ onOpenLab }) => {
               </div>
             </div>
           </div>
+
+          {/* Mobile In-Page Table of Contents Dropdown (< xl) */}
+          {tocHeadings.length > 0 && (
+            <details className="xl:hidden my-2 rounded-xl border border-border/70 bg-card/50 p-2.5 text-xs group">
+              <summary className="flex items-center justify-between font-mono font-semibold text-muted-foreground cursor-pointer select-none">
+                <span className="flex items-center gap-1.5 text-foreground/90 text-[11.5px]">
+                  <List className="h-3.5 w-3.5 text-primary" />
+                  <span>本頁章節目錄 ({tocHeadings.length})</span>
+                </span>
+                <span className="text-[10px] text-primary">展開導航</span>
+              </summary>
+              <nav className="mt-2.5 space-y-1 pt-2 border-t border-border/50 max-h-56 overflow-y-auto">
+                {tocHeadings.map((heading) => (
+                  <a
+                    key={heading.id}
+                    href={`#${heading.id}`}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      const el = document.getElementById(heading.id);
+                      if (el) el.scrollIntoView({ behavior: 'smooth' });
+                    }}
+                    className={cn(
+                      "block py-1 transition-colors leading-snug cursor-pointer",
+                      heading.level === 3 ? "pl-3 text-[10.5px] text-muted-foreground hover:text-foreground" : "text-[11.5px] font-medium text-foreground/85 hover:text-primary",
+                      activeHeadingId === heading.id && "text-primary font-semibold"
+                    )}
+                  >
+                    {heading.text}
+                  </a>
+                ))}
+              </nav>
+            </details>
+          )}
 
           {/* 3. Main Chapter Body (Markdown / HTML) */}
           <article ref={articleRef} className="prose prose-slate dark:prose-invert max-w-none prose-p:leading-[1.68] prose-p:text-[13.5px] sm:prose-p:text-[14px] prose-headings:font-title prose-headings:tracking-tight prose-headings:scroll-mt-20 prose-pre:p-0 prose-pre:my-0 prose-pre:bg-transparent prose-table:my-0">
@@ -694,8 +727,8 @@ export const ReaderCanvas: React.FC<ReaderCanvasProps> = ({ onOpenLab }) => {
                   },
                   table({ children, ...props }) {
                     return (
-                      <div className="my-4 overflow-x-auto rounded-lg border border-border/70 bg-card/40 shadow-xs">
-                        <table className="w-full border-collapse text-left text-xs" {...props}>
+                      <div className="my-4 overflow-x-auto rounded-lg border border-border/70 bg-card/40 shadow-xs max-w-full">
+                        <table className="w-full border-collapse text-left text-xs min-w-[480px]" {...props}>
                           {children}
                         </table>
                       </div>
@@ -790,33 +823,39 @@ export const ReaderCanvas: React.FC<ReaderCanvasProps> = ({ onOpenLab }) => {
           </article>
 
           {/* 4. Footer Navigation Buttons */}
-          <div className="flex items-center justify-between border-t border-border pt-6">
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 border-t border-border pt-6">
             {prevChapter ? (
               <Button
                 variant="outline"
                 size="sm"
-                onClick={() => setCurrentChapterId(prevChapter.id)}
-                className="flex items-center gap-2 text-xs cursor-pointer"
+                onClick={() => {
+                  setCurrentChapterId(prevChapter.id);
+                  window.scrollTo({ top: 0, behavior: 'smooth' });
+                }}
+                className="flex items-center justify-center sm:justify-start gap-2 text-xs cursor-pointer py-2 sm:py-1.5"
               >
-                <ArrowLeft className="h-3.5 w-3.5" />
-                <span>上一章：{prevChapter.num} {prevChapter.title.split('(')[0].trim()}</span>
+                <ArrowLeft className="h-3.5 w-3.5 shrink-0" />
+                <span className="truncate">上一章：{prevChapter.num} {prevChapter.title.split('(')[0].trim()}</span>
               </Button>
             ) : (
-              <div />
+              <div className="hidden sm:block" />
             )}
 
             {nextChapter ? (
               <Button
                 variant="default"
                 size="sm"
-                onClick={() => setCurrentChapterId(nextChapter.id)}
-                className="flex items-center gap-2 text-xs cursor-pointer"
+                onClick={() => {
+                  setCurrentChapterId(nextChapter.id);
+                  window.scrollTo({ top: 0, behavior: 'smooth' });
+                }}
+                className="flex items-center justify-center sm:justify-end gap-2 text-xs cursor-pointer py-2 sm:py-1.5"
               >
-                <span>下一章：{nextChapter.num} {nextChapter.title.split('(')[0].trim()}</span>
-                <ArrowRight className="h-3.5 w-3.5" />
+                <span className="truncate">下一章：{nextChapter.num} {nextChapter.title.split('(')[0].trim()}</span>
+                <ArrowRight className="h-3.5 w-3.5 shrink-0" />
               </Button>
             ) : (
-              <div />
+              <div className="hidden sm:block" />
             )}
           </div>
         </div>

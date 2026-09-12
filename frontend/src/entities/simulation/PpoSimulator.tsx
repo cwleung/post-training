@@ -137,12 +137,12 @@ export const PpoSimulator: React.FC = () => {
         {/* Visual Canvas & Curve */}
         <Card className="lg:col-span-2 p-5 bg-card/60 backdrop-blur-sm border-border flex flex-col justify-between">
           <div>
-            <div className="flex items-center justify-between mb-3">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-3">
               <div className="flex items-center gap-2">
                 <TrendingUp className="w-4 h-4 text-emerald-400" />
                 <span className="text-sm font-semibold">目標函數響應曲線 L^(CLIP)(θ)</span>
               </div>
-              <div className="flex items-center gap-3 text-xs">
+              <div className="flex flex-wrap items-center gap-2.5 sm:gap-3 text-xs">
                 <div className="flex items-center gap-1">
                   <span className="w-3 h-0.5 bg-muted-foreground inline-block dashed" />
                   <span className="text-muted-foreground">未截斷 r·Â</span>

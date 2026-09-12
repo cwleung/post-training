@@ -291,13 +291,26 @@ html, body {
 .katex {
   font-size: 1.05em;
   color: inherit !important;
+  max-width: 100%;
 }
 
 .katex-display {
-  margin: 1.5em 0 !important;
-  overflow-x: auto;
-  overflow-y: hidden;
-  padding: 0.5em 0;
+  margin: 1.25em 0 !important;
+  overflow-x: auto !important;
+  overflow-y: hidden !important;
+  padding: 0.5em 0.25em !important;
+  max-width: 100% !important;
+  -webkit-overflow-scrolling: touch;
+}
+
+.katex-display > .katex {
+  max-width: 100%;
+  text-align: center;
+}
+
+/* Ensure smooth touch scrolling on mobile for code and data tables */
+pre, code, table {
+  -webkit-overflow-scrolling: touch;
 }
 
 /* Deep link interactive buttons */
