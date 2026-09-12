@@ -33,7 +33,7 @@ export const useChapterStore = create<ChapterState>()(
       currentChapterId: 'da01',
       doneChapters: [],
       theme: 'dark',
-      sidebarOpen: true,
+      sidebarOpen: typeof window !== 'undefined' ? window.innerWidth >= 768 : true,
       selectedCodeLine: null,
       activeMilestonePartId: null,
 

@@ -11,5 +11,5 @@ Main interactive guide page view assembling the sidebar navigation, reader canva
 | `GuidePage.tsx` | TSX Component | `GuidePage`: Page shell combining `SidebarNavigation`, `ReaderCanvas`, and floating sidebar toggle controls |
 
 ## Invariants & Rules
-- Controls sidebar expandability and floating open button when navigation is collapsed.
+- Controls sidebar expandability, responsive viewport breakpoint collapse (<768px), and floating open button when navigation is collapsed.
 - Coordinates simulation modal launch events between reader canvas and chapter store.

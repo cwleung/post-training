@@ -172,6 +172,17 @@ This log records every documentation synchronization, bootstrap scan, and file m
 
 ---
 
+### [2026-09-13] - Responsive Mobile Drawer & Viewport Resize Auto-Collapse Hardening
+- **Dynamic Viewport Synchronization (`frontend/src/pages/guide/GuidePage.tsx`)**:
+  - Replaced one-shot mount effect with dynamic `resize` event listener tracking viewport width transitions across the 768px (`md`) boundary.
+  - Automatically collapses sidebar drawer (`setSidebarOpen(false)`) when reducing window width to mobile (<768px), seamlessly revealing the reading canvas and floating "目錄導航" / "ψ" controls.
+  - Automatically restores user's desktop sidebar preference (`userDesktopPref.current`) when expanding back to desktop (>=768px).
+- **Responsive Store State Initialization (`frontend/src/entities/chapter/chapterStore.ts`)**:
+  - Initialized `sidebarOpen` dynamically based on client viewport (`window.innerWidth >= 768`), eliminating initial drawer flicker on mobile reloads.
+- **Verification**: Ran `npm --prefix frontend run typecheck && npm --prefix frontend run build` (passed with code 0 in 7.77s).
+
+---
+
 ### [2026-09-13] - Post-Training Track Comprehensive Code Coherence Audit & Standardization
 - **18-Chapter Cumulative Execution & Coherence Audit**:
   - Validated all 18 chapters (`01_data.md` through `18_alignment_safety_red_teaming.md`) against the 5-stage progressive notebook laboratory standard (Synthetic Batch -> Causal Gathering -> Vectorized Loss -> Pathological Stress Test -> Remediation & Comparative Ablation).

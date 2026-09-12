@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { PanelLeft } from 'lucide-react';
 import { SidebarNavigation } from '@/widgets/sidebar-nav/SidebarNavigation';
 import { ReaderCanvas } from '@/widgets/reader-canvas/ReaderCanvas';
@@ -20,11 +20,46 @@ export const GuidePage: React.FC = () => {
   } = useChapterStore();
   const [activeLabId, setActiveLabId] = useState<string | null>(null);
 
-  // Auto-close sidebar on mobile devices on mount
+  const userDesktopPref = useRef<boolean>(
+    typeof window !== 'undefined' ? window.innerWidth >= 768 : true
+  );
+
+  // Synchronize desktop preference when user toggles sidebar on desktop
   useEffect(() => {
-    if (typeof window !== 'undefined' && window.innerWidth < 768) {
+    if (typeof window !== 'undefined' && window.innerWidth >= 768) {
+      userDesktopPref.current = sidebarOpen;
+    }
+  }, [sidebarOpen]);
+
+  // Responsive sidebar: Automatically collapse sidebar drawer when reducing window width to mobile (< 768px),
+  // and restore desktop split pane when expanding to desktop (>= 768px).
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+
+    let prevWidth = window.innerWidth;
+
+    const handleResize = () => {
+      const currentWidth = window.innerWidth;
+      const isMobile = currentWidth < 768;
+      const wasMobile = prevWidth < 768;
+
+      if (isMobile && !wasMobile) {
+        // Just crossed from desktop to mobile: hide sidebar drawer
+        setSidebarOpen(false);
+      } else if (!isMobile && wasMobile) {
+        // Just crossed from mobile to desktop: restore desktop sidebar preference
+        setSidebarOpen(userDesktopPref.current);
+      }
+      prevWidth = currentWidth;
+    };
+
+    // Initial check on mount: ensure sidebar is closed on mobile viewport
+    if (window.innerWidth < 768) {
       setSidebarOpen(false);
     }
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
   }, [setSidebarOpen]);
 
   const handleOpenLab = (labId: string) => {
