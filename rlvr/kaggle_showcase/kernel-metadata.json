@@ -1,0 +1,14 @@
+{
+  "id": "YOUR_KAGGLE_USERNAME/post-training-mle-reasoning-engine",
+  "title": "🏆 Post-Training MLE: ReMax, SimPO, PRM & Data Flywheel",
+  "code_file": "post_training_mle_showcase.ipynb",
+  "language": "python",
+  "kernel_type": "notebook",
+  "is_private": "false",
+  "enable_gpu": "true",
+  "enable_tpu": "false",
+  "enable_internet": "true",
+  "dataset_sources": [],
+  "competition_sources": [],
+  "kernel_sources": []
+}

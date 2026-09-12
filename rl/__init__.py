@@ -1,0 +1,12 @@
+"""
+rl package initialization.
+Ensures internal modules (kairos_log, policy_feedback, grpo_toy, etc.)
+are resolvable whether running as a package or standalone scripts.
+"""
+
+import sys
+from pathlib import Path
+
+_pkg_dir = str(Path(__file__).resolve().parent)
+if _pkg_dir not in sys.path:
+    sys.path.insert(0, _pkg_dir)

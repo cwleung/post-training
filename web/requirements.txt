@@ -1,0 +1,10 @@
+# web/ — GRPO 教學 demo 的 FastAPI backend + 純前端
+# 安裝：pip install -r web/requirements.txt
+# Python 3.9 相容（對齊 repo 既有 demo）。
+#
+# 注意：不需要 gradio / matplotlib / PIL —— web 版用 Chart.js（前端 CDN）畫圖。
+
+fastapi>=0.110
+uvicorn[standard]>=0.27
+pydantic>=2.5
+numpy>=1.20

@@ -1,0 +1,569 @@
+@article{sheng2024hybridflow,
+  title = {HybridFlow: A Flexible and Efficient RLHF Framework},
+  author = {Guangming Sheng and Chi Zhang and Zilin Zhu and Xun Zhou and Guanqun Shen and Jianwei Dong and Qinghao Hu and Zheng Chen and Fei Xia and Zhiying Tu and Dianhai Yu and Yanjun Ma},
+  year = {2024},
+  eprint = {2409.19256v1},
+  archivePrefix = {arXiv},
+  journal = {arXiv preprint arXiv:2409.19256v1},
+  abstract = {Reinforcement Learning from Human Feedback (RLHF) is a critical step in aligning Large Language Models (LLMs) with human intent. However, existing RLHF systems struggle to efficiently scale due to the complex inter-dependencies between the Actor, Critic, Reference, and Reward models, especially when alternating between memory-bound autoregressive generation and compute-bound training. We introduce HybridFlow (open-sourced as veRL), a flexible and efficient RLHF framework that features a novel 3D},
+}
+
+@article{xu2024magpie,
+  title = {Magpie: Alignment Data Synthesis from Scratch by Prompting Aligned LLMs with Nothing},
+  author = {Zhangchen Xu and Fengqing Jiang and Luyao Niu and Yuntian Deng and Radha Poovendran and Yejin Choi and Bill Yuchen Lin},
+  year = {2024},
+  eprint = {2406.08464v2},
+  archivePrefix = {arXiv},
+  journal = {arXiv preprint arXiv:2406.08464v2},
+  abstract = {High-quality instruction data is critical for aligning large language models (LLMs). Although some models, such as Llama-3-Instruct, have open weights, their alignment data remain private, which hinders the democratization of AI. High human labor costs and a limited, predefined scope for prompting prevent existing open-source data creation methods from scaling effectively, potentially limiting the diversity and quality of public alignment datasets. Is it possible to synthesize high-quality instr},
+}
+
+@article{duan2026mitigating,
+  title = {Mitigating Reward Hacking in RLHF via Bayesian Non-negative Reward Modeling},
+  author = {Zhibin Duan and Guowei Rong and Zhuo Li and Bo Chen and Mingyuan Zhou and Dandan Guo},
+  year = {2026},
+  eprint = {2602.10623v2},
+  archivePrefix = {arXiv},
+  journal = {arXiv preprint arXiv:2602.10623v2},
+  abstract = {Reward models learned from human preferences are central to aligning large language models (LLMs) via reinforcement learning from human feedback, yet they are often vulnerable to reward hacking due to noisy annotations and systematic biases such as response length or style. We propose Bayesian Non-Negative Reward Model (BNRM), a principled reward modeling framework that integrates non-negative factor analysis into Bradley-Terry (BT) preference model. BNRM represents rewards through a sparse, non},
+}
+
+@article{meng2024simpo,
+  title = {SimPO: Simple Preference Optimization with a Reference-Free Reward},
+  author = {Yu Meng and Mengzhou Xia and Danqi Chen},
+  year = {2024},
+  eprint = {2405.14734v3},
+  archivePrefix = {arXiv},
+  journal = {arXiv preprint arXiv:2405.14734v3},
+  abstract = {Direct Preference Optimization (DPO) is a widely used offline preference optimization algorithm that reparameterizes reward functions in reinforcement learning from human feedback (RLHF) to enhance simplicity and training stability. In this work, we propose SimPO, a simpler yet more effective approach. The effectiveness of SimPO is attributed to a key design: using the average log probability of a sequence as the implicit reward. This reward formulation better aligns with model generation and el},
+}
+
+@article{sun2026boosting,
+  title = {Boosting Direct Preference Optimization with Penalization},
+  author = {Pengwei Sun},
+  year = {2026},
+  eprint = {2606.12505v1},
+  archivePrefix = {arXiv},
+  journal = {arXiv preprint arXiv:2606.12505v1},
+  abstract = {Offline preference optimization has become a practical substitute for reinforcement learning from human feedback, but pairwise objectives such as Direct Preference Optimization (DPO) and its variants use only the chosen and rejected responses stored in a static dataset. This leaves a useful signal unused: the response that the reference model itself would generate for the same prompt. We propose Direct Preference Optimization with Penalization (DPOP), a simple extension of DPO that augments the },
+}
+
+@article{xiong2024building,
+  title = {Building Math Agents with Multi-Turn Iterative Preference Learning},
+  author = {Wei Xiong and Chengshuai Shi and Jiaming Shen and Aviv Rosenberg and Zhen Qin and Daniele Calandriello and Misha Khalman and Rishabh Joshi and Bilal Piot and Mohammad Saleh and Chi Jin and Tong Zhang and Tianqi Liu},
+  year = {2024},
+  eprint = {2409.02392v2},
+  archivePrefix = {arXiv},
+  journal = {arXiv preprint arXiv:2409.02392v2},
+  abstract = {Recent studies have shown that large language models' (LLMs) mathematical problem-solving capabilities can be enhanced by integrating external tools, such as code interpreters, and employing multi-turn Chain-of-Thought (CoT) reasoning. While current methods focus on synthetic data generation and Supervised Fine-Tuning (SFT), this paper studies the complementary direct preference learning approach to further improve model performance. However, existing direct preference learning algorithms are or},
+}
+
+@article{ethayarajh2024kto,
+  title = {KTO: Model Alignment as Prospect Theoretic Optimization},
+  author = {Kawin Ethayarajh and Winnie Xu and Niklas Muennighoff and Dan Jurafsky and Douwe Kiela},
+  year = {2024},
+  eprint = {2402.01306v4},
+  archivePrefix = {arXiv},
+  journal = {arXiv preprint arXiv:2402.01306v4},
+  abstract = {Kahneman \& Tversky's $\textit{prospect theory}$ tells us that humans perceive random variables in a biased but well-defined manner (1992); for example, humans are famously loss-averse. We show that objectives for aligning LLMs with human feedback implicitly incorporate many of these biases -- the success of these objectives (e.g., DPO) over cross-entropy minimization can partly be ascribed to them belonging to a family of loss functions that we call $\textit{human-aware losses}$ (HALOs). However},
+}
+
+@article{xiong2023iterative,
+  title = {Iterative Preference Learning from Human Feedback: Bridging Theory and Practice for RLHF under KL-Constraint},
+  author = {Wei Xiong and Hanze Dong and Chenlu Ye and Ziqi Wang and Han Zhong and Heng Ji and Nan Jiang and Tong Zhang},
+  year = {2023},
+  eprint = {2312.11456v4},
+  archivePrefix = {arXiv},
+  journal = {arXiv preprint arXiv:2312.11456v4},
+  abstract = {This paper studies the alignment process of generative models with Reinforcement Learning from Human Feedback (RLHF). We first identify the primary challenges of existing popular methods like offline PPO and offline DPO as lacking in strategical exploration of the environment. Then, to understand the mathematical principle of RLHF, we consider a standard mathematical formulation, the reverse-KL regularized contextual bandit for RLHF. Despite its widespread practical application, a rigorous theor},
+}
+
+@article{wang2024interpretable,
+  title = {Interpretable Preferences via Multi-Objective Reward Modeling and Mixture-of-Experts},
+  author = {Haoxiang Wang and Wei Xiong and Tengyang Xie and Han Zhao and Tong Zhang},
+  year = {2024},
+  eprint = {2406.12845v1},
+  archivePrefix = {arXiv},
+  journal = {arXiv preprint arXiv:2406.12845v1},
+  abstract = {Reinforcement learning from human feedback (RLHF) has emerged as the primary method for aligning large language models (LLMs) with human preferences. The RLHF process typically starts by training a reward model (RM) using human preference data. Conventional RMs are trained on pairwise responses to the same user request, with relative ratings indicating which response humans prefer. The trained RM serves as a proxy for human preferences. However, due to the black-box nature of RMs, their outputs },
+}
+
+@article{rafailov2023direct,
+  title = {Direct Preference Optimization: Your Language Model is Secretly a Reward Model},
+  author = {Rafael Rafailov and Archit Sharma and Eric Mitchell and Stefano Ermon and Christopher D. Manning and Chelsea Finn},
+  year = {2023},
+  eprint = {2305.18290v3},
+  archivePrefix = {arXiv},
+  journal = {arXiv preprint arXiv:2305.18290v3},
+  abstract = {While large-scale unsupervised language models (LMs) learn broad world knowledge and some reasoning skills, achieving precise control of their behavior is difficult due to the completely unsupervised nature of their training. Existing methods for gaining such steerability collect human labels of the relative quality of model generations and fine-tune the unsupervised LM to align with these preferences, often with reinforcement learning from human feedback (RLHF). However, RLHF is a complex and o},
+}
+
+@article{just2024data,
+  title = {Data-Centric Human Preference with Rationales for Direct Preference Alignment},
+  author = {Hoang Anh Just and Ming Jin and Anit Sahu and Huy Phan and Ruoxi Jia},
+  year = {2024},
+  eprint = {2407.14477v4},
+  archivePrefix = {arXiv},
+  journal = {arXiv preprint arXiv:2407.14477v4},
+  abstract = {Aligning language models with human preferences through reinforcement learning from human feedback is crucial for their safe and effective deployment. The human preference is typically represented through comparison where one response is chosen over another for a given prompt. However, standard preference datasets often lack explicit information on why a particular choice was made, presenting an ambiguity that can hinder efficient learning and robust alignment, especially given the high cost of },
+}
+
+@article{li2023remax,
+  title = {ReMax: A Simple, Effective, and Efficient Reinforcement Learning Method for Aligning Large Language Models},
+  author = {Ziniu Li and Tian Xu and Yushun Zhang and Zhihang Lin and Yang Yu and Ruoyu Sun and Zhi-Quan Luo},
+  year = {2023},
+  eprint = {2310.10505v4},
+  archivePrefix = {arXiv},
+  journal = {arXiv preprint arXiv:2310.10505v4},
+  abstract = {Reinforcement Learning from Human Feedback (RLHF) is key to aligning Large Language Models (LLMs), typically paired with the Proximal Policy Optimization (PPO) algorithm. While PPO is a powerful method designed for general reinforcement learning tasks, it is overly sophisticated for LLMs, leading to laborious hyper-parameter tuning and significant computation burdens. To make RLHF efficient, we present ReMax, which leverages 3 properties of RLHF: fast simulation, deterministic transitions, and t},
+}
+
+@article{wang2024cream,
+  title = {CREAM: Consistency Regularized Self-Rewarding Language Models},
+  author = {Zhaoyang Wang and Weilei He and Zhiyuan Liang and Xuchao Zhang and Chetan Bansal and Ying Wei and Weitong Zhang and Huaxiu Yao},
+  year = {2024},
+  eprint = {2410.12735v5},
+  archivePrefix = {arXiv},
+  journal = {arXiv preprint arXiv:2410.12735v5},
+  abstract = {Recent self-rewarding large language models (LLM) have successfully applied LLM-as-a-Judge to iteratively improve the alignment performance without the need of human annotations for preference data. These methods commonly utilize the same LLM to act as both the policy model (which generates responses) and the reward model (which scores and ranks those responses). The ranked responses are then used as preference pairs to train the LLM via direct alignment technologies (e.g. DPO). However, it is n},
+}
+
+@article{wang2023math,
+  title = {Math-Shepherd: Verify and Reinforce LLMs Step-by-step without Human Annotations},
+  author = {Peiyi Wang and Lei Li and Zhihong Shao and R. X. Xu and Damai Dai and Yifei Li and Deli Chen and Y. Wu and Zhifang Sui},
+  year = {2023},
+  eprint = {2312.08935v3},
+  archivePrefix = {arXiv},
+  journal = {arXiv preprint arXiv:2312.08935v3},
+  abstract = {In this paper, we present an innovative process-oriented math process reward model called \textbf{Math-Shepherd}, which assigns a reward score to each step of math problem solutions. The training of Math-Shepherd is achieved using automatically constructed process-wise supervision data, breaking the bottleneck of heavy reliance on manual annotation in existing work. We explore the effectiveness of Math-Shepherd in two scenarios: 1) \textit{Verification}: Math-Shepherd is utilized for reranking m},
+}
+
+@article{lai2024step,
+  title = {Step-DPO: Step-wise Preference Optimization for Long-chain Reasoning of LLMs},
+  author = {Xin Lai and Zhuotao Tian and Yukang Chen and Senqiao Yang and Xiangru Peng and Jiaya Jia},
+  year = {2024},
+  eprint = {2406.18629v1},
+  archivePrefix = {arXiv},
+  journal = {arXiv preprint arXiv:2406.18629v1},
+  abstract = {Mathematical reasoning presents a significant challenge for Large Language Models (LLMs) due to the extensive and precise chain of reasoning required for accuracy. Ensuring the correctness of each reasoning step is critical. To address this, we aim to enhance the robustness and factuality of LLMs by learning from human feedback. However, Direct Preference Optimization (DPO) has shown limited benefits for long-chain mathematical reasoning, as models employing DPO struggle to identify detailed err},
+}
+
+@article{shao2025deepseekmath,
+  title = {DeepSeekMath-V2: Towards Self-Verifiable Mathematical Reasoning},
+  author = {Zhihong Shao and Yuxiang Luo and Chengda Lu and Z. Z. Ren and Jiewen Hu and Tian Ye and Zhibin Gou and Shirong Ma and Xiaokang Zhang},
+  year = {2025},
+  eprint = {2511.22570v1},
+  archivePrefix = {arXiv},
+  journal = {arXiv preprint arXiv:2511.22570v1},
+  abstract = {Large language models have made significant progress in mathematical reasoning, which serves as an important testbed for AI and could impact scientific research if further advanced. By scaling reasoning with reinforcement learning that rewards correct final answers, LLMs have improved from poor performance to saturating quantitative reasoning competitions like AIME and HMMT in one year. However, this approach faces fundamental limitations. Pursuing higher final answer accuracy doesn't address a },
+}
+
+@article{hu2024openrlhf,
+  title = {OpenRLHF: An Easy-to-use, Scalable and High-performance RLHF Framework},
+  author = {Jian Hu and Xibin Wu and Wei Shen and Jason Klein Liu and Zilin Zhu and Weixun Wang and Songlin Jiang and Haoran Wang and Hao Chen and Bin Chen and Weikai Fang and Xianyu and Yu Cao and Haotian Xu and Yiming Liu},
+  year = {2024},
+  eprint = {2405.11143v6},
+  archivePrefix = {arXiv},
+  journal = {arXiv preprint arXiv:2405.11143v6},
+  abstract = {Large Language Models (LLMs) fine-tuned via Reinforcement Learning from Human Feedback (RLHF) and Reinforcement Learning with Verifiable Rewards (RLVR) significantly improve the alignment of human-AI values, further raising the upper bound of AI capabilities, particularly in reasoning-intensive, long-context Chain-of-Thought (CoT) tasks. However, existing frameworks commonly face challenges such as inference bottlenecks and complexity barriers, which restrict their accessibility to newcomers. To},
+}
+
+@article{hong2024orpo,
+  title = {ORPO: Monolithic Preference Optimization without Reference Model},
+  author = {Jiwoo Hong and Noah Lee and James Thorne},
+  year = {2024},
+  eprint = {2403.07691v2},
+  archivePrefix = {arXiv},
+  journal = {arXiv preprint arXiv:2403.07691v2},
+  abstract = {While recent preference alignment algorithms for language models have demonstrated promising results, supervised fine-tuning (SFT) remains imperative for achieving successful convergence. In this paper, we study the crucial role of SFT within the context of preference alignment, emphasizing that a minor penalty for the disfavored generation style is sufficient for preference-aligned SFT. Building on this foundation, we introduce a straightforward and innovative reference model-free monolithic od},
+}
+
+@article{yuan2024self,
+  title = {Self-Rewarding Language Models},
+  author = {Weizhe Yuan and Richard Yuanzhe Pang and Kyunghyun Cho and Xian Li and Sainbayar Sukhbaatar and Jing Xu and Jason Weston},
+  year = {2024},
+  eprint = {2401.10020v3},
+  archivePrefix = {arXiv},
+  journal = {arXiv preprint arXiv:2401.10020v3},
+  abstract = {We posit that to achieve superhuman agents, future models require superhuman feedback in order to provide an adequate training signal. Current approaches commonly train reward models from human preferences, which may then be bottlenecked by human performance level, and secondly these separate frozen reward models cannot then learn to improve during LLM training. In this work, we study Self-Rewarding Language Models, where the language model itself is used via LLM-as-a-Judge prompting to provide },
+}
+
+@article{kwon2023efficient,
+  title = {Efficient Memory Management for Large Language Model Serving with PagedAttention},
+  author = {Woosuk Kwon and Zhuohan Li and Siyuan Zhuang and Ying Sheng and Lianmin Zheng and Cody Hao Yu and Joseph E. Gonzalez and Hao Zhang and Ion Stoica},
+  year = {2023},
+  eprint = {2309.06180v1},
+  archivePrefix = {arXiv},
+  journal = {arXiv preprint arXiv:2309.06180v1},
+  abstract = {High throughput serving of large language models (LLMs) requires batching sufficiently many requests at a time. However, existing systems struggle because the key-value cache (KV cache) memory for each request is huge and grows and shrinks dynamically. When managed inefficiently, this memory can be significantly wasted by fragmentation and redundant duplication, limiting the batch size. To address this problem, we propose PagedAttention, an attention algorithm inspired by the classical virtual m},
+}
+
+@article{prabhu2024vattention,
+  title = {vAttention: Dynamic Memory Management for Serving LLMs without PagedAttention},
+  author = {Ramya Prabhu and Ajay Nayak and Jayashree Mohan and Ramachandran Ramjee and Ashish Panwar},
+  year = {2024},
+  eprint = {2405.04437v3},
+  archivePrefix = {arXiv},
+  journal = {arXiv preprint arXiv:2405.04437v3},
+  abstract = {PagedAttention is a popular approach for dynamic memory allocation in LLM serving systems. It enables on-demand allocation of GPU memory to mitigate KV cache fragmentation -- a phenomenon that crippled the batch size (and consequently throughput) in prior systems. However, in trying to allocate physical memory at runtime, PagedAttention ends up changing the virtual memory layout of the KV cache from contiguous to non-contiguous. Such a design leads to non-trivial programming and performance over},
+}
+
+@article{jimenez2023swe,
+  title = {SWE-bench: Can Language Models Resolve Real-World GitHub Issues?},
+  author = {Carlos E. Jimenez and John Yang and Alexander Wettig and Shunyu Yao and Kexin Pei and Ofir Press and Karthik Narasimhan},
+  year = {2023},
+  eprint = {2310.06770v3},
+  archivePrefix = {arXiv},
+  journal = {arXiv preprint arXiv:2310.06770v3},
+  abstract = {Language models have outpaced our ability to evaluate them effectively, but for their future development it is essential to study the frontier of their capabilities. We find real-world software engineering to be a rich, sustainable, and challenging testbed for evaluating the next generation of language models. To this end, we introduce SWE-bench, an evaluation framework consisting of $2,294$ software engineering problems drawn from real GitHub issues and corresponding pull requests across $12$ p},
+}
+
+@article{zhang2025swe,
+  title = {SWE-bench Goes Live!},
+  author = {Linghao Zhang and Shilin He and Chaoyun Zhang and Yu Kang and Bowen Li and Chengxing Xie and Junhao Wang and Maoquan Wang and Yufan Huang and Shengyu Fu and Elsie Nallipogu and Qingwei Lin and Yingnong Dang and Saravan Rajmohan and Dongmei Zhang},
+  year = {2025},
+  eprint = {2505.23419v2},
+  archivePrefix = {arXiv},
+  journal = {arXiv preprint arXiv:2505.23419v2},
+  abstract = {The issue-resolving task, where a model generates patches to fix real-world bugs, has emerged as a critical benchmark for evaluating the capabilities of large language models (LLMs). While SWE-bench and its variants have become standard in this domain, they suffer from key limitations: they have not been updated since their initial releases, cover a narrow set of repositories, and depend heavily on manual effort for instance construction and environment setup. These factors hinder scalability an},
+}
+
+@article{zan2024swe,
+  title = {SWE-bench-java: A GitHub Issue Resolving Benchmark for Java},
+  author = {Daoguang Zan and Zhirong Huang and Ailun Yu and Shaoxin Lin and Yifan Shi and Wei Liu and Dong Chen and Zongshuai Qi and Hao Yu and Lei Yu and Dezhi Ran and Muhan Zeng and Bo Shen and Pan Bian and Guangtai Liang and Bei Guan and Pengjie Huang and Tao Xie and Yongji Wang and Qianxiang Wang},
+  year = {2024},
+  eprint = {2408.14354v1},
+  archivePrefix = {arXiv},
+  journal = {arXiv preprint arXiv:2408.14354v1},
+  abstract = {GitHub issue resolving is a critical task in software engineering, recently gaining significant attention in both industry and academia. Within this task, SWE-bench has been released to evaluate issue resolving capabilities of large language models (LLMs), but has so far only focused on Python version. However, supporting more programming languages is also important, as there is a strong demand in industry. As a first step toward multilingual support, we have developed a Java version of SWE-benc},
+}
+
+@article{lightman2023let,
+  title = {Let's Verify Step by Step},
+  author = {Hunter Lightman and Vineet Kosaraju and Yura Burda and Harri Edwards and Bowen Baker and Teddy Lee and Jan Leike and John Schulman and Ilya Sutskever and Karl Cobbe},
+  year = {2023},
+  eprint = {2305.20050v1},
+  archivePrefix = {arXiv},
+  journal = {arXiv preprint arXiv:2305.20050v1},
+  abstract = {In recent years, large language models have greatly improved in their ability to perform complex multi-step reasoning. However, even state-of-the-art models still regularly produce logical mistakes. To train more reliable models, we can turn either to outcome supervision, which provides feedback for a final result, or process supervision, which provides feedback for each intermediate reasoning step. Given the importance of training reliable models, and given the high cost of human feedback, it i},
+}
+
+@article{wang2024arithmetic,
+  title = {Arithmetic Control of LLMs for Diverse User Preferences: Directional Preference Alignment with Multi-Objective Rewards},
+  author = {Haoxiang Wang and Yong Lin and Wei Xiong and Rui Yang and Shizhe Diao and Shuang Qiu and Han Zhao and Tong Zhang},
+  year = {2024},
+  eprint = {2402.18571v3},
+  archivePrefix = {arXiv},
+  journal = {arXiv preprint arXiv:2402.18571v3},
+  abstract = {Fine-grained control over large language models (LLMs) remains a significant challenge, hindering their adaptability to diverse user needs. While Reinforcement Learning from Human Feedback (RLHF) shows promise in aligning LLMs, its reliance on scalar rewards often limits its ability to capture diverse user preferences in real-world applications. To address this limitation, we introduce the Directional Preference Alignment (DPA) framework. Unlike the scalar-reward RLHF, DPA incorporates multi-obj},
+}
+
+@article{zhan2026magpie,
+  title = {Magpie: Real-Time World Renderer for Interactive Games},
+  author = {Xiaoyu Zhan and Xinyu Wang and Xiaohong Zhang and Huanjie Zhu and Tengjiao Sun and Pengcheng Fang and Jiaxing Yu and Yanwen Guo and Dongjie Fu},
+  year = {2026},
+  eprint = {2608.27168v1},
+  archivePrefix = {arXiv},
+  journal = {arXiv preprint arXiv:2608.27168v1},
+  abstract = {Modern game development relies heavily on conventional graphics pipelines. High-quality visual content requires modeling, material authoring, animation, lighting, effects, and runtime optimization, making asset production expensive and extending the development cycle of game prototypes. Recently, video foundation models are beginning to change film and video production, but games differ from linear media, they require not only continuous and realistic imagery, but also stable and reproducible ga},
+}
+
+@article{shao2024deepseekmath,
+  title = {DeepSeekMath: Pushing the Limits of Mathematical Reasoning in Open Language Models},
+  author = {Zhihong Shao and Peiyi Wang and Qihao Zhu and Runxin Xu and Junxiao Song and Xiao Bi and Haowei Zhang and Mingchuan Zhang and Y. K. Li and Y. Wu and Daya Guo},
+  year = {2024},
+  eprint = {2402.03300v3},
+  archivePrefix = {arXiv},
+  journal = {arXiv preprint arXiv:2402.03300v3},
+  abstract = {Mathematical reasoning poses a significant challenge for language models due to its complex and structured nature. In this paper, we introduce DeepSeekMath 7B, which continues pre-training DeepSeek-Coder-Base-v1.5 7B with 120B math-related tokens sourced from Common Crawl, together with natural language and code data. DeepSeekMath 7B has achieved an impressive score of 51.7\% on the competition-level MATH benchmark without relying on external toolkits and voting techniques, approaching the perfor},
+}
+
+@article{ye2024online,
+  title = {Online Iterative Reinforcement Learning from Human Feedback with General Preference Model},
+  author = {Chenlu Ye and Wei Xiong and Yuheng Zhang and Hanze Dong and Nan Jiang and Tong Zhang},
+  year = {2024},
+  eprint = {2402.07314v3},
+  archivePrefix = {arXiv},
+  journal = {arXiv preprint arXiv:2402.07314v3},
+  abstract = {We investigate Reinforcement Learning from Human Feedback (RLHF) in the context of a general preference oracle. In particular, we do not assume the existence of a reward function and an oracle preference signal drawn from the Bradley-Terry model as most of the prior works do. We consider a standard mathematical formulation, the reverse-KL regularized minimax game between two LLMs for RLHF under general preference oracle. The learning objective of this formulation is to find a policy so that it i},
+}
+
+@article{barman2024reinforcement,
+  title = {Reinforcement Learning from Human Feedback: Whose Culture, Whose Values, Whose Perspectives?},
+  author = {Kristian González Barman and Simon Lohse and Henk de Regt},
+  year = {2024},
+  eprint = {2407.17482v2},
+  archivePrefix = {arXiv},
+  journal = {arXiv preprint arXiv:2407.17482v2},
+  abstract = {We argue for the epistemic and ethical advantages of pluralism in Reinforcement Learning from Human Feedback (RLHF) in the context of Large Language Models (LLM). Drawing on social epistemology and pluralist philosophy of science, we suggest ways in which RHLF can be made more responsive to human needs and how we can address challenges along the way. The paper concludes with an agenda for change, i.e. concrete, actionable steps to improve LLM development.},
+}
+
+@article{zhang2025process,
+  title = {Process-based Self-Rewarding Language Models},
+  author = {Shimao Zhang and Xiao Liu and Xin Zhang and Junxiao Liu and Zheheng Luo and Shujian Huang and Yeyun Gong},
+  year = {2025},
+  eprint = {2503.03746v1},
+  archivePrefix = {arXiv},
+  journal = {arXiv preprint arXiv:2503.03746v1},
+  abstract = {Large Language Models have demonstrated outstanding performance across various downstream tasks and have been widely applied in multiple scenarios. Human-annotated preference data is used for training to further improve LLMs' performance, which is constrained by the upper limit of human performance. Therefore, Self-Rewarding method has been proposed, where LLMs generate training data by rewarding their own outputs. However, the existing self-rewarding paradigm is not effective in mathematical re},
+}
+
+@article{snell2024scaling,
+  title = {Scaling LLM Test-Time Compute Optimally can be More Effective than Scaling Model Parameters},
+  author = {Charlie Snell and Jaehoon Lee and Kelvin Xu and Aviral Kumar},
+  year = {2024},
+  eprint = {2408.03314v1},
+  archivePrefix = {arXiv},
+  journal = {arXiv preprint arXiv:2408.03314v1},
+  abstract = {Enabling LLMs to improve their outputs by using more test-time computation is a critical step towards building generally self-improving agents that can operate on open-ended natural language. In this paper, we study the scaling of inference-time computation in LLMs, with a focus on answering the question: if an LLM is allowed to use a fixed but non-trivial amount of inference-time compute, how much can it improve its performance on a challenging prompt? Answering this question has implications n},
+}
+
+@article{zhu2025scaling,
+  title = {Scaling Test-time Compute for LLM Agents},
+  author = {King Zhu and Hanhao Li and Siwei Wu and Tianshun Xing and Dehua Ma and Xiangru Tang and Minghao Liu and Jian Yang and Jiaheng Liu and Yuchen Eleanor Jiang and Changwang Zhang and Chenghua Lin and Jun Wang and Ge Zhang and Wangchunshu Zhou},
+  year = {2025},
+  eprint = {2506.12928v1},
+  archivePrefix = {arXiv},
+  journal = {arXiv preprint arXiv:2506.12928v1},
+  abstract = {Scaling test time compute has shown remarkable success in improving the reasoning abilities of large language models (LLMs). In this work, we conduct the first systematic exploration of applying test-time scaling methods to language agents and investigate the extent to which it improves their effectiveness. Specifically, we explore different test-time scaling strategies, including: (1) parallel sampling algorithms; (2) sequential revision strategies; (3) verifiers and merging methods; (4)strateg},
+}
+
+@article{grattafiori2024llama,
+  title = {The Llama 3 Herd of Models},
+  author = {Aaron Grattafiori and Abhimanyu Dubey and Abhinav Jauhri and Abhinav Pandey and Abhishek Kadian and Ahmad Al-Dahle and Aiesha Letman and Akhil Mathur and Alan Schelten and Alex Vaughan and Amy Yang and Angela Fan and Anirudh Goyal and Anthony Hartshorn and Aobo Yang and Archi Mitra and Archie Sravankumar and Artem Korenev and Arthur Hinsvark and Arun Rao and Aston Zhang and Aurelien Rodriguez and Austen Gregerson and Ava Spataru and Baptiste Roziere and Bethany Biron and Binh Tang and Bobbie Chern and Charlotte Caucheteux and Chaya Nayak and Chloe Bi and Chris Marra and Chris McConnell and Christian Keller and Christophe Touret and Chunyang Wu and Corinne Wong and Cristian Canton Ferrer and Cyrus Nikolaidis and Damien Allonsius and Daniel Song and Danielle Pintz and Danny Livshits and Danny Wyatt and David Esiobu and Dhruv Choudhary and Dhruv Mahajan and Diego Garcia-Olano and Diego Perino and Dieuwke Hupkes and Egor Lakomkin and Ehab AlBadawy and Elina Lobanova and Emily Dinan and Eric Michael Smith and Filip Radenovic and Francisco Guzmán and Frank Zhang and Gabriel Synnaeve and Gabrielle Lee and Georgia Lewis Anderson and Govind Thattai and Graeme Nail and Gregoire Mialon and Guan Pang and Guillem Cucurell and Hailey Nguyen and Hannah Korevaar and Hu Xu and Hugo Touvron and Iliyan Zarov and Imanol Arrieta Ibarra and Isabel Kloumann and Ishan Misra and Ivan Evtimov and Jack Zhang and Jade Copet and Jaewon Lee and Jan Geffert and Jana Vranes and Jason Park and Jay Mahadeokar and Jeet Shah and Jelmer van der Linde and Jennifer Billock and Jenny Hong and Jenya Lee and Jeremy Fu and Jianfeng Chi and Jianyu Huang and Jiawen Liu and Jie Wang and Jiecao Yu and Joanna Bitton and Joe Spisak and Jongsoo Park and Joseph Rocca and Joshua Johnstun and Joshua Saxe and Junteng Jia and Kalyan Vasuden Alwala and Karthik Prasad and Kartikeya Upasani and Kate Plawiak and Ke Li and Kenneth Heafield and Kevin Stone and Khalid El-Arini and Krithika Iyer and Kshitiz Malik and Kuenley Chiu and Kunal Bhalla and Kushal Lakhotia and Lauren Rantala-Yeary and Laurens van der Maaten and Lawrence Chen and Liang Tan and Liz Jenkins and Louis Martin and Lovish Madaan and Lubo Malo and Lukas Blecher and Lukas Landzaat and Luke de Oliveira and Madeline Muzzi and Mahesh Pasupuleti and Mannat Singh and Manohar Paluri and Marcin Kardas and Maria Tsimpoukelli and Mathew Oldham and Mathieu Rita and Maya Pavlova and Melanie Kambadur and Mike Lewis and Min Si and Mitesh Kumar Singh and Mona Hassan and Naman Goyal and Narjes Torabi and Nikolay Bashlykov and Nikolay Bogoychev and Niladri Chatterji and Ning Zhang and Olivier Duchenne and Onur Çelebi and Patrick Alrassy and Pengchuan Zhang and Pengwei Li and Petar Vasic and Peter Weng and Prajjwal Bhargava and Pratik Dubal and Praveen Krishnan and Punit Singh Koura and Puxin Xu and Qing He and Qingxiao Dong and Ragavan Srinivasan and Raj Ganapathy and Ramon Calderer and Ricardo Silveira Cabral and Robert Stojnic and Roberta Raileanu and Rohan Maheswari and Rohit Girdhar and Rohit Patel and Romain Sauvestre and Ronnie Polidoro and Roshan Sumbaly and Ross Taylor and Ruan Silva and Rui Hou and Rui Wang and Saghar Hosseini and Sahana Chennabasappa and Sanjay Singh and Sean Bell and Seohyun Sonia Kim and Sergey Edunov and Shaoliang Nie and Sharan Narang and Sharath Raparthy and Sheng Shen and Shengye Wan and Shruti Bhosale and Shun Zhang and Simon Vandenhende and Soumya Batra and Spencer Whitman and Sten Sootla and Stephane Collot and Suchin Gururangan and Sydney Borodinsky and Tamar Herman and Tara Fowler and Tarek Sheasha and Thomas Georgiou and Thomas Scialom and Tobias Speckbacher and Todor Mihaylov and Tong Xiao and Ujjwal Karn and Vedanuj Goswami and Vibhor Gupta and Vignesh Ramanathan and Viktor Kerkez and Vincent Gonguet and Virginie Do and Vish Vogeti and Vítor Albiero and Vladan Petrovic and Weiwei Chu and Wenhan Xiong and Wenyin Fu and Whitney Meers and Xavier Martinet and Xiaodong Wang and Xiaofang Wang and Xiaoqing Ellen Tan and Xide Xia and Xinfeng Xie and Xuchao Jia and Xuewei Wang and Yaelle Goldschlag and Yashesh Gaur and Yasmine Babaei and Yi Wen and Yiwen Song and Yuchen Zhang and Yue Li and Yuning Mao and Zacharie Delpierre Coudert and Zheng Yan and Zhengxing Chen and Zoe Papakipos and Aaditya Singh and Aayushi Srivastava and Abha Jain and Adam Kelsey and Adam Shajnfeld and Adithya Gangidi and Adolfo Victoria and Ahuva Goldstand and Ajay Menon and Ajay Sharma and Alex Boesenberg and Alexei Baevski and Allie Feinstein and Amanda Kallet and Amit Sangani and Amos Teo and Anam Yunus and Andrei Lupu and Andres Alvarado and Andrew Caples and Andrew Gu and Andrew Ho and Andrew Poulton and Andrew Ryan and Ankit Ramchandani and Annie Dong and Annie Franco and Anuj Goyal and Aparajita Saraf and Arkabandhu Chowdhury and Ashley Gabriel and Ashwin Bharambe and Assaf Eisenman and Azadeh Yazdan and Beau James and Ben Maurer and Benjamin Leonhardi and Bernie Huang and Beth Loyd and Beto De Paola and Bhargavi Paranjape and Bing Liu and Bo Wu and Boyu Ni and Braden Hancock and Bram Wasti and Brandon Spence and Brani Stojkovic and Brian Gamido and Britt Montalvo and Carl Parker and Carly Burton and Catalina Mejia and Ce Liu and Changhan Wang and Changkyu Kim and Chao Zhou and Chester Hu and Ching-Hsiang Chu and Chris Cai and Chris Tindal and Christoph Feichtenhofer and Cynthia Gao and Damon Civin and Dana Beaty and Daniel Kreymer and Daniel Li and David Adkins and David Xu and Davide Testuggine and Delia David and Devi Parikh and Diana Liskovich and Didem Foss and Dingkang Wang and Duc Le and Dustin Holland and Edward Dowling and Eissa Jamil and Elaine Montgomery and Eleonora Presani and Emily Hahn and Emily Wood and Eric-Tuan Le and Erik Brinkman and Esteban Arcaute and Evan Dunbar and Evan Smothers and Fei Sun and Felix Kreuk and Feng Tian and Filippos Kokkinos and Firat Ozgenel and Francesco Caggioni and Frank Kanayet and Frank Seide and Gabriela Medina Florez and Gabriella Schwarz and Gada Badeer and Georgia Swee and Gil Halpern and Grant Herman and Grigory Sizov and Guangyi and Zhang and Guna Lakshminarayanan and Hakan Inan and Hamid Shojanazeri and Han Zou and Hannah Wang and Hanwen Zha and Haroun Habeeb and Harrison Rudolph and Helen Suk and Henry Aspegren and Hunter Goldman and Hongyuan Zhan and Ibrahim Damlaj and Igor Molybog and Igor Tufanov and Ilias Leontiadis and Irina-Elena Veliche and Itai Gat and Jake Weissman and James Geboski and James Kohli and Janice Lam and Japhet Asher and Jean-Baptiste Gaya and Jeff Marcus and Jeff Tang and Jennifer Chan and Jenny Zhen and Jeremy Reizenstein and Jeremy Teboul and Jessica Zhong and Jian Jin and Jingyi Yang and Joe Cummings and Jon Carvill and Jon Shepard and Jonathan McPhie and Jonathan Torres and Josh Ginsburg and Junjie Wang and Kai Wu and Kam Hou U and Karan Saxena and Kartikay Khandelwal and Katayoun Zand and Kathy Matosich and Kaushik Veeraraghavan and Kelly Michelena and Keqian Li and Kiran Jagadeesh and Kun Huang and Kunal Chawla and Kyle Huang and Lailin Chen and Lakshya Garg and Lavender A and Leandro Silva and Lee Bell and Lei Zhang and Liangpeng Guo and Licheng Yu and Liron Moshkovich and Luca Wehrstedt and Madian Khabsa and Manav Avalani and Manish Bhatt and Martynas Mankus and Matan Hasson and Matthew Lennie and Matthias Reso and Maxim Groshev and Maxim Naumov and Maya Lathi and Meghan Keneally and Miao Liu and Michael L. Seltzer and Michal Valko and Michelle Restrepo and Mihir Patel and Mik Vyatskov and Mikayel Samvelyan and Mike Clark and Mike Macey and Mike Wang and Miquel Jubert Hermoso and Mo Metanat and Mohammad Rastegari and Munish Bansal and Nandhini Santhanam and Natascha Parks and Natasha White and Navyata Bawa and Nayan Singhal and Nick Egebo and Nicolas Usunier and Nikhil Mehta and Nikolay Pavlovich Laptev and Ning Dong and Norman Cheng and Oleg Chernoguz and Olivia Hart and Omkar Salpekar and Ozlem Kalinli and Parkin Kent and Parth Parekh and Paul Saab and Pavan Balaji and Pedro Rittner and Philip Bontrager and Pierre Roux and Piotr Dollar and Polina Zvyagina and Prashant Ratanchandani and Pritish Yuvraj and Qian Liang and Rachad Alao and Rachel Rodriguez and Rafi Ayub and Raghotham Murthy and Raghu Nayani and Rahul Mitra and Rangaprabhu Parthasarathy and Raymond Li and Rebekkah Hogan and Robin Battey and Rocky Wang and Russ Howes and Ruty Rinott and Sachin Mehta and Sachin Siby and Sai Jayesh Bondu and Samyak Datta and Sara Chugh and Sara Hunt and Sargun Dhillon and Sasha Sidorov and Satadru Pan and Saurabh Mahajan and Saurabh Verma and Seiji Yamamoto and Sharadh Ramaswamy and Shaun Lindsay and Shaun Lindsay and Sheng Feng and Shenghao Lin and Shengxin Cindy Zha and Shishir Patil and Shiva Shankar and Shuqiang Zhang and Shuqiang Zhang and Sinong Wang and Sneha Agarwal and Soji Sajuyigbe and Soumith Chintala and Stephanie Max and Stephen Chen and Steve Kehoe and Steve Satterfield and Sudarshan Govindaprasad and Sumit Gupta and Summer Deng and Sungmin Cho and Sunny Virk and Suraj Subramanian and Sy Choudhury and Sydney Goldman and Tal Remez and Tamar Glaser and Tamara Best and Thilo Koehler and Thomas Robinson and Tianhe Li and Tianjun Zhang and Tim Matthews and Timothy Chou and Tzook Shaked and Varun Vontimitta and Victoria Ajayi and Victoria Montanez and Vijai Mohan and Vinay Satish Kumar and Vishal Mangla and Vlad Ionescu and Vlad Poenaru and Vlad Tiberiu Mihailescu and Vladimir Ivanov and Wei Li and Wenchen Wang and Wenwen Jiang and Wes Bouaziz and Will Constable and Xiaocheng Tang and Xiaojian Wu and Xiaolan Wang and Xilun Wu and Xinbo Gao and Yaniv Kleinman and Yanjun Chen and Ye Hu and Ye Jia and Ye Qi and Yenda Li and Yilin Zhang and Ying Zhang and Yossi Adi and Youngjin Nam and Yu and Wang and Yu Zhao and Yuchen Hao and Yundi Qian and Yunlu Li and Yuzi He and Zach Rait and Zachary DeVito and Zef Rosnbrick and Zhaoduo Wen and Zhenyu Yang and Zhiwei Zhao and Zhiyu Ma},
+  year = {2024},
+  eprint = {2407.21783v3},
+  archivePrefix = {arXiv},
+  journal = {arXiv preprint arXiv:2407.21783v3},
+  abstract = {Modern artificial intelligence (AI) systems are powered by foundation models. This paper presents a new set of foundation models, called Llama 3. It is a herd of language models that natively support multilinguality, coding, reasoning, and tool usage. Our largest model is a dense Transformer with 405B parameters and a context window of up to 128K tokens. This paper presents an extensive empirical evaluation of Llama 3. We find that Llama 3 delivers comparable quality to leading language models s},
+}
+
+@article{cui2023ultrafeedback,
+  title = {UltraFeedback: Boosting Language Models with Scaled AI Feedback},
+  author = {Ganqu Cui and Lifan Yuan and Ning Ding and Guanming Yao and Bingxiang He and Wei Zhu and Yuan Ni and Guotong Xie and Ruobing Xie and Yankai Lin and Zhiyuan Liu and Maosong Sun},
+  year = {2023},
+  eprint = {2310.01377v2},
+  archivePrefix = {arXiv},
+  journal = {arXiv preprint arXiv:2310.01377v2},
+  abstract = {Learning from human feedback has become a pivot technique in aligning large language models (LLMs) with human preferences. However, acquiring vast and premium human feedback is bottlenecked by time, labor, and human capability, resulting in small sizes or limited topics of current datasets. This further hinders feedback learning as well as alignment research within the open-source community. To address this issue, we explore how to go beyond human feedback and collect high-quality \textit{AI fee},
+}
+
+@article{zhang2024aligning,
+  title = {Aligning Language Models Using Follow-up Likelihood as Reward Signal},
+  author = {Chen Zhang and Dading Chong and Feng Jiang and Chengguang Tang and Anningzhe Gao and Guohua Tang and Haizhou Li},
+  year = {2024},
+  eprint = {2409.13948v3},
+  archivePrefix = {arXiv},
+  journal = {arXiv preprint arXiv:2409.13948v3},
+  abstract = {In natural human-to-human conversations, participants often receive feedback signals from one another based on their follow-up reactions. These reactions can include verbal responses, facial expressions, changes in emotional state, and other non-verbal cues. Similarly, in human-machine interactions, the machine can leverage the user's follow-up utterances as feedback signals to assess whether it has appropriately addressed the user's request. Therefore, we propose using the likelihood of follow-},
+}
+
+@article{yuan2024advancing,
+  title = {Advancing LLM Reasoning Generalists with Preference Trees},
+  author = {Lifan Yuan and Ganqu Cui and Hanbin Wang and Ning Ding and Xingyao Wang and Jia Deng and Boji Shan and Huimin Chen and Ruobing Xie and Yankai Lin and Zhenghao Liu and Bowen Zhou and Hao Peng and Zhiyuan Liu and Maosong Sun},
+  year = {2024},
+  eprint = {2404.02078v1},
+  archivePrefix = {arXiv},
+  journal = {arXiv preprint arXiv:2404.02078v1},
+  abstract = {We introduce Eurus, a suite of large language models (LLMs) optimized for reasoning. Finetuned from Mistral-7B and CodeLlama-70B, Eurus models achieve state-of-the-art results among open-source models on a diverse set of benchmarks covering mathematics, code generation, and logical reasoning problems. Notably, Eurus-70B beats GPT-3.5 Turbo in reasoning through a comprehensive benchmarking across 12 tests covering five tasks, and achieves a 33.3\% pass@1 accuracy on LeetCode and 32.6\% on TheoremQA},
+}
+
+@article{xie2025swe,
+  title = {SWE-Fixer: Training Open-Source LLMs for Effective and Efficient GitHub Issue Resolution},
+  author = {Chengxing Xie and Bowen Li and Chang Gao and He Du and Wai Lam and Difan Zou and Kai Chen},
+  year = {2025},
+  eprint = {2501.05040v3},
+  archivePrefix = {arXiv},
+  journal = {arXiv preprint arXiv:2501.05040v3},
+  abstract = {Large Language Models (LLMs) have demonstrated remarkable proficiency across a variety of complex tasks. One significant application of LLMs is in tackling software engineering challenges, particularly in resolving real-world tasks on GitHub by fixing code based on the issues reported by the users. However, many current approaches rely on proprietary LLMs, which limits reproducibility, accessibility, and transparency. The critical components of LLMs for addressing software engineering issues and},
+}
+
+@article{yu2026swe,
+  title = {SWE-ABS: Adversarial Benchmark Strengthening Exposes Inflated Success Rates on Test-based Benchmark},
+  author = {Boxi Yu and Yang Cao and Yuzhong Zhang and Liting Lin and Junjielong Xu and Zhiqing Zhong and Qinghua Xu and Guancheng Wang and Jialun Cao and Shing-Chi Cheung and Pinjia He and Lionel Briand},
+  year = {2026},
+  eprint = {2603.00520v1},
+  archivePrefix = {arXiv},
+  journal = {arXiv preprint arXiv:2603.00520v1},
+  abstract = {The SWE-Bench Verified leaderboard is approaching saturation, with the top system achieving 78.80\%. However, we show that this performance is inflated. Our re-evaluation reveals that one in five "solved" patches from the top-30 agents are semantically incorrect, passing only because weak test suites fail to expose their errors. We present SWE-ABS, an adversarial framework that strengthens test suites through a two-stage pipeline: (1) coverage-driven augmentation using program slicing to target u},
+}
+
+@article{yuan2023rrhf,
+  title = {RRHF: Rank Responses to Align Language Models with Human Feedback without tears},
+  author = {Zheng Yuan and Hongyi Yuan and Chuanqi Tan and Wei Wang and Songfang Huang and Fei Huang},
+  year = {2023},
+  eprint = {2304.05302v3},
+  archivePrefix = {arXiv},
+  journal = {arXiv preprint arXiv:2304.05302v3},
+  abstract = {Reinforcement Learning from Human Feedback (RLHF) facilitates the alignment of large language models with human preferences, significantly enhancing the quality of interactions between humans and models. InstructGPT implements RLHF through several stages, including Supervised Fine-Tuning (SFT), reward model training, and Proximal Policy Optimization (PPO). However, PPO is sensitive to hyperparameters and requires multiple models in its standard implementation, making it hard to train and scale u},
+}
+
+@article{zhuang2025towards,
+  title = {Towards Better Instruction Following Retrieval Models},
+  author = {Yuchen Zhuang and Aaron Trinh and Rushi Qiang and Haotian Sun and Chao Zhang and Hanjun Dai and Bo Dai},
+  year = {2025},
+  eprint = {2505.21439v1},
+  archivePrefix = {arXiv},
+  journal = {arXiv preprint arXiv:2505.21439v1},
+  abstract = {Modern information retrieval (IR) models, trained exclusively on standard <query, passage> pairs, struggle to effectively interpret and follow explicit user instructions. We introduce InF-IR, a large-scale, high-quality training corpus tailored for enhancing retrieval models in Instruction-Following IR. InF-IR expands traditional training pairs into over 38,000 expressive <instruction, query, passage> triplets as positive samples. In particular, for each positive triplet, we generate two additio},
+}
+
+@article{xu2023wizardlm,
+  title = {WizardLM: Empowering large pre-trained language models to follow complex instructions},
+  author = {Can Xu and Qingfeng Sun and Kai Zheng and Xiubo Geng and Pu Zhao and Jiazhan Feng and Chongyang Tao and Qingwei Lin and Daxin Jiang},
+  year = {2023},
+  eprint = {2304.12244v3},
+  archivePrefix = {arXiv},
+  journal = {arXiv preprint arXiv:2304.12244v3},
+  abstract = {Training large language models (LLMs) with open-domain instruction following data brings colossal success. However, manually creating such instruction data is very time-consuming and labor-intensive. Moreover, humans may struggle to produce high-complexity instructions. In this paper, we show an avenue for creating large amounts of instruction data with varying levels of complexity using LLM instead of humans. Starting with an initial set of instructions, we use our proposed Evol-Instruct to rew},
+}
+
+@article{ho2025reassessing,
+  title = {Reassessing Extractive QA Datasets at Scale: LLM-as-a-Judge and In-Depth Analyses},
+  author = {Xanh Ho and Jiahao Huang and Florian Boudin and Akiko Aizawa},
+  year = {2025},
+  eprint = {2504.11972v3},
+  archivePrefix = {arXiv},
+  journal = {arXiv preprint arXiv:2504.11972v3},
+  abstract = {Extractive QA tasks are commonly evaluated using Exact Match (EM) and F1-score, but these metrics often fail to reflect true model performance. Recent studies have proposed using large language models (LLMs) as judges (LLM-as-a-judge), yet they often lack comprehensive evaluation across datasets and overlook key factors such as sensitivity to answer types, prompt variations, and self-preference bias. In this work, we conduct a systematic study of LLM-as-a-judge across four extractive QA datasets},
+}
+
+@article{dong2024can,
+  title = {Can LLM be a Personalized Judge?},
+  author = {Yijiang River Dong and Tiancheng Hu and Nigel Collier},
+  year = {2024},
+  eprint = {2406.11657v1},
+  archivePrefix = {arXiv},
+  journal = {arXiv preprint arXiv:2406.11657v1},
+  abstract = {Ensuring that large language models (LLMs) reflect diverse user values and preferences is crucial as their user bases expand globally. It is therefore encouraging to see the growing interest in LLM personalization within the research community. However, current works often rely on the LLM-as-a-Judge approach for evaluation without thoroughly examining its validity. In this paper, we investigate the reliability of LLM-as-a-Personalized-Judge, asking LLMs to judge user preferences based on persona},
+}
+
+@article{cho2025causal,
+  title = {Causal-Paced Deep Reinforcement Learning},
+  author = {Geonwoo Cho and Jaegyun Im and Doyoon Kim and Sundong Kim},
+  year = {2025},
+  eprint = {2507.02910v1},
+  archivePrefix = {arXiv},
+  journal = {arXiv preprint arXiv:2507.02910v1},
+  abstract = {Designing effective task sequences is crucial for curriculum reinforcement learning (CRL), where agents must gradually acquire skills by training on intermediate tasks. A key challenge in CRL is to identify tasks that promote exploration, yet are similar enough to support effective transfer. While recent approach suggests comparing tasks via their Structural Causal Models (SCMs), the method requires access to ground-truth causal structures, an unrealistic assumption in most RL settings. In this },
+}
+
+@article{meisheri2019accelerating,
+  title = {Accelerating Training in Pommerman with Imitation and Reinforcement Learning},
+  author = {Hardik Meisheri and Omkar Shelke and Richa Verma and Harshad Khadilkar},
+  year = {2019},
+  eprint = {1911.04947v2},
+  archivePrefix = {arXiv},
+  journal = {arXiv preprint arXiv:1911.04947v2},
+  abstract = {The Pommerman simulation was recently developed to mimic the classic Japanese game Bomberman, and focuses on competitive gameplay in a multi-agent setting. We focus on the 2$\times$2 team version of Pommerman, developed for a competition at NeurIPS 2018. Our methodology involves training an agent initially through imitation learning on a noisy expert policy, followed by a proximal-policy optimization (PPO) reinforcement learning algorithm. The basic PPO approach is modified for stable transition},
+}
+
+@article{denison2024sycophancy,
+  title = {Sycophancy to Subterfuge: Investigating Reward-Tampering in Large Language Models},
+  author = {Carson Denison and Monte MacDiarmid and Fazl Barez and David Duvenaud and Shauna Kravec and Samuel Marks and Nicholas Schiefer and Ryan Soklaski and Alex Tamkin and Jared Kaplan and Buck Shlegeris and Samuel R. Bowman and Ethan Perez and Evan Hubinger},
+  year = {2024},
+  eprint = {2406.10162v3},
+  archivePrefix = {arXiv},
+  journal = {arXiv preprint arXiv:2406.10162v3},
+  abstract = {In reinforcement learning, specification gaming occurs when AI systems learn undesired behaviors that are highly rewarded due to misspecified training goals. Specification gaming can range from simple behaviors like sycophancy to sophisticated and pernicious behaviors like reward-tampering, where a model directly modifies its own reward mechanism. However, these more pernicious behaviors may be too complex to be discovered via exploration. In this paper, we study whether Large Language Model (LL},
+}
+
+@article{metz2023rlhf,
+  title = {RLHF-Blender: A Configurable Interactive Interface for Learning from Diverse Human Feedback},
+  author = {Yannick Metz and David Lindner and Raphaël Baur and Daniel Keim and Mennatallah El-Assady},
+  year = {2023},
+  eprint = {2308.04332v1},
+  archivePrefix = {arXiv},
+  journal = {arXiv preprint arXiv:2308.04332v1},
+  abstract = {To use reinforcement learning from human feedback (RLHF) in practical applications, it is crucial to learn reward models from diverse sources of human feedback and to consider human factors involved in providing feedback of different types. However, the systematic study of learning from diverse types of feedback is held back by limited standardized tooling available to researchers. To bridge this gap, we propose RLHF-Blender, a configurable, interactive interface for learning from human feedback},
+}
+
+@article{ebrahimi2024optimal,
+  title = {Optimal design of frame structures with mixed categorical and continuous design variables using the Gumbel-Softmax method},
+  author = {Mehran Ebrahimi and Hyunmin Cheong and Pradeep Kumar Jayaraman and Farhad Javid},
+  year = {2024},
+  eprint = {2501.00258v1},
+  archivePrefix = {arXiv},
+  journal = {arXiv preprint arXiv:2501.00258v1},
+  abstract = {In optimizing real-world structures, due to fabrication or budgetary restraints, the design variables may be restricted to a set of standard engineering choices. Such variables, commonly called categorical variables, are discrete and unordered in essence, precluding the utilization of gradient-based optimizers for the problems containing them. In this paper, incorporating the Gumbel-Softmax (GSM) method, we propose a new gradient-based optimizer for handling such variables in the optimal design },
+}
+
+@article{lin2026emo,
+  title = {Emo-LiPO: Listwise Preference Optimization for Fine-Grained Emotion Intensity Control in LLM-based Text-to-Speech},
+  author = {Yihang Lin and Li Zhou and Congwei Cao and Dongchu Xie and Xiaoxue Gao and Chen Zhang and Haizhou Li},
+  year = {2026},
+  eprint = {2606.13006v1},
+  archivePrefix = {arXiv},
+  journal = {arXiv preprint arXiv:2606.13006v1},
+  abstract = {Large language model (LLM)-based text-to-speech (TTS) systems enable prompt-conditioned emotional control but struggle with fine-grained emotion intensity due to the semantic -- acoustic gap between text and speech. To address this challenge, we formulate emotion intensity control in LLM-based TTS as a learning-to-rank problem and propose Emo-LiPO, a listwise preference optimization framework that aligns prompt-conditioned speech generation with relative emotion intensity expressed in text. Emo-},
+}
+
+@article{lin2025sleep,
+  title = {Sleep-time Compute: Beyond Inference Scaling at Test-time},
+  author = {Kevin Lin and Charlie Snell and Yu Wang and Charles Packer and Sarah Wooders and Ion Stoica and Joseph E. Gonzalez},
+  year = {2025},
+  eprint = {2504.13171v1},
+  archivePrefix = {arXiv},
+  journal = {arXiv preprint arXiv:2504.13171v1},
+  abstract = {Scaling test-time compute has emerged as a key ingredient for enabling large language models (LLMs) to solve difficult problems, but comes with high latency and inference cost. We introduce sleep-time compute, which allows models to "think" offline about contexts before queries are presented: by anticipating what queries users might ask and pre-computing useful quantities, we can significantly reduce the compute requirements at test-time. To demonstrate the efficacy of our method, we create modi},
+}
+
+@article{yuksekgonul2026learning,
+  title = {Learning to Discover at Test Time},
+  author = {Mert Yuksekgonul and Daniel Koceja and Xinhao Li and Federico Bianchi and Jed McCaleb and Xiaolong Wang and Jan Kautz and Yejin Choi and James Zou and Carlos Guestrin and Yu Sun},
+  year = {2026},
+  eprint = {2601.16175v2},
+  archivePrefix = {arXiv},
+  journal = {arXiv preprint arXiv:2601.16175v2},
+  abstract = {How can we use AI to discover a new state of the art for a scientific problem? Prior work in test-time scaling, such as AlphaEvolve, performs search by prompting a frozen LLM. We perform reinforcement learning at test time, so the LLM can continue to train, but now with experience specific to the test problem. This form of continual learning is quite special, because its goal is to produce one great solution rather than many good ones on average, and to solve this very problem rather than genera},
+}
+
+@article{qiu2025saffron,
+  title = {Saffron-1: Safety Inference Scaling},
+  author = {Ruizhong Qiu and Gaotang Li and Tianxin Wei and Jingrui He and Hanghang Tong},
+  year = {2025},
+  eprint = {2506.06444v2},
+  archivePrefix = {arXiv},
+  journal = {arXiv preprint arXiv:2506.06444v2},
+  abstract = {Existing safety assurance research has primarily focused on training-phase alignment to instill safe behaviors into LLMs. However, recent studies have exposed these methods' susceptibility to diverse jailbreak attacks. Concurrently, inference scaling has significantly advanced LLM reasoning capabilities but remains unexplored in the context of safety assurance. Addressing this gap, our work pioneers inference scaling for robust and effective LLM safety against emerging threats. We reveal that co},
+}
+
+@article{wu2025step,
+  title = {Step-Audio 2 Technical Report},
+  author = {Boyong Wu and Chao Yan and Chen Hu and Cheng Yi and Chengli Feng and Fei Tian and Feiyu Shen and Gang Yu and Haoyang Zhang and Jingbei Li and Mingrui Chen and Peng Liu and Wang You and Xiangyu Tony Zhang and Xingyuan Li and Xuerui Yang and Yayue Deng and Yechang Huang and Yuxin Li and Yuxin Zhang and Zhao You and Brian Li and Changyi Wan and Hanpeng Hu and Jiangjie Zhen and Siyu Chen and Song Yuan and Xuelin Zhang and Yimin Jiang and Yu Zhou and Yuxiang Yang and Bingxin Li and Buyun Ma and Changhe Song and Dongqing Pang and Guoqiang Hu and Haiyang Sun and Kang An and Na Wang and Shuli Gao and Wei Ji and Wen Li and Wen Sun and Xuan Wen and Yong Ren and Yuankai Ma and Yufan Lu and Bin Wang and Bo Li and Changxin Miao and Che Liu and Chen Xu and Dapeng Shi and Dingyuan Hu and Donghang Wu and Enle Liu and Guanzhe Huang and Gulin Yan and Han Zhang and Hao Nie and Haonan Jia and Hongyu Zhou and Jianjian Sun and Jiaoren Wu and Jie Wu and Jie Yang and Jin Yang and Junzhe Lin and Kaixiang Li and Lei Yang and Liying Shi and Li Zhou and Longlong Gu and Ming Li and Mingliang Li and Mingxiao Li and Nan Wu and Qi Han and Qinyuan Tan and Shaoliang Pang and Shengjie Fan and Siqi Liu and Tiancheng Cao and Wanying Lu and Wenqing He and Wuxun Xie and Xu Zhao and Xueqi Li and Yanbo Yu and Yang Yang and Yi Liu and Yifan Lu and Yilei Wang and Yuanhao Ding and Yuanwei Liang and Yuanwei Lu and Yuchu Luo and Yuhe Yin and Yumeng Zhan and Yuxiang Zhang and Zidong Yang and Zixin Zhang and Binxing Jiao and Daxin Jiang and Heung-Yeung Shum and Jiansheng Chen and Jing Li and Xiangyu Zhang and Yibo Zhu},
+  year = {2025},
+  eprint = {2507.16632v3},
+  archivePrefix = {arXiv},
+  journal = {arXiv preprint arXiv:2507.16632v3},
+  abstract = {This paper presents Step-Audio 2, an end-to-end multi-modal large language model designed for industry-strength audio understanding and speech conversation. By integrating a latent audio encoder and reasoning-centric reinforcement learning (RL), Step-Audio 2 achieves promising performance in automatic speech recognition (ASR) and audio understanding. To facilitate genuine end-to-end speech conversation, Step-Audio 2 incorporates the generation of discrete audio tokens into language modeling, sig},
+}
+
+@article{shafayat2025can,
+  title = {Can Large Reasoning Models Self-Train?},
+  author = {Sheikh Shafayat and Fahim Tajwar and Ruslan Salakhutdinov and Jeff Schneider and Andrea Zanette},
+  year = {2025},
+  eprint = {2505.21444v2},
+  archivePrefix = {arXiv},
+  journal = {arXiv preprint arXiv:2505.21444v2},
+  abstract = {Recent successes of reinforcement learning (RL) in training large reasoning models motivate the question of whether self-training - the process where a model learns from its own judgments - can be sustained within RL. In this work, we study this question using majority voting as a simple self-feedback mechanism. On a comprehensive set of experiments on both synthetic and real reasoning tasks, we find that this basic approach improves not only the model's reasoning performance, but also its capab},
+}
+
+@article{gao2023llama,
+  title = {LLaMA-Adapter V2: Parameter-Efficient Visual Instruction Model},
+  author = {Peng Gao and Jiaming Han and Renrui Zhang and Ziyi Lin and Shijie Geng and Aojun Zhou and Wei Zhang and Pan Lu and Conghui He and Xiangyu Yue and Hongsheng Li and Yu Qiao},
+  year = {2023},
+  eprint = {2304.15010v1},
+  archivePrefix = {arXiv},
+  journal = {arXiv preprint arXiv:2304.15010v1},
+  abstract = {How to efficiently transform large language models (LLMs) into instruction followers is recently a popular research direction, while training LLM for multi-modal reasoning remains less explored. Although the recent LLaMA-Adapter demonstrates the potential to handle visual inputs with LLMs, it still cannot generalize well to open-ended visual instructions and lags behind GPT-4. In this paper, we present LLaMA-Adapter V2, a parameter-efficient visual instruction model. Specifically, we first augme},
+}
+
+@article{scheurer2022training,
+  title = {Training Language Models with Language Feedback},
+  author = {Jérémy Scheurer and Jon Ander Campos and Jun Shern Chan and Angelica Chen and Kyunghyun Cho and Ethan Perez},
+  year = {2022},
+  eprint = {2204.14146v4},
+  archivePrefix = {arXiv},
+  journal = {arXiv preprint arXiv:2204.14146v4},
+  abstract = {Pretrained language models often do not perform tasks in ways that are in line with our preferences, e.g., generating offensive text or factually incorrect summaries. Recent work approaches the above issue by learning from a simple form of human evaluation: comparisons between pairs of model-generated task outputs. Comparison feedback conveys limited information about human preferences per human evaluation. Here, we propose to learn from natural language feedback, which conveys more information },
+}
