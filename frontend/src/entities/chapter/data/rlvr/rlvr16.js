@@ -2,7 +2,7 @@
 export default {
   "id": "rlvr16",
   "num": "16",
-  "title": "Chapter 16: 大模型推論極限優化 — 量化 (GPTQ/AWQ)、投機解碼、KV-Cache 與硬體編譯",
+  "title": "大模型推論極限優化 — 量化 (GPTQ/AWQ)、投機解碼、KV-Cache 與硬體編譯",
   "icon": "🚀",
   "file": "16_inference_optimization_quantization_compilation",
   "hasVisualizer": "rlvr_scaling",

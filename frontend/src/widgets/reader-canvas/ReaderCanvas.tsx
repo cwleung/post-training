@@ -27,6 +27,9 @@ import {
   WrapText,
   Trophy,
   List,
+  Network,
+  Terminal,
+  Code2,
 } from 'lucide-react';
 import type { ChapterData } from '@/shared/types';
 import { getManifest, getAllChapters } from '@/entities/manifest';
@@ -151,10 +154,10 @@ const AlertBlockquote: React.FC<{ children?: React.ReactNode }> = ({ children })
   );
 };
 
-// CodeBlock component: ReadTheDocs minimal style with Prism syntax highlighting & docked terminal output
+// Tri-Modal CodeBlock component: Architectural Blueprint / Terminal Telemetry / Source Code
 const CodeBlock: React.FC<{ lang: string; codeString: string }> = ({ lang, codeString }) => {
   const [copied, setCopied] = useState(false);
-  const [isWrapped, setIsWrapped] = useState(true);
+  const [isWrapped, setIsWrapped] = useState(false);
 
   const handleCopy = () => {
     navigator.clipboard.writeText(codeString);
@@ -162,18 +165,37 @@ const CodeBlock: React.FC<{ lang: string; codeString: string }> = ({ lang, codeS
     setTimeout(() => setCopied(false), 2000);
   };
 
-  const isOutputBlock =
-    lang === 'text' ||
-    lang === 'output' ||
-    lang === 'terminal' ||
-    lang === 'console' ||
-    lang === 'log' ||
-    codeString.trim().startsWith('[Execution Output') ||
-    codeString.trim().startsWith('[Output');
+  // 1. Detect if this block is an ASCII Architecture Map or Systems Topology Blueprint
+  const isAsciiDiagram = useMemo(() => {
+    if (lang === 'ascii' || lang === 'diagram' || lang === 'blueprint') return true;
+    const isExplicitOutput =
+      codeString.trim().startsWith('[Execution Output') ||
+      codeString.trim().startsWith('[Output') ||
+      codeString.trim().startsWith('[Telemetry Log');
+    if (isExplicitOutput) return false;
 
-  // Prism syntax highlighting
+    // Detect box-drawing characters or topology indicators
+    const boxChars = ['┌', '─', '│', '└', '├', '╔', '═', '║', '╚', '╠', '▼', '▲', '◀', '▶'];
+    return boxChars.some((char) => codeString.includes(char));
+  }, [lang, codeString]);
+
+  // 2. Detect if this block is an Execution Output / Telemetry Log
+  const isOutputBlock = useMemo(() => {
+    if (isAsciiDiagram) return false;
+    return (
+      lang === 'output' ||
+      lang === 'terminal' ||
+      lang === 'console' ||
+      lang === 'log' ||
+      codeString.trim().startsWith('[Execution Output') ||
+      codeString.trim().startsWith('[Output') ||
+      codeString.trim().startsWith('[Telemetry Log')
+    );
+  }, [isAsciiDiagram, lang, codeString]);
+
+  // Prism syntax highlighting for source code
   const highlightedHtml = useMemo(() => {
-    if (isOutputBlock) return null;
+    if (isOutputBlock || isAsciiDiagram) return null;
     const normalizedLang = lang ? lang.toLowerCase().trim() : 'python';
     const grammar = Prism.languages[normalizedLang] || Prism.languages.python;
     if (grammar) {
@@ -184,57 +206,109 @@ const CodeBlock: React.FC<{ lang: string; codeString: string }> = ({ lang, codeS
       }
     }
     return null;
-  }, [codeString, lang, isOutputBlock]);
+  }, [codeString, lang, isOutputBlock, isAsciiDiagram]);
 
-  // Specialized Sleek Terminal / Execution Output Block (Interactive Notebook / Jupyter style)
+  // Case 1: Architectural Topology Blueprint Canvas
+  if (isAsciiDiagram) {
+    return (
+      <div className="group relative my-4 overflow-hidden rounded-lg ascii-blueprint-container transition-all">
+        {/* Top Blueprint Header Bar */}
+        <div className="flex items-center justify-between border-b border-cyan-500/20 bg-muted/40 px-3 py-1.5 text-xs">
+          <div className="flex items-center gap-2">
+            <Network className="h-3.5 w-3.5 text-cyan-400 shrink-0" />
+            <span className="font-mono text-[10px] sm:text-[10.5px] font-semibold uppercase tracking-wider text-cyan-400 dark:text-cyan-300">
+              SYSTEM TOPOLOGY & ARCHITECTURAL BLUEPRINT
+            </span>
+          </div>
+
+          <div className="flex items-center gap-1">
+            <button
+              type="button"
+              onClick={() => setIsWrapped(!isWrapped)}
+              className="rounded p-1 text-muted-foreground hover:text-foreground hover:bg-muted/60 transition-colors cursor-pointer"
+              title={isWrapped ? '切換為不換行 (橫向滾動)' : '切換為自動換行'}
+            >
+              <WrapText className="h-3.5 w-3.5" />
+            </button>
+            <button
+              type="button"
+              onClick={handleCopy}
+              className="rounded p-1 text-muted-foreground hover:text-foreground hover:bg-muted/60 transition-colors cursor-pointer"
+              title="複製架構拓撲圖"
+            >
+              {copied ? <Check className="h-3.5 w-3.5 text-emerald-400" /> : <Copy className="h-3.5 w-3.5" />}
+            </button>
+          </div>
+        </div>
+
+        {/* Monospace Blueprint Canvas */}
+        <div className="overflow-x-auto p-3 sm:p-4 text-[11px] sm:text-[11.5px] ascii-blueprint-canvas">
+          <pre className={cn("m-0 p-0 font-mono ascii-blueprint-text bg-transparent border-none", isWrapped ? "whitespace-pre-wrap break-all" : "whitespace-pre")}>
+            <code>{codeString}</code>
+          </pre>
+        </div>
+      </div>
+    );
+  }
+
+  // Case 2: Specialized Sleek Terminal / Execution Output Block (Interactive Notebook / Jupyter style)
   if (isOutputBlock) {
     let displayTitle = '';
     let cleanedOutput = codeString;
 
-    const titleMatch = codeString.match(/^\s*\[(?:Execution Output|Output)(?:\s*\/\s*([^\]]+))?\]\s*\n?/i);
+    const titleMatch = codeString.match(/^\s*\[(?:Execution Output|Output|Telemetry Log)(?:\s*\/\s*([^\]]+))?\]\s*\n?/i);
     if (titleMatch) {
       displayTitle = titleMatch[1]?.trim() ? titleMatch[1].trim() : '';
       cleanedOutput = codeString.slice(titleMatch[0].length);
     }
 
     return (
-      <div className="group relative -mt-2 mb-4 overflow-hidden rounded-lg border border-border/50 bg-[#060910] shadow-xs transition-all hover:border-emerald-500/30">
-        {/* Floating Controls on Hover (or visible by default on touch) */}
-        <div className="absolute top-2 right-2 z-10 flex items-center gap-1 opacity-80 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity duration-150 bg-[#0e1422]/90 backdrop-blur-md rounded-md p-0.5 border border-border/50">
-          <button
-            type="button"
-            onClick={() => setIsWrapped(!isWrapped)}
-            className="rounded p-1 text-slate-400 hover:text-emerald-300 hover:bg-slate-800 transition-colors cursor-pointer"
-            title={isWrapped ? '切換為不換行 (橫向滾動)' : '切換為自動換行'}
-          >
-            <WrapText className="h-3.5 w-3.5" />
-          </button>
-          <button
-            type="button"
-            onClick={handleCopy}
-            className="rounded p-1 text-slate-400 hover:text-emerald-300 hover:bg-slate-800 transition-colors cursor-pointer"
-            title="複製輸出"
-          >
-            {copied ? (
-              <Check className="h-3.5 w-3.5 text-emerald-400" />
-            ) : (
-              <Copy className="h-3.5 w-3.5" />
-            )}
-          </button>
+      <div className="group relative -mt-2 mb-4 overflow-hidden rounded-lg terminal-telemetry-container transition-all">
+        {/* Terminal Header Bar with Micro-dots & Title */}
+        <div className="flex items-center justify-between border-b border-emerald-500/20 bg-black/40 px-3 py-1.5 text-xs">
+          <div className="flex items-center gap-2">
+            <div className="flex items-center gap-1 select-none">
+              <span className="h-2 w-2 rounded-full bg-red-500/80 inline-block" />
+              <span className="h-2 w-2 rounded-full bg-amber-500/80 inline-block" />
+              <span className="h-2 w-2 rounded-full bg-emerald-500/80 inline-block" />
+            </div>
+            <Terminal className="h-3 w-3 text-emerald-400 ml-1 shrink-0" />
+            <span className="font-mono text-[10px] font-semibold uppercase tracking-wider text-emerald-400">
+              RUNTIME TELEMETRY {displayTitle ? `· ${displayTitle}` : ''}
+            </span>
+          </div>
+
+          <div className="flex items-center gap-1">
+            <button
+              type="button"
+              onClick={() => setIsWrapped(!isWrapped)}
+              className="rounded p-1 text-slate-400 hover:text-emerald-300 hover:bg-emerald-950/40 transition-colors cursor-pointer"
+              title={isWrapped ? '切換為不換行 (橫向滾動)' : '切換為自動換行'}
+            >
+              <WrapText className="h-3.5 w-3.5" />
+            </button>
+            <button
+              type="button"
+              onClick={handleCopy}
+              className="rounded p-1 text-slate-400 hover:text-emerald-300 hover:bg-emerald-950/40 transition-colors cursor-pointer"
+              title="複製執行輸出"
+            >
+              {copied ? (
+                <Check className="h-3.5 w-3.5 text-emerald-400" />
+              ) : (
+                <Copy className="h-3.5 w-3.5" />
+              )}
+            </button>
+          </div>
         </div>
 
         {/* Output Gutter & Content (Interactive Notebook Out: flow) */}
         <div className="flex items-start gap-2.5 p-2.5 sm:p-3 font-mono leading-relaxed">
-          <div className="shrink-0 select-none text-emerald-500/70 font-mono text-[10px] pt-0.5 font-semibold">
+          <div className="shrink-0 select-none text-emerald-500/80 font-mono text-[10px] pt-0.5 font-semibold">
             Out:
           </div>
           <div className="flex-1 min-w-0 overflow-x-auto">
-            {displayTitle && (
-              <div className="text-[10px] font-mono text-emerald-400/80 mb-1 font-medium tracking-wide">
-                [{displayTitle}]
-              </div>
-            )}
-            <pre className={cn("m-0 p-0 font-mono text-[11px] sm:text-[11.5px] text-emerald-300/90 leading-relaxed font-normal bg-transparent border-none", isWrapped ? "whitespace-pre-wrap break-all" : "whitespace-pre")}>
+            <pre className={cn("m-0 p-0 font-mono text-[11px] sm:text-[11.5px] text-emerald-300 leading-relaxed font-normal bg-transparent border-none", isWrapped ? "whitespace-pre-wrap break-all" : "whitespace-pre")}>
               <code>{cleanedOutput}</code>
             </pre>
           </div>
@@ -243,46 +317,52 @@ const CodeBlock: React.FC<{ lang: string; codeString: string }> = ({ lang, codeS
     );
   }
 
-  // Regular Source Code Block (Python, TS, Bash, etc. - Interactive Notebook In: flow)
+  // Case 3: Regular Source Code Block (Python, TS, Bash, etc. - Interactive Notebook In: flow)
   return (
-    <div className="group relative my-3.5 overflow-hidden rounded-lg border border-border/70 bg-[#0d1117] shadow-xs transition-all hover:border-border">
-      {/* Floating Hover Controls in Top-Right Corner (or visible by default on touch) */}
-      <div className="absolute top-2 right-2 z-10 flex items-center gap-1 opacity-80 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity duration-150 bg-[#161b22]/95 backdrop-blur-md rounded-md p-0.5 border border-border/60 shadow-md">
-        <span className="px-1.5 font-mono text-[9px] text-muted-foreground uppercase select-none">
-          {lang || 'python'}
-        </span>
-        <button
-          type="button"
-          onClick={() => setIsWrapped(!isWrapped)}
-          className="rounded p-1 text-slate-400 hover:text-slate-100 hover:bg-slate-700/60 transition-colors cursor-pointer"
-          title={isWrapped ? '切換為不換行 (橫向滾動)' : '切換為自動換行'}
-        >
-          <WrapText className="h-3.5 w-3.5" />
-        </button>
-        <button
-          type="button"
-          onClick={handleCopy}
-          className="rounded p-1 text-slate-400 hover:text-slate-100 hover:bg-slate-700/60 transition-colors cursor-pointer"
-          title="複製程式碼"
-        >
-          {copied ? <Check className="h-3.5 w-3.5 text-emerald-400" /> : <Copy className="h-3.5 w-3.5" />}
-        </button>
+    <div className="group relative my-3.5 overflow-hidden rounded-lg code-surface-container transition-all">
+      {/* Code Header Toolbar */}
+      <div className="flex items-center justify-between border-b border-border/50 bg-muted/30 px-3 py-1.5 text-xs">
+        <div className="flex items-center gap-2">
+          <Code2 className="h-3.5 w-3.5 text-sky-400 shrink-0" />
+          <span className="font-mono text-[10.5px] font-semibold uppercase tracking-wider text-muted-foreground">
+            {lang || 'python'}
+          </span>
+        </div>
+
+        <div className="flex items-center gap-1">
+          <button
+            type="button"
+            onClick={() => setIsWrapped(!isWrapped)}
+            className="rounded p-1 text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-colors cursor-pointer"
+            title={isWrapped ? '切換為不換行 (橫向滾動)' : '切換為自動換行'}
+          >
+            <WrapText className="h-3.5 w-3.5" />
+          </button>
+          <button
+            type="button"
+            onClick={handleCopy}
+            className="rounded p-1 text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-colors cursor-pointer"
+            title="複製程式碼"
+          >
+            {copied ? <Check className="h-3.5 w-3.5 text-emerald-400" /> : <Copy className="h-3.5 w-3.5" />}
+          </button>
+        </div>
       </div>
 
       {/* Code Area with In: Gutter */}
-      <div className="flex items-start gap-2.5 p-3 sm:p-3.5 bg-[#0d1117]/95">
-        <div className="shrink-0 select-none text-sky-400/60 font-mono text-[10px] pt-0.5 font-semibold">
+      <div className="flex items-start gap-2.5 p-3 sm:p-3.5">
+        <div className="shrink-0 select-none text-sky-400/80 font-mono text-[10px] pt-0.5 font-semibold">
           In:
         </div>
         <div className="flex-1 min-w-0 overflow-x-auto">
           <pre className={cn("m-0 p-0 font-mono text-[11.5px] sm:text-[12px] leading-relaxed bg-transparent border-none", isWrapped ? "whitespace-pre-wrap break-all" : "whitespace-pre")}>
             {highlightedHtml ? (
               <code
-                className="font-mono text-slate-200"
+                className="font-mono text-foreground"
                 dangerouslySetInnerHTML={{ __html: highlightedHtml }}
               />
             ) : (
-              <code className="font-mono text-slate-200">{codeString}</code>
+              <code className="font-mono text-foreground">{codeString}</code>
             )}
           </pre>
         </div>

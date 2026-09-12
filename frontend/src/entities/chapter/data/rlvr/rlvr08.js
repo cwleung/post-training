@@ -2,7 +2,7 @@
 export default {
   "id": "rlvr08",
   "num": "08",
-  "title": "Chapter 08: 消融實驗與擴展規律 (Ablations & Scaling Analysis)",
+  "title": "消融實驗與擴展規律 (Ablations & Scaling Analysis)",
   "icon": "🔬",
   "file": "08_ablations_and_scaling",
   "hasVisualizer": "scaling_laws",

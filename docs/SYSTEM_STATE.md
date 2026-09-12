@@ -767,3 +767,25 @@ This log records every documentation synchronization, bootstrap scan, and file m
   - Built fresh production web bundle with `npm --prefix frontend run build` in 8.16s (exit code 0).
   - Zero documentation drift and zero mentions of restricted terms.
 
+---
+
+### [2026-09-13] - Frontend CSS Polish, JS Tri-Modal CodeBlock & Dependency Updates
+- **Dependency Upgrades (`frontend/package.json`, `frontend/package-lock.json`)**:
+  - Updated `lucide-react` to `^1.45.0` and audited 660 packages (0 vulnerabilities).
+  - Audited and updated compatible dependencies via `npm update`.
+- **CSS Design System & Visual Polish (`frontend/src/app/styles/index.css`)**:
+  - Added `.ascii-blueprint-container`, `.ascii-blueprint-canvas`, and `.ascii-blueprint-text` styling with pixel-perfect monospace ligatures and high-contrast dark/light drafting canvas modes.
+  - Enhanced `.terminal-telemetry-container` with authentic macOS micro-status dots and emerald terminal output styling.
+  - Upgraded table typography and zebra striping contrast under light mode (`[data-theme="light"]`).
+- **Tri-Modal Code Block Architecture (`frontend/src/widgets/reader-canvas/ReaderCanvas.tsx`)**:
+  - Partitioned code rendering into three specialized modes:
+    1. **Architectural Blueprints (`isAsciiDiagram`)**: Renders box-drawing topology maps with `Network` icon, blueprint header, and high-density monospace layout.
+    2. **Runtime Telemetry (`isOutputBlock`)**: Renders execution logs with `Terminal` icon, micro-dots, and `Out:` gutter.
+    3. **Source Code (`CodeBlock`)**: Renders syntax-highlighted code cells with `Code2` icon, language badge, and `In:` gutter.
+- **Chapter Metadata Title Standardization (`frontend/src/entities/chapter/data/rlvr/`)**:
+  - Stripped redundant `Chapter XX:` prefixes from `rlvr05.js`, `06.js`, `08.js`, `09.js`, `12.js`, `13.js`, `14.js`, `16.js`, `17.js`, `18.js` to match the clean naming format of `rlvrManifest.ts`.
+- **Verification & Zero-Drift**:
+  - Updated `frontend/src/app/styles/INDEX.md` and `frontend/src/widgets/reader-canvas/INDEX.md`.
+  - Passed `npm --prefix frontend run typecheck` (exit code 0).
+  - Compiled fresh production web bundle via `npm --prefix frontend run build` in 7.60s (exit code 0).
+

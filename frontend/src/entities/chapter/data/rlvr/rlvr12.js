@@ -2,7 +2,7 @@
 export default {
   "id": "rlvr12",
   "num": "12",
-  "title": "Chapter 12: 過程監督與推理算力擴展 (Process Supervision & Test-Time Compute)",
+  "title": "過程監督與推理算力擴展 (Process Supervision & Test-Time Compute)",
   "icon": "🌲",
   "file": "12_process_supervision_and_test_time_compute",
   "hasVisualizer": "prm_tree",

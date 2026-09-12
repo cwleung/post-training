@@ -2,7 +2,7 @@
 export default {
   "id": "rlvr06",
   "num": "06",
-  "title": "Chapter 06: Agentic 多輪強化學習 (Agentic RLVR & Multi-Turn Verification)",
+  "title": "Agentic 多輪強化學習 (Agentic RLVR & Multi-Turn Verification)",
   "icon": "🤖",
   "file": "06_agentic_rlvr",
   "hasVisualizer": "agent_sandbox",

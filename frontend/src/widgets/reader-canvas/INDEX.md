@@ -13,7 +13,8 @@ Markdown reader canvas parsing KaTeX formulas, callouts, and embedded interactiv
 ## Invariants & Rules
 - Intercepts internal markdown links and routes them via `useChapterStore`.
 - Embeds interactive visual labs seamlessly inside curriculum content.
-- Renders source code blocks with ReadTheDocs minimal style: Prism syntax highlighting for Python/Bash/TS/JSON, clean rounded frames, and subtle floating hover action pills in top-right (no bulky text buttons or window title bars).
-- Renders execution outputs as sleek docked terminal panels (`Terminal Output`) attached flush directly beneath the preceding code cell without OS chrome.
+- Renders source code blocks with ReadTheDocs / Jupyter minimal style: Prism syntax highlighting for Python/Bash/TS/JSON, clean rounded frames, `In:` gutter, language badge, and subtle floating action pills (wrap toggle and copy).
+- Renders ASCII architectural maps and systems topology diagrams as dedicated Blueprint canvases with crisp monospaced alignment, network icons, and blueprint framing.
+- Renders execution outputs as sleek docked terminal panels (`Out:` gutter, micro-status indicators, emerald output) attached flush directly beneath the preceding code cell.
 - Features a dynamic, scrollspy-enabled "On this page" right rail on large viewports (`xl:block`) reflecting chapter subheadings.
 - Streamlines publication header with compact badge pills for Kaggle milestone playbooks, simulation labs, read time, and competency tags.

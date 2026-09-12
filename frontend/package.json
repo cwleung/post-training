@@ -19,7 +19,7 @@
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "katex": "^0.16.11",
-    "lucide-react": "^0.469.0",
+    "lucide-react": "^1.45.0",
     "mermaid": "^10.9.1",
     "prismjs": "^1.30.0",
     "react": "^19.0.0",

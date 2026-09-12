@@ -2,7 +2,7 @@
 export default {
   "id": "rlvr13",
   "num": "13",
-  "title": "Chapter 13: 數據飛輪與基準去污染 (Data Flywheel & Decontamination)",
+  "title": "數據飛輪與基準去污染 (Data Flywheel & Decontamination)",
   "icon": "🔄",
   "file": "13_data_flywheel_and_decontamination",
   "hasVisualizer": "flywheel",

@@ -2,7 +2,7 @@
 export default {
   "id": "rlvr14",
   "num": "14",
-  "title": "Chapter 14: Post-Training 系統架構與故障排查實戰指南 (System Architecture & Incident Triage Playbook)",
+  "title": "Post-Training 系統架構與故障排查實戰指南 (System Architecture & Incident Triage Playbook)",
   "icon": "🏛️",
   "file": "14_post_training_systems_and_triage_playbook",
   "hasVisualizer": "swe_rl",

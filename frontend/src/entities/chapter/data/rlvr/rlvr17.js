@@ -2,7 +2,7 @@
 export default {
   "id": "rlvr17",
   "num": "17",
-  "title": "Chapter 17: 大模型評估基準與提示優化策略 — 準確率、延遲、安全與成本",
+  "title": "大模型評估基準與提示優化策略 — 準確率、延遲、安全與成本",
   "icon": "📊",
   "file": "17_llm_evaluation_benchmarking_prompt_optimization",
   "hasVisualizer": "eval_workbench",

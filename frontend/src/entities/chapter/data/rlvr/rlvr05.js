@@ -2,7 +2,7 @@
 export default {
   "id": "rlvr05",
   "num": "05",
-  "title": "Chapter 05: 評估基準與組合數學 (Evaluation Benchmarking & Pass@k)",
+  "title": "評估基準與組合數學 (Evaluation Benchmarking & Pass@k)",
   "icon": "📈",
   "file": "05_evaluation",
   "hasVisualizer": "rlvr_eval",

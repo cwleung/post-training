@@ -2,7 +2,7 @@
 export default {
   "id": "rlvr09",
   "num": "09",
-  "title": "Chapter 09: SFT Cold-Start 階段與思維鏈合成 (SFT Cold-Start & Reasoning Distillation)",
+  "title": "SFT Cold-Start 階段與思維鏈合成 (SFT Cold-Start & Reasoning Distillation)",
   "icon": "🧊",
   "file": "09_sft_cold_start",
   "hasVisualizer": "rlvr_coldstart",

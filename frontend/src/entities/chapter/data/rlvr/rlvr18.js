@@ -2,7 +2,7 @@
 export default {
   "id": "rlvr18",
   "num": "18",
-  "title": "Chapter 18: RL 模型對齊、憲政 AI 與安全對抗防禦 (Alignment, Safety & Red-Teaming)",
+  "title": "RL 模型對齊、憲政 AI 與安全對抗防禦 (Alignment, Safety & Red-Teaming)",
   "icon": "🛡️",
   "file": "18_alignment_safety_red_teaming",
   "hasVisualizer": "pitfalls",
