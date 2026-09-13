@@ -849,3 +849,25 @@ This log records every documentation synchronization, bootstrap scan, and file m
   - Updated simulation catalog count (18 labs) and tri-modal code block references.
 - **Integrity**: Zero documentation drift across all functional directories.
 
+---
+
+### [2026-09-13] - Eliminate Kaggle Modal Horizontal Scrolling & Add Code Wrap Toggle
+- **Root Cause & Layout Mechanics**:
+  - `DialogContent` used CSS grid with `overflow-y-auto` without `overflow-x-hidden`. In standard CSS, vertical overflow without horizontal overflow computes `overflow-x: auto`.
+  - Child elements with long preformatted Python code (`<pre className="whitespace-pre">`) caused CSS grid track items (which default to `min-width: auto`) to expand to the width of the longest code line (1000px+), blowing out the modal container width and creating outer horizontal scrollbars on both desktop and mobile viewports.
+- **Horizontal Scroll Containment (`Dialog.tsx`, `SimulationModal.tsx`, `MilestoneTutorialModal.tsx`)**:
+  - `Dialog.tsx`: Converted `DialogPrimitive.Content` from `grid` to `flex flex-col` and applied `overflow-y-auto overflow-x-hidden min-w-0 max-w-full`.
+  - `SimulationModal.tsx`: Applied `overflow-y-auto overflow-x-hidden min-w-0 max-w-full flex flex-col` to prevent simulation labs from causing horizontal overflow.
+  - `MilestoneTutorialModal.tsx`:
+    - Updated `DialogContent` with `overflow-y-auto overflow-x-hidden min-w-0 max-w-full flex flex-col`.
+    - Wrapped step cards, script cards, and code containers with `min-w-0 max-w-full overflow-hidden`.
+    - Added `truncate` and `break-words` guards to titles, badges, and long explanatory texts across all tabs (Pipeline, STAR, Interview QA, Resume Highlights).
+- **Code Wrap Toggle Feature (`WrapText` from `lucide-react`)**:
+  - Introduced interactive `isCodeWrapped` state with toggle buttons in code box headers across all 3 view modes (All Steps, Single Step, and Full Script).
+  - Allows users to switch seamlessly between standard horizontal code scroll (`whitespace-pre` inside bounded `overflow-x-auto`) and auto-wrapped code (`whitespace-pre-wrap break-all`), especially convenient for reading code on mobile and narrower split-screen viewports.
+- **Verification**:
+  - `npm run typecheck` passed cleanly (exit code 0).
+  - `npm run build` compiled all production bundles cleanly into `web/dist/` in 7.84s (exit code 0).
+  - Local indices synchronized (`frontend/src/entities/milestone/INDEX.md`, `frontend/src/shared/ui/INDEX.md`).
+
+

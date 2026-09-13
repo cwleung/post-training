@@ -11,7 +11,7 @@ Reusable design system primitives and atomic UI components.
 | `Badge.tsx` | TSX Component | Status and category badge indicator |
 | `Button.tsx` | TSX Component | Standard interactive button with variant and size options |
 | `Card.tsx` | TSX Component | Framed panel container with dark/light border styling |
-| `Dialog.tsx` | TSX Component | Accessible modal dialog container with overlay backdrop |
+| `Dialog.tsx` | TSX Component | Accessible modal dialog container with overlay backdrop, flex layout containment, and overflow-x protection |
 | `Slider.tsx` | TSX Component | Range input slider with numeric readout for simulation parameter tuning |
 | `index.ts` | TS Module | Unified exports of all UI primitive components |
 

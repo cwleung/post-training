@@ -50,7 +50,7 @@ export const SimulationModal: React.FC<SimulationModalProps> = ({
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="w-[calc(100vw-1rem)] sm:w-full max-w-4xl max-h-[92vh] overflow-y-auto p-3.5 sm:p-6 bg-background/95 backdrop-blur-md border border-border shadow-2xl">
+      <DialogContent className="w-[calc(100vw-1rem)] sm:w-full max-w-4xl max-h-[92vh] overflow-y-auto overflow-x-hidden min-w-0 max-w-full flex flex-col p-3.5 sm:p-6 bg-background/95 backdrop-blur-md border border-border shadow-2xl">
         <DialogHeader className="pb-4 border-b border-border">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <div className="flex items-start sm:items-center gap-3">
